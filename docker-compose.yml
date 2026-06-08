@@ -59,6 +59,15 @@ services:
     container_name: ims_dbgate
     ports:
       - "3000:3000"
+    environment:
+      - CONNECTIONS=sqlserver_db
+      - LABEL_sqlserver_db=CSDL Quản Lý Hàng Tồn Kho (sa)
+      - SERVER_sqlserver_db=sqlserver
+      - USER_sqlserver_db=sa
+      - PASSWORD_sqlserver_db=Sa_strong_password_2026
+      - PORT_sqlserver_db=1433
+      - ENGINE_sqlserver_db=mssql@dbgate-plugin-mssql
+      - DATABASE_sqlserver_db=InventoryDB
     depends_on:
       sqlserver:
         condition: service_healthy

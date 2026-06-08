@@ -1,63 +1,115 @@
 @using System.Security.Claims
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+
+    var isNghiepVuActive = controller == "PhieuNhap" || controller == "PhieuXuat" || controller == "TonKho";
+    var isDanhMucActive = controller == "SanPham" || controller == "DanhMuc" || controller == "NhaCungCap" || controller == "Kho";
+    var isNangCaoActive = controller == "Demo" || controller == "HeThong";
+}
 
 <div class="app-sidebar">
     <div class="sidebar-brand">
-        <i class="fa-solid fa-boxes-stacked"></i>
+        <i class="fa-solid fa-boxes-stacked text-white"></i>
         <span>IMS Antigravity</span>
     </div>
     
     <div class="sidebar-menu">
-        <div class="menu-category">Chính</div>
-        <a href="/" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+        <!-- Dashboard Item -->
+        <a href="/" class="menu-item @(controller == "Home" && action == "Index" ? "active" : "")">
             <i class="fa-solid fa-chart-line"></i>
-            Tổng quan
+            <span>Tổng quan</span>
         </a>
 
-        <div class="menu-category">Nghiệp vụ kho</div>
-        <a href="/PhieuNhap" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "PhieuNhap" ? "active" : "")">
-            <i class="fa-solid fa-file-import"></i>
-            Phiếu Nhập Kho
-        </a>
-        <a href="/PhieuXuat" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "PhieuXuat" ? "active" : "")">
-            <i class="fa-solid fa-file-export"></i>
-            Phiếu Xuất Kho
-        </a>
-        <a href="/TonKho" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "TonKho" ? "active" : "")">
-            <i class="fa-solid fa-warehouse"></i>
-            Báo cáo Tồn Kho
-        </a>
+        <!-- Collapsible Group: Nghiệp vụ kho -->
+        <div class="menu-group">
+            <div class="menu-group-header @(isNghiepVuActive ? "active-header" : "")" 
+                 data-bs-toggle="collapse" 
+                 data-bs-target="#collapseNghiepVu" 
+                 aria-expanded="@(isNghiepVuActive ? "true" : "false")" 
+                 aria-controls="collapseNghiepVu">
+                <i class="fa-solid fa-warehouse"></i>
+                <span>Nghiệp vụ kho</span>
+                <i class="fa-solid fa-chevron-down group-arrow"></i>
+            </div>
+            <div id="collapseNghiepVu" class="collapse @(isNghiepVuActive ? "show" : "")">
+                <div class="menu-group-items">
+                    <a href="/PhieuNhap" class="menu-item sub-item @(controller == "PhieuNhap" ? "active" : "")">
+                        <i class="fa-solid fa-file-import"></i>
+                        Phiếu Nhập Kho
+                    </a>
+                    <a href="/PhieuXuat" class="menu-item sub-item @(controller == "PhieuXuat" ? "active" : "")">
+                        <i class="fa-solid fa-file-export"></i>
+                        Phiếu Xuất Kho
+                    </a>
+                    <a href="/TonKho" class="menu-item sub-item @(controller == "TonKho" ? "active" : "")">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        Báo cáo Tồn Kho
+                    </a>
+                </div>
+            </div>
+        </div>
 
-        <div class="menu-category">Danh mục hệ thống</div>
-        <a href="/SanPham" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "SanPham" ? "active" : "")">
-            <i class="fa-solid fa-box"></i>
-            Sản phẩm
-        </a>
-        <a href="/DanhMuc" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "DanhMuc" ? "active" : "")">
-            <i class="fa-solid fa-tags"></i>
-            Danh mục
-        </a>
-        <a href="/NhaCungCap" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "NhaCungCap" ? "active" : "")">
-            <i class="fa-solid fa-truck-field"></i>
-            Nhà cung cấp
-        </a>
-        <a href="/Kho" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Kho" ? "active" : "")">
-            <i class="fa-solid fa-map-location-dot"></i>
-            Kho hàng
-        </a>
+        <!-- Collapsible Group: Danh mục hệ thống -->
+        <div class="menu-group">
+            <div class="menu-group-header @(isDanhMucActive ? "active-header" : "")" 
+                 data-bs-toggle="collapse" 
+                 data-bs-target="#collapseDanhMuc" 
+                 aria-expanded="@(isDanhMucActive ? "true" : "false")" 
+                 aria-controls="collapseDanhMuc">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Danh mục hệ thống</span>
+                <i class="fa-solid fa-chevron-down group-arrow"></i>
+            </div>
+            <div id="collapseDanhMuc" class="collapse @(isDanhMucActive ? "show" : "")">
+                <div class="menu-group-items">
+                    <a href="/SanPham" class="menu-item sub-item @(controller == "SanPham" ? "active" : "")">
+                        <i class="fa-solid fa-box"></i>
+                        Sản phẩm
+                    </a>
+                    <a href="/DanhMuc" class="menu-item sub-item @(controller == "DanhMuc" ? "active" : "")">
+                        <i class="fa-solid fa-tags"></i>
+                        Danh mục
+                    </a>
+                    <a href="/NhaCungCap" class="menu-item sub-item @(controller == "NhaCungCap" ? "active" : "")">
+                        <i class="fa-solid fa-truck-field"></i>
+                        Nhà cung cấp
+                    </a>
+                    <a href="/Kho" class="menu-item sub-item @(controller == "Kho" ? "active" : "")">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        Kho hàng
+                    </a>
+                </div>
+            </div>
+        </div>
 
-        <div class="menu-category">Nâng cao & Demo</div>
-        <a href="/Demo" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Demo" ? "active" : "")">
-            <i class="fa-solid fa-flask"></i>
-            Demo SP/Trigger (B1-B5)
-        </a>
-        
-        @if (User.IsInRole("Admin"))
-        {
-            <a href="/HeThong" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "HeThong" ? "active" : "")">
-                <i class="fa-solid fa-gears"></i>
-                Sao lưu & Phục hồi
-            </a>
-        }
+        <!-- Collapsible Group: Nâng cao & Hệ thống -->
+        <div class="menu-group">
+            <div class="menu-group-header @(isNangCaoActive ? "active-header" : "")" 
+                 data-bs-toggle="collapse" 
+                 data-bs-target="#collapseNangCao" 
+                 aria-expanded="@(isNangCaoActive ? "true" : "false")" 
+                 aria-controls="collapseNangCao">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                <span>Nâng cao & Hệ thống</span>
+                <i class="fa-solid fa-chevron-down group-arrow"></i>
+            </div>
+            <div id="collapseNangCao" class="collapse @(isNangCaoActive ? "show" : "")">
+                <div class="menu-group-items">
+                    <a href="/Demo" class="menu-item sub-item @(controller == "Demo" ? "active" : "")">
+                        <i class="fa-solid fa-flask"></i>
+                        Demo B1-B5 SP/Trigger
+                    </a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="/HeThong" class="menu-item sub-item @(controller == "HeThong" ? "active" : "")">
+                            <i class="fa-solid fa-gears"></i>
+                            Sao lưu & Phục hồi
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="sidebar-footer">

@@ -38,27 +38,27 @@ GO
 -- 4. Seed data: SanPham
 INSERT INTO SanPham (TenSP, MaDanhMuc, DonVi, MaVach, GiaNhap, GiaBan, TonToiThieu, HinhAnh, MoTa, TrangThai) VALUES
 -- Electronics (MaDanhMuc = 1)
-(N'Chuột không dây Logitech M331', 1, N'Cái', '8936012345001', 180000.00, 250000.00, 15, '/images/products/logitech_m331.jpg', N'Chuột không dây Silent mượt mà', 1),
-(N'Bàn phím cơ Logitech G213', 1, N'Cái', '8936012345002', 850000.00, 1200000.00, 5, '/images/products/logitech_g213.jpg', N'Bàn phím giả cơ chuyên game RGB', 1),
-(N'Tai nghe chụp tai Sony WH-CH520', 1, N'Cái', '8936012345003', 900000.00, 1300000.00, 5, '/images/products/sony_wh_ch520.jpg', N'Tai nghe chụp tai bluetooth không dây thời lượng pin 50h', 1),
+(N'Chuột không dây Logitech M331', 1, N'Cái', '5099206066274', 180000.00, 250000.00, 15, '/images/products/logitech_m331.jpg', N'Chuột không dây Silent mượt mà', 1),
+(N'Bàn phím cơ Logitech G213', 1, N'Cái', '5099206067943', 850000.00, 1200000.00, 5, '/images/products/logitech_g213.jpg', N'Bàn phím giả cơ chuyên game RGB', 1),
+(N'Tai nghe chụp tai Sony WH-CH520', 1, N'Cái', '4548736140134', 900000.00, 1300000.00, 5, '/images/products/sony_wh_ch520.jpg', N'Tai nghe chụp tai bluetooth không dây thời lượng pin 50h', 1),
 
 -- Appliances (MaDanhMuc = 2)
-(N'Nồi cơm điện Tefal 1.8L', 2, N'Cái', '8936012345004', 1200000.00, 1750000.00, 8, '/images/products/tefal_cooker.jpg', N'Nồi cơm điện lòng niêu cao cấp', 1),
-(N'Quạt đứng Senko DTS1607', 2, N'Cái', '8936012345005', 320000.00, 450000.00, 20, '/images/products/senko_dts1607.jpg', N'Quạt đứng 5 cánh gió mạnh mẽ', 1),
+(N'Nồi cơm điện Tefal 1.8L', 2, N'Cái', '3016661156824', 1200000.00, 1750000.00, 8, '/images/products/tefal_cooker.jpg', N'Nồi cơm điện lòng niêu cao cấp', 1),
+(N'Quạt đứng Senko DTS1607', 2, N'Cái', '8936034151745', 320000.00, 450000.00, 20, '/images/products/senko_dts1607.jpg', N'Quạt đứng 5 cánh gió mạnh mẽ', 1),
 
 -- Cosmetics (MaDanhMuc = 3)
-(N'Nước lau sàn Sunlight Hương Hoa Thiên Nhiên 3.8kg', 3, N'Chai', '8936012345006', 65000.00, 85000.00, 30, '/images/products/sunlight_floor.jpg', N'Nước lau sàn thơm mát sạch bóng', 1),
-(N'Nước rửa chén Sunlight Chanh 3.6kg', 3, N'Chai', '8936012345007', 85000.00, 115000.00, 25, '/images/products/sunlight_dish.jpg', N'Nước rửa chén sạch dầu mỡ nhanh chóng', 1),
-(N'Dầu gội Clear Bạc Hà Thơm Mát 630ml', 3, N'Chai', '8936012345008', 135000.00, 175000.00, 20, '/images/products/clear_shampoo.jpg', N'Dầu gội sạch gàu sảng khoái mát lạnh', 1),
+(N'Nước lau sàn Sunlight Hương Hoa Thiên Nhiên 3.8kg', 3, N'Chai', '8934839121972', 65000.00, 85000.00, 30, '/images/products/sunlight_floor.jpg', N'Nước lau sàn thơm mát sạch bóng', 1),
+(N'Nước rửa chén Sunlight Chanh 3.6kg', 3, N'Chai', '8934839111812', 85000.00, 115000.00, 25, '/images/products/sunlight_dish.jpg', N'Nước rửa chén sạch dầu mỡ nhanh chóng', 1),
+(N'Dầu gội Clear Bạc Hà Thơm Mát 630ml', 3, N'Chai', '8934839123847', 135000.00, 175000.00, 20, '/images/products/clear_shampoo.jpg', N'Dầu gội sạch gàu sảng khoái mát lạnh', 1),
 
 -- F&B (MaDanhMuc = 4)
-(N'Sữa tươi Vinamilk Có Đường 180ml', 4, N'Thùng', '8936012345009', 315000.00, 370000.00, 50, '/images/products/vinamilk_180.jpg', N'Thùng 48 hộp sữa tươi tiệt trùng', 1),
-(N'Sữa đặc Ông Thọ Đỏ 380g', 4, N'Hộp', '8936012345010', 20000.00, 25000.00, 100, '/images/products/ong_tho_do.jpg', N'Sữa đặc có đường thơm ngon', 1),
-(N'Nước ngọt Coca Cola 320ml', 4, N'Thùng', '8936012345011', 170000.00, 210000.00, 40, '/images/products/coca_320.jpg', N'Thùng 24 lon Coca Cola giải khát', 1),
+(N'Sữa tươi Vinamilk Có Đường 180ml', 4, N'Thùng', '8934673151833', 315000.00, 370000.00, 50, '/images/products/vinamilk_180.jpg', N'Thùng 48 hộp sữa tươi tiệt trùng', 1),
+(N'Sữa đặc Ông Thọ Đỏ 380g', 4, N'Hộp', '8934673270030', 20000.00, 25000.00, 100, '/images/products/ong_tho_do.jpg', N'Sữa đặc có đường thơm ngon', 1),
+(N'Nước ngọt Coca Cola 320ml', 4, N'Thùng', '8935049500466', 170000.00, 210000.00, 40, '/images/products/coca_320.jpg', N'Thùng 24 lon Coca Cola giải khát', 1),
 
 -- Office supplies (MaDanhMuc = 5)
-(N'Giấy in Double A A4 70gsm', 5, N'Ram', '8936012345012', 55000.00, 75000.00, 100, '/images/products/double_a_a4.jpg', N'Giấy in chất lượng cao Thái Lan', 1),
-(N'Bút bi Thiên Long 0.27mm TL-027', 5, N'Hộp', '8936012345013', 50000.00, 72000.00, 50, '/images/products/but_bi_tl027.jpg', N'Hộp 20 cây bút bi mực xanh', 1);
+(N'Giấy in Double A A4 70gsm', 5, N'Ram', '8851351110174', 55000.00, 75000.00, 100, '/images/products/double_a_a4.jpg', N'Giấy in chất lượng cao Thái Lan', 1),
+(N'Bút bi Thiên Long 0.27mm TL-027', 5, N'Hộp', '8935001800160', 50000.00, 72000.00, 50, '/images/products/but_bi_tl027.jpg', N'Hộp 20 cây bút bi mực xanh', 1);
 GO
 
 -- 5. Seed data: NhanVien
@@ -108,57 +108,57 @@ INSERT INTO TonKho (MaSP, MaKho, SoLuong) VALUES
 GO
 
 -- 8. Seed data: PhieuNhap and CT_PhieuNhap
--- PO 1: Approved, Unilever import
+-- PO 1: Approved, Unilever import (5 days ago)
 INSERT INTO PhieuNhap (SoPhieu, NgayLap, NgayDuyet, MaNCC, MaKho, MaNV, TrangThai, TongTien, GhiChu) VALUES
-('PN-2026-00001', '2026-05-10 09:00:00', '2026-05-10 10:30:00', 4, 1, 2, N'ĐãDuyệt', 22750000.00, N'Nhập hàng hóa mỹ phẩm định kỳ Unilever');
+('PN-2026-00001', DATEADD(day, -5, GETDATE()), DATEADD(minute, 30, DATEADD(day, -5, GETDATE())), 4, 1, 2, N'ĐãDuyệt', 22750000.00, N'Nhập hàng hóa mỹ phẩm Unilever');
 
 INSERT INTO CT_PhieuNhap (MaPN, MaSP, SoLuong, DonGia) VALUES
 (1, 6, 100, 65000.00),
 (1, 7, 100, 85000.00),
 (1, 8, 50, 135000.00);
 
--- PO 2: Approved, Vinamilk import
+-- PO 2: Approved, Vinamilk import (3 days ago)
 INSERT INTO PhieuNhap (SoPhieu, NgayLap, NgayDuyet, MaNCC, MaKho, MaNV, TrangThai, TongTien, GhiChu) VALUES
-('PN-2026-00002', '2026-05-15 14:00:00', '2026-05-15 15:00:00', 3, 2, 3, N'ĐãDuyệt', 51250000.00, N'Nhập sữa tươi sữa đặc Vinamilk');
+('PN-2026-00002', DATEADD(day, -3, GETDATE()), DATEADD(minute, 45, DATEADD(day, -3, GETDATE())), 3, 2, 3, N'ĐãDuyệt', 51250000.00, N'Nhập sữa tươi sữa đặc Vinamilk');
 
 INSERT INTO CT_PhieuNhap (MaPN, MaSP, SoLuong, DonGia) VALUES
 (2, 9, 150, 315000.00),
 (2, 10, 200, 20000.00);
 
--- PO 3: Draft, Hoang Gia import
+-- PO 3: Draft, Hoang Gia import (1 day ago)
 INSERT INTO PhieuNhap (SoPhieu, NgayLap, NgayDuyet, MaNCC, MaKho, MaNV, TrangThai, TongTien, GhiChu) VALUES
-('PN-2026-00003', '2026-06-05 08:30:00', NULL, 1, 1, 2, N'Nháp', 15700000.00, N'Nhập bổ sung chuột phím Sony và Logitech');
+('PN-2026-00003', DATEADD(day, -1, GETDATE()), NULL, 1, 1, 2, N'Nháp', 15700000.00, N'Nhập bổ sung chuột phím Sony và Logitech');
 
 INSERT INTO CT_PhieuNhap (MaPN, MaSP, SoLuong, DonGia) VALUES
 (3, 1, 40, 180000.00),
 (3, 2, 10, 850000.00);
 
--- PO 4: Cancelled, Hong Ha import
+-- PO 4: Cancelled, Hong Ha import (6 days ago)
 INSERT INTO PhieuNhap (SoPhieu, NgayLap, NgayDuyet, MaNCC, MaKho, MaNV, TrangThai, TongTien, GhiChu) VALUES
-('PN-2026-00004', '2026-06-06 10:00:00', NULL, 5, 3, 4, N'ĐãHủy', 8000000.00, N'Nhập giấy in Hồng Hà | Lý do hủy: Sai đơn giá thỏa thuận');
+('PN-2026-00004', DATEADD(day, -6, GETDATE()), NULL, 5, 3, 4, N'ĐãHủy', 8000000.00, N'Nhập giấy in Hồng Hà | Hủy do sai đơn giá');
 
 INSERT INTO CT_PhieuNhap (MaPN, MaSP, SoLuong, DonGia) VALUES
 (4, 12, 100, 80000.00);
 GO
 
 -- 9. Seed data: PhieuXuat and CT_PhieuXuat
--- GI 1: Approved, School export
+-- GI 1: Approved, School export (4 days ago)
 INSERT INTO PhieuXuat (SoPhieu, NgayLap, NgayDuyet, MaKho, MaNV, NguoiNhan, TrangThai, TongTien, GhiChu) VALUES
-('PX-2026-00001', '2026-05-20 08:00:00', '2026-05-20 09:30:00', 1, 2, N'Nguyễn Thị Hồng (Trường ĐH CNTT)', N'ĐãDuyệt', 3750000.00, N'Xuất cấp phát văn phòng phẩm kỳ thi học kỳ');
+('PX-2026-00001', DATEADD(day, -4, GETDATE()), DATEADD(minute, 60, DATEADD(day, -4, GETDATE())), 1, 2, N'Nguyễn Thị Hồng (Trường ĐH CNTT)', N'ĐãDuyệt', 3750000.00, N'Xuất cấp phát văn phòng phẩm kỳ thi học kỳ');
 
 INSERT INTO CT_PhieuXuat (MaPX, MaSP, SoLuong, DonGia) VALUES
 (1, 12, 50, 75000.00);
 
--- GI 2: Approved, Coca Cola export
+-- GI 2: Approved, Coca Cola export (2 days ago)
 INSERT INTO PhieuXuat (SoPhieu, NgayLap, NgayDuyet, MaKho, MaNV, NguoiNhan, TrangThai, TongTien, GhiChu) VALUES
-('PX-2026-00002', '2026-05-28 15:00:00', '2026-05-28 16:00:00', 2, 3, N'Lê Minh Hoàng (Đại lý Sóng Thần)', N'ĐãDuyệt', 21000000.00, N'Xuất bán Coca Cola số lượng lớn đại lý');
+('PX-2026-00002', DATEADD(day, -2, GETDATE()), DATEADD(minute, 30, DATEADD(day, -2, GETDATE())), 2, 3, N'Lê Minh Hoàng (Đại lý Sóng Thần)', N'ĐãDuyệt', 21000000.00, N'Xuất bán Coca Cola số lượng lớn đại lý');
 
 INSERT INTO CT_PhieuXuat (MaPX, MaSP, SoLuong, DonGia) VALUES
 (2, 11, 100, 210000.00);
 
--- GI 3: Draft, Senko export
+-- GI 3: Draft, Senko export (Today)
 INSERT INTO PhieuXuat (SoPhieu, NgayLap, NgayDuyet, MaKho, MaNV, NguoiNhan, TrangThai, TongTien, GhiChu) VALUES
-('PX-2026-00003', '2026-06-07 11:00:00', NULL, 2, 3, N'Nguyễn Văn Long', N'Nháp', 4500000.00, N'Xuất bán lẻ quạt Senko khách hàng tự chở');
+('PX-2026-00003', DATEADD(minute, -30, GETDATE()), NULL, 2, 3, N'Nguyễn Văn Long', N'Nháp', 4500000.00, N'Xuất bán lẻ quạt Senko');
 
 INSERT INTO CT_PhieuXuat (MaPX, MaSP, SoLuong, DonGia) VALUES
 (3, 5, 10, 450000.00);
@@ -166,9 +166,9 @@ GO
 
 -- 10. Seed data: LichSuHoatDong
 INSERT INTO LichSuHoatDong (BangLienQuan, MaBanGhi, HanhDong, NoiDungCu, NoiDungMoi, MaNV, ThoiGian) VALUES
-('TaiKhoan', 1, 'INSERT', NULL, N'{"TenDangNhap":"admin","VaiTro":"Admin"}', 1, '2026-05-01 08:00:00'),
-('PhieuNhap', 1, 'INSERT', NULL, N'{"SoPhieu":"PN-2026-00001","TrangThai":"Nháp"}', 2, '2026-05-10 09:00:00'),
-('PhieuNhap', 1, 'UPDATE', N'{"TrangThai":"Nháp"}', N'{"TrangThai":"ĐãDuyệt"}', 2, '2026-05-10 10:30:00'),
-('PhieuXuat', 1, 'INSERT', NULL, N'{"SoPhieu":"PX-2026-00001","TrangThai":"Nháp"}', 2, '2026-05-20 08:00:00'),
-('PhieuXuat', 1, 'UPDATE', N'{"TrangThai":"Nháp"}', N'{"TrangThai":"ĐãDuyệt"}', 2, '2026-05-20 09:30:00');
+('TaiKhoan', 1, 'INSERT', NULL, N'{"TenDangNhap":"admin","VaiTro":"Admin"}', 1, DATEADD(day, -10, GETDATE())),
+('PhieuNhap', 1, 'INSERT', NULL, N'{"SoPhieu":"PN-2026-00001","TrangThai":"Nháp"}', 2, DATEADD(day, -5, GETDATE())),
+('PhieuNhap', 1, 'UPDATE', N'{"TrangThai":"Nháp"}', N'{"TrangThai":"ĐãDuyệt"}', 2, DATEADD(minute, 30, DATEADD(day, -5, GETDATE()))),
+('PhieuXuat', 1, 'INSERT', NULL, N'{"SoPhieu":"PX-2026-00001","TrangThai":"Nháp"}', 2, DATEADD(day, -4, GETDATE())),
+('PhieuXuat', 1, 'UPDATE', N'{"TrangThai":"Nháp"}', N'{"TrangThai":"ĐãDuyệt"}', 2, DATEADD(minute, 60, DATEADD(day, -4, GETDATE())));
 GO
