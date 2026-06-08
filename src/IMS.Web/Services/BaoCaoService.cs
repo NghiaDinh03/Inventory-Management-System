@@ -71,7 +71,7 @@ namespace IMS.Web.Services
             });
         }
 
-        // Helper thực thi Stored Procedure trả về DataTable dùng ADO.NET
+        // Helper to execute stored procedure and return DataTable using ADO.NET
         private async Task<DataTable> ExecuteStoredProcedureAsync(string spName, SqlParameter[] parameters)
         {
             var connection = _context.Database.GetDbConnection();
@@ -88,7 +88,7 @@ namespace IMS.Web.Services
                 {
                     command.CommandText = spName;
                     command.CommandType = CommandType.StoredProcedure;
-                    command.CommandTimeout = 120; // 2 phút cho các cursor nặng
+                    command.CommandTimeout = 120; // 2 minutes timeout for heavy cursors
 
                     if (parameters != null)
                     {

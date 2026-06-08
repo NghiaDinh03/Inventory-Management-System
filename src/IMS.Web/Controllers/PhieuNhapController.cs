@@ -81,7 +81,7 @@ namespace IMS.Web.Controllers
                 chiTiet.Add((maSP[i], soLuong[i], donGia[i]));
             }
 
-            // Lấy MaNV từ Claims
+            // Get MaNV from Claims
             string? maNVClaim = User.FindFirst("MaNV")?.Value;
             if (string.IsNullOrEmpty(maNVClaim) || !int.TryParse(maNVClaim, out int maNV))
             {

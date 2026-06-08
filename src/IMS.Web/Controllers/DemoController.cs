@@ -22,7 +22,7 @@ namespace IMS.Web.Controllers
             return View();
         }
 
-        // Action API phục vụ lấy dữ liệu trước/sau (B3/B5) và thực thi câu lệnh (B4) qua AJAX
+        // Action API to get data before/after (B3/B5) and execute commands (B4) via AJAX
         [HttpPost]
         public async Task<IActionResult> ExecuteDemo([FromBody] DemoRequest request)
         {
@@ -35,19 +35,13 @@ namespace IMS.Web.Controllers
             {
                 if (request.ActionType == "GET_BEFORE_SP")
                 {
-                    // Lấy 5 phiếu nhập mới nhất để xem trước
-                    var dt = await _sqlService.ExecuteQueryAsync("SELECT TOP 5 MaPN, SoPhieu, NgayLap, TrangThai, TongTien, GhiChu FROM PhieuNhap ORDER BY MaPN DESC");
-                    return Json(new { success = true, data = ConvertDataTableToList(dt) });
-                }
-                else if (request.ActionType == "RUN_SP")
-                {
-                    // Chạy SP tạo phiếu nhập kho bằng cách chèn trực tiếp raw SQL
-                    // Ở đây để đơn giản và minh hoạ rõ ràng: Ta khai báo TVP ngay trong đoạn code và gọi SP
+                    // Execute SP to create purchase order by inserting raw SQL directly
+                    // TVP is defined and passed directly to simplify the demonstration
                     string sql = @"
                         DECLARE @Details ChiTietPhieuType;
                         INSERT INTO @Details (MaSP, SoLuong, DonGia) VALUES (1, 10, 180000); -- Logitech G213
                         INSERT INTO @Details (MaSP, SoLuong, DonGia) VALUES (2, 5, 850000);  -- Logitech M331
-                        EXEC sp_TaoPhieuNhap @MaNCC = 1, @MaKho = 1, @MaNV = 1, @GhiChu = N'Phiếu nhập Demo chạy qua Web UI', @ChiTiet = @Details;
+                        EXEC sp_TaoPhieuNhap @MaNCC = 1, @MaKho = 1, @MaNV = 1, @GhiChu = N'Demo purchase order executed via Web UI', @ChiTiet = @Details;
                     ";
                     await _sqlService.ExecuteNonQueryAsync(sql);
                     return Json(new { success = true, message = "Thực thi sp_TaoPhieuNhap thành công! Phiếu đã được tạo ở trạng thái Nháp." });
@@ -59,14 +53,14 @@ namespace IMS.Web.Controllers
                 }
                 else if (request.ActionType == "GET_BEFORE_TRIGGER_PASS")
                 {
-                    // Xem tồn kho của sản phẩm có MaSP = 1 (Chuột Logitech) ở Kho = 3 trước
+                    // Check stock of MaSP = 1 (Logitech Mouse) in Kho = 3 beforehand
                     var dt = await _sqlService.ExecuteQueryAsync("SELECT tk.MaKho, k.TenKho, tk.MaSP, sp.TenSP, tk.SoLuong FROM TonKho tk JOIN Kho k ON tk.MaKho = k.MaKho JOIN SanPham sp ON tk.MaSP = sp.MaSP WHERE tk.MaSP = 1 AND tk.MaKho = 3");
                     return Json(new { success = true, data = ConvertDataTableToList(dt) });
                 }
                 else if (request.ActionType == "RUN_TRIGGER_PASS")
                 {
-                    // Tạo một phiếu xuất nháp ở Kho 3 có số lượng xuất = 2 (tồn kho Kho 3 hiện tại là 5 -> Đủ hàng)
-                    // Sau đó tiến hành Duyệt phiếu xuất để kích hoạt trigger trừ tồn kho!
+                    // Create draft goods issue in Kho 3 with qty = 2 (sufficient stock)
+                    // Then approve it to trigger stock deduction trigger
                     string sql = @"
                         DECLARE @Details ChiTietPhieuType;
                         INSERT INTO @Details (MaSP, SoLuong, DonGia) VALUES (1, 2, 250000);
@@ -74,13 +68,13 @@ namespace IMS.Web.Controllers
                         DECLARE @OutID TABLE (ID INT);
                         INSERT INTO PhieuXuat (MaKho, MaNV, NguoiNhan, TrangThai, GhiChu)
                         OUTPUT inserted.MaPX INTO @OutID
-                        VALUES (3, 1, N'Khách mua Demo', N'Nháp', N'Demo xuất kho đủ hàng');
+                        VALUES (3, 1, N'Demo Buyer', N'Nháp', N'Demo sufficient stock issue');
 
                         DECLARE @MaPX INT = (SELECT TOP 1 ID FROM @OutID);
                         INSERT INTO CT_PhieuXuat (MaPX, MaSP, SoLuong, DonGia)
                         SELECT @MaPX, MaSP, SoLuong, DonGia FROM @Details;
 
-                        -- Kích hoạt trigger trừ tồn kho bằng cách duyệt phiếu
+                        -- Approve issue to trigger stock deduction
                         EXEC sp_DuyetPhieu @LoaiPhieu = 'PX', @MaPhieu = @MaPX, @MaNV = 1;
                     ";
                     await _sqlService.ExecuteNonQueryAsync(sql);
@@ -93,8 +87,8 @@ namespace IMS.Web.Controllers
                 }
                 else if (request.ActionType == "RUN_TRIGGER_FAIL")
                 {
-                    // Lập phiếu xuất và duyệt với số lượng = 100 (tồn kho hiện tại ở Kho 3 tối đa là 5 -> Thiếu hàng!)
-                    // Việc duyệt phiếu sẽ kích hoạt trigger, trigger kiểm tra không đủ hàng sẽ quăng lỗi RAISERROR và ROLLBACK TRANSACTION!
+                    // Attempt goods issue with qty = 100 (insufficient stock)
+                    // Trigger will raise error and rollback transaction
                     string sql = @"
                         DECLARE @Details ChiTietPhieuType;
                         INSERT INTO @Details (MaSP, SoLuong, DonGia) VALUES (1, 100, 250000);
@@ -102,40 +96,40 @@ namespace IMS.Web.Controllers
                         DECLARE @OutID TABLE (ID INT);
                         INSERT INTO PhieuXuat (MaKho, MaNV, NguoiNhan, TrangThai, GhiChu)
                         OUTPUT inserted.MaPX INTO @OutID
-                        VALUES (3, 1, N'Khách mua Demo', N'Nháp', N'Demo xuất kho thiếu hàng');
+                        VALUES (3, 1, N'Demo Buyer', N'Nháp', N'Demo insufficient stock issue');
 
                         DECLARE @MaPX INT = (SELECT TOP 1 ID FROM @OutID);
                         INSERT INTO CT_PhieuXuat (MaPX, MaSP, SoLuong, DonGia)
                         SELECT @MaPX, MaSP, SoLuong, DonGia FROM @Details;
 
-                        -- Bước này kích hoạt trigger kiểm tra tồn và sẽ quăng lỗi
+                        -- This triggers stock validation and raises error
                         EXEC sp_DuyetPhieu @LoaiPhieu = 'PX', @MaPhieu = @MaPX, @MaNV = 1;
                     ";
                     await _sqlService.ExecuteNonQueryAsync(sql);
-                    return Json(new { success = true, message = "Thành công?" }); // Dòng này thực tế không chạy tới vì CSDL quăng lỗi
+                    return Json(new { success = true, message = "Success?" }); // This line is unreachable due to SQL error
                 }
                 else if (request.ActionType == "GET_BEFORE_FUNCTION")
                 {
-                    // Xem thông tin giá trị tồn mặc định trong bảng SanPham (để đối chiếu)
+                    // Check original stock values in SanPham table for comparison
                     var dt = await _sqlService.ExecuteQueryAsync("SELECT MaSP, TenSP, GiaNhap, GiaBan FROM SanPham WHERE MaSP IN (1, 2)");
                     return Json(new { success = true, data = ConvertDataTableToList(dt) });
                 }
                 else if (request.ActionType == "RUN_FUNCTION")
                 {
-                    // Chạy câu lệnh SELECT sử dụng các hàm scalar function fn_TinhGiaTriTonKho và fn_TinhGiaXuatBinhQuan
+                    // Execute SELECT using fn_TinhGiaTriTonKho and fn_TinhGiaXuatBinhQuan scalar functions
                     string sql = "SELECT dbo.fn_TinhGiaTriTonKho(1) AS [Tổng giá trị tồn Kho 1 (VND)], dbo.fn_TinhGiaXuatBinhQuan(1) AS [Giá xuất bình quân SP 1 (VND)]";
                     var dt = await _sqlService.ExecuteQueryAsync(sql);
                     return Json(new { success = true, data = ConvertDataTableToList(dt) });
                 }
                 else if (request.ActionType == "GET_BEFORE_CURSOR")
                 {
-                    // Xem bảng TonKho của tất cả sản phẩm đang dưới hạn mức tối thiểu
+                    // View TonKho records where quantity is below minimum stock
                     var dt = await _sqlService.ExecuteQueryAsync("SELECT tk.MaSP, sp.TenSP, tk.SoLuong, sp.TonToiThieu FROM TonKho tk JOIN SanPham sp ON tk.MaSP = sp.MaSP WHERE tk.SoLuong < sp.TonToiThieu");
                     return Json(new { success = true, data = ConvertDataTableToList(dt) });
                 }
                 else if (request.ActionType == "RUN_CURSOR")
                 {
-                    // Chạy SP sp_CursorCanhBaoTon chứa cursor
+                    // Execute cursor-based SP sp_CursorCanhBaoTon
                     var dt = await _sqlService.ExecuteQueryAsync("EXEC sp_CursorCanhBaoTon");
                     return Json(new { success = true, data = ConvertDataTableToList(dt) });
                 }
@@ -144,12 +138,12 @@ namespace IMS.Web.Controllers
             }
             catch (Exception ex)
             {
-                // Trả về lỗi chi tiết từ SQL Server (bao gồm cả lỗi RAISERROR từ trigger!)
+                // Return detailed error from SQL Server (including RAISERROR from trigger)
                 return Json(new { success = false, message = "LỖI SQL SERVER: " + ex.Message });
             }
         }
 
-        // Helper chuyển đổi DataTable sang List Dictionary để dễ dàng JSON hóa
+        // Helper to convert DataTable to List of Dictionaries for JSON serialization
         private List<Dictionary<string, object>> ConvertDataTableToList(DataTable dt)
         {
             var list = new List<Dictionary<string, object>>();

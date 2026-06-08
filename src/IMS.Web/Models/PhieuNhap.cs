@@ -36,7 +36,7 @@ namespace IMS.Web.Models
 
         [Required]
         [StringLength(20)]
-        public string TrangThai { get; set; } = "Nháp"; // 'Nháp', 'ĐãDuyệt', 'ĐãHủy'
+        public string TrangThai { get; set; } = "Nháp";
 
         public decimal TongTien { get; set; } = 0;
 

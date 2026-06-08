@@ -62,8 +62,8 @@ namespace IMS.Web.Services
             var sp = await _context.SanPhams.FindAsync(id);
             if (sp == null) return false;
             
-            // Xóa sản phẩm: Trigger trg_ChanXoaSP_DaCoPhieu ở CSDL sẽ chặn và ném lỗi 
-            // nếu sản phẩm đã phát sinh phiếu nhập/xuất kho.
+            // Delete product: trg_ChanXoaSP_DaCoPhieu database trigger will prevent deletion 
+            // if there are existing purchase orders or goods issues related to this product.
             _context.SanPhams.Remove(sp);
             return await _context.SaveChangesAsync() > 0;
         }

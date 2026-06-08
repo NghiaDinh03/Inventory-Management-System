@@ -34,7 +34,7 @@ namespace IMS.Web.Services
                 string hashCu = HashPassword(matKhauCu);
                 string hashMoi = HashPassword(matKhauMoi);
 
-                // Gọi Stored Procedure ở mức CSDL để thay đổi mật khẩu
+
                 var maTKParam = new SqlParameter("@MaTK", maTK);
                 var matKhauCuParam = new SqlParameter("@MatKhauCu", hashCu);
                 var matKhauMoiParam = new SqlParameter("@MatKhauMoi", hashMoi);
@@ -57,7 +57,7 @@ namespace IMS.Web.Services
             {
                 byte[] bytes = Encoding.UTF8.GetBytes(password);
                 byte[] hash = sha256.ComputeHash(bytes);
-                return Convert.ToHexString(hash); // Trả về chuỗi Hex viết hoa (độ dài 64 ký tự)
+                return Convert.ToHexString(hash);
             }
         }
     }

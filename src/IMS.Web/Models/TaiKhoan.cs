@@ -25,7 +25,7 @@ namespace IMS.Web.Models
 
         [Required(ErrorMessage = "Vui lòng chọn vai trò")]
         [StringLength(20)]
-        public string VaiTro { get; set; } = "NVKho"; // 'Admin' hoặc 'NVKho'
+        public string VaiTro { get; set; } = "NVKho";
 
         public bool TrangThai { get; set; } = true;
     }

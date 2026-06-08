@@ -4,7 +4,7 @@ namespace IMS.Web.Models.Views
     {
         public int MaPhieu { get; set; }
         public string? SoPhieu { get; set; }
-        public string LoaiPhieu { get; set; } = null!; // Nhập hoặc Xuất
+        public string LoaiPhieu { get; set; } = null!;
         public DateTime NgayLap { get; set; }
         public string TrangThai { get; set; } = null!;
         public decimal TongTien { get; set; }

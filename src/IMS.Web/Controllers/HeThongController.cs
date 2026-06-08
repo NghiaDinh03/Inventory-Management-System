@@ -4,7 +4,7 @@ using IMS.Web.Services;
 
 namespace IMS.Web.Controllers
 {
-    [Authorize(Roles = "Admin")] // Chỉ tài khoản Admin mới có quyền truy cập
+    [Authorize(Roles = "Admin")]
     public class HeThongController : Controller
     {
         private readonly IHeThongService _heThongService;
@@ -25,16 +25,15 @@ namespace IMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Backup()
         {
-            // Thư mục lưu trữ mặc định trong container SQL Server
+            // Default directory in SQL Server container
             string backupFolder = "/var/opt/mssql/data/";
             
-            // Ở Windows/Local, bạn có thể truyền đường dẫn khác nếu chạy local
-            // Ở đây vì định hướng chạy Docker-compose nên "/var/opt/mssql/data/" là chính xác nhất
+            // For local setup, this path can be customized. Under Docker-compose, "/var/opt/mssql/data/" is standard.
             bool success = await _heThongService.BackupDatabaseAsync(backupFolder);
             
             if (success)
             {
-                // Vì SP trả về danh sách, ta có thể sinh chuỗi hiển thị tên file
+
                 string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string generatedFilename = $"InventoryDB_Backup_{timestamp}.bak";
                 

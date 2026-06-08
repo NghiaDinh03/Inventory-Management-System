@@ -10,7 +10,7 @@ namespace IMS.Web.Data
         {
         }
 
-        // 12 Bảng Cơ sở dữ liệu chính
+        // 12 Core Database Tables
         public DbSet<DanhMuc> DanhMucs { get; set; } = null!;
         public DbSet<NhaCungCap> NhaCungCaps { get; set; } = null!;
         public DbSet<Kho> Khos { get; set; } = null!;
@@ -24,7 +24,7 @@ namespace IMS.Web.Data
         public DbSet<TonKho> TonKhos { get; set; } = null!;
         public DbSet<LichSuHoatDong> LichSuHoatDongs { get; set; } = null!;
 
-        // 7 Views (Không có khoá chính, phục vụ truy vấn chỉ đọc)
+        // 7 Views (No key, read-only query mapping)
         public DbSet<TonKhoHienTaiView> TonKhoHienTaiViews { get; set; } = null!;
         public DbSet<SanPhamDuoiTonToiThieuView> SanPhamDuoiTonToiThieuViews { get; set; } = null!;
         public DbSet<NhapXuatTheoNgayView> NhapXuatTheoNgayViews { get; set; } = null!;
@@ -37,7 +37,7 @@ namespace IMS.Web.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Cấu hình các bảng chính
+            // Configuration for core tables
             modelBuilder.Entity<DanhMuc>(entity =>
             {
                 entity.HasIndex(e => e.TenDanhMuc).IsUnique();
@@ -96,7 +96,7 @@ namespace IMS.Web.Data
                 entity.HasOne(d => d.PhieuNhap)
                     .WithMany(p => p.ChiTietPhieuNhaps)
                     .HasForeignKey(d => d.MaPN)
-                    .OnDelete(DeleteBehavior.Cascade); // Cấu hình cascade delete khi xoá phiếu nhập
+                    .OnDelete(DeleteBehavior.Cascade); // Cascade delete on purchase order deletion
 
                 entity.HasOne(d => d.SanPham)
                     .WithMany(p => p.ChiTietPhieuNhaps)
@@ -128,7 +128,7 @@ namespace IMS.Web.Data
                 entity.HasOne(d => d.PhieuXuat)
                     .WithMany(p => p.ChiTietPhieuXuats)
                     .HasForeignKey(d => d.MaPX)
-                    .OnDelete(DeleteBehavior.Cascade); // Cấu hình cascade delete khi xoá phiếu xuất
+                    .OnDelete(DeleteBehavior.Cascade); // Cascade delete on goods issue deletion
 
                 entity.HasOne(d => d.SanPham)
                     .WithMany(p => p.ChiTietPhieuXuats)
@@ -151,7 +151,7 @@ namespace IMS.Web.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Cấu hình mapping Views (Không có khoá chính)
+            // Configuration for views (Keyless entities)
             modelBuilder.Entity<TonKhoHienTaiView>(entity =>
             {
                 entity.HasNoKey();

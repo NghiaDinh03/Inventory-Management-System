@@ -17,7 +17,7 @@ namespace IMS.Web.Services
         {
             try
             {
-                // Mặc định path là thư mục lưu trong Docker container /var/opt/mssql/data/
+                // Default path is /var/opt/mssql/data/ inside Docker container
                 var folderParam = new SqlParameter("@BackupFolder", path);
                 
                 await _context.Database.ExecuteSqlRawAsync(
@@ -40,7 +40,7 @@ namespace IMS.Web.Services
             {
                 var pathParam = new SqlParameter("@BackupFilePath", path);
                 
-                // Gọi stored procedure nằm ở database master bằng tên đầy đủ
+                // Call stored procedure located in master database
                 await _context.Database.ExecuteSqlRawAsync(
                     "EXEC master.dbo.sp_RestoreDatabase @BackupFilePath", 
                     pathParam);

@@ -5,12 +5,12 @@ using IMS.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Cấu hình DbContext
+// 1. DbContext Configuration
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// 2. Cấu hình Cookie Authentication
+// 2. Cookie Authentication Configuration
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -21,7 +21,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
     });
 
-// 3. Cấu hình Session
+// 3. Session Configuration
 builder.Services.AddSession(options =>
     {
         options.IdleTimeout = TimeSpan.FromMinutes(60);
@@ -31,7 +31,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddHttpContextAccessor();
 
-// 4. Đăng ký các Services Nghiệp Vụ (DI)
+// 4. Register Business Services (DI)
 builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 builder.Services.AddScoped<IDanhMucService, DanhMucService>();
 builder.Services.AddScoped<INhaCungCapService, NhaCungCapService>();
@@ -49,7 +49,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Cấu hình HTTP request pipeline.
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -61,7 +61,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Sử dụng Session và Authentication trước Authorization
+// Use Session and Authentication before Authorization
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();

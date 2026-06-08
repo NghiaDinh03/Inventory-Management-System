@@ -18,13 +18,13 @@ namespace IMS.Web.Models
 
         [Required]
         [StringLength(10)]
-        public string HanhDong { get; set; } = null!; // INSERT, UPDATE, DELETE
+        public string HanhDong { get; set; } = null!;
 
-        public string? NoiDungCu { get; set; } // Dạng JSON string chứa dữ liệu cũ
+        public string? NoiDungCu { get; set; }
 
-        public string? NoiDungMoi { get; set; } // Dạng JSON string chứa dữ liệu mới
+        public string? NoiDungMoi { get; set; }
 
-        public int? MaNV { get; set; } // Người thực hiện hành động (null nếu hệ thống tự chạy)
+        public int? MaNV { get; set; }
 
         public DateTime ThoiGian { get; set; } = DateTime.Now;
     }

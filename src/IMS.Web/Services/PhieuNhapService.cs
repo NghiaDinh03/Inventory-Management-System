@@ -39,7 +39,7 @@ namespace IMS.Web.Services
 
         public async Task<int> CreatePhieuNhapAsync(int maNCC, int maKho, int maNV, string? ghiChu, List<(int MaSP, int SoLuong, decimal DonGia)> chiTiet)
         {
-            // 1. Tạo DataTable tương thích với Table-Valued Parameter (TVP) ChiTietPhieuType
+            // 1. Create DataTable compatible with Table-Valued Parameter (TVP) ChiTietPhieuType
             var table = new DataTable();
             table.Columns.Add("MaSP", typeof(int));
             table.Columns.Add("SoLuong", typeof(int));
@@ -50,7 +50,7 @@ namespace IMS.Web.Services
                 table.Rows.Add(item.MaSP, item.SoLuong, item.DonGia);
             }
 
-            // 2. Định nghĩa các tham số SQL
+            // 2. Define SQL parameters
             var maNCCParam = new SqlParameter("@MaNCC", maNCC);
             var maKhoParam = new SqlParameter("@MaKho", maKho);
             var maNVParam = new SqlParameter("@MaNV", maNV);
@@ -61,9 +61,7 @@ namespace IMS.Web.Services
                 TypeName = "dbo.ChiTietPhieuType"
             };
 
-            // 3. Thực thi Stored Procedure và trả về ID phiếu nhập vừa sinh
-            // Vì EF Core SqlQueryRaw yêu cầu một Class Entity hoặc kiểu nguyên thủy được định nghĩa,
-            // Chúng ta có thể dùng ExecuteSqlRaw với Parameter Output hoặc SqlQueryRaw<int>
+            // 3. Execute Stored Procedure and return the newly generated purchase order ID
             var ids = await _context.Database
                 .SqlQueryRaw<int>("EXEC sp_TaoPhieuNhap @MaNCC, @MaKho, @MaNV, @GhiChu, @ChiTiet",
                     maNCCParam, maKhoParam, maNVParam, ghiChuParam, chiTietParam)

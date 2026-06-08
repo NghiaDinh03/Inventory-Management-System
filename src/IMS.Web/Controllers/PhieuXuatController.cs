@@ -148,7 +148,7 @@ namespace IMS.Web.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
 
-        // Action API phục vụ check tồn kho của sản phẩm tại một kho cụ thể (gọi qua AJAX ở màn hình lập phiếu)
+        // Action API to check current stock level of a product in a specific warehouse (called via AJAX in view)
         [HttpGet]
         public async Task<IActionResult> GetStockLevel(int maSP, int maKho)
         {

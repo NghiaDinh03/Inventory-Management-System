@@ -26,7 +26,6 @@ namespace IMS.Web.Models
 
         public bool TrangThai { get; set; } = true;
 
-        // Quan hệ 1-1 với TaiKhoan
         public TaiKhoan? TaiKhoan { get; set; }
 
         public ICollection<PhieuNhap>? PhieuNhaps { get; set; }

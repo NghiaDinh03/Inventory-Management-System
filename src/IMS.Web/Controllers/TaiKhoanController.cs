@@ -45,7 +45,7 @@ namespace IMS.Web.Controllers
                 return View();
             }
 
-            // Thiết lập các quyền (Claims)
+            // Set up authentication claims
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, taiKhoan.TenDangNhap),
@@ -68,7 +68,7 @@ namespace IMS.Web.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            // Lưu trữ thông tin nhân viên vào Session
+            // Store user info in Session
             HttpContext.Session.SetString("TenNV", taiKhoan.NhanVien?.HoTen ?? taiKhoan.TenDangNhap);
             HttpContext.Session.SetString("VaiTro", taiKhoan.VaiTro);
             HttpContext.Session.SetInt32("MaNV", taiKhoan.MaNV);
@@ -111,7 +111,7 @@ namespace IMS.Web.Controllers
                 return View();
             }
 
-            // Lấy MaTK của tài khoản đang đăng nhập
+            // Get account ID of the logged in user
             var maTKClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(maTKClaim) || !int.TryParse(maTKClaim, out int maTK))
             {
