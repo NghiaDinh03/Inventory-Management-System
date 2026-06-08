@@ -1,9 +1,16 @@
 USE InventoryDB;
 GO
 
--- =============================================
--- 1. SCALAR FUNCTION: TÍNH TỒN KHO CỦA SẢN PHẨM TẠI KHO
--- =============================================
+SET ANSI_NULLS ON;
+SET ANSI_PADDING ON;
+SET ANSI_WARNINGS ON;
+SET ARITHABORT ON;
+SET CONCAT_NULL_YIELDS_NULL ON;
+SET NUMERIC_ROUNDABORT OFF;
+SET QUOTED_IDENTIFIER ON;
+GO
+
+-- 1. Get stock quantity of a product in a warehouse
 CREATE OR ALTER FUNCTION fn_TinhTonKho (
     @MaSP INT,
     @MaKho INT
@@ -21,9 +28,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 2. SCALAR FUNCTION: TÍNH TỔNG GIÁ TRỊ TỒN KHO CỦA MỘT KHO
--- =============================================
+-- 2. Get total stock value in a warehouse
 CREATE OR ALTER FUNCTION fn_TinhGiaTriTonKho (
     @MaKho INT
 )
@@ -41,9 +46,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 3. SCALAR FUNCTION: TÍNH GIÁ XUẤT BÌNH QUÂN GIA QUYỀN
--- =============================================
+-- 3. Calculate weighted average export price
 CREATE OR ALTER FUNCTION fn_TinhGiaXuatBinhQuan (
     @MaSP INT
 )
@@ -57,7 +60,7 @@ BEGIN
     JOIN PhieuNhap pn ON ct.MaPN = pn.MaPN
     WHERE ct.MaSP = @MaSP AND pn.TrangThai = N'ĐãDuyệt';
     
-    -- Nếu chưa từng nhập hàng (hoặc chưa duyệt phiếu nào), lấy giá nhập mặc định từ bảng SanPham
+    -- If no purchase history, use default GiaNhap from SanPham
     IF @GiaBinhQuan = 0
     BEGIN
         SELECT @GiaBinhQuan = COALESCE(GiaNhap, 0)
@@ -69,9 +72,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 4. TABLE-VALUED FUNCTION: DANH SÁCH SẢN PHẨM THEO KHO
--- =============================================
+-- 4. Get product list of a warehouse
 CREATE OR ALTER FUNCTION fn_LayDanhSachSPTheoKho (
     @MaKho INT
 )
@@ -90,9 +91,7 @@ RETURN (
 );
 GO
 
--- =============================================
--- 5. TABLE-VALUED FUNCTION: TỔNG NHẬP XUẤT TRONG KỲ THEO NGÀY
--- =============================================
+-- 5. Calculate total import/export values per day in a period
 CREATE OR ALTER FUNCTION fn_TongNhapXuatTrongKy (
     @TuNgay DATE,
     @DenNgay DATE
@@ -101,7 +100,7 @@ RETURNS TABLE
 AS
 RETURN (
     WITH Dates AS (
-        -- Tạo danh sách các ngày trong khoảng từ TuNgay đến DenNgay
+        -- Generate list of dates between @TuNgay and @DenNgay
         SELECT @TuNgay AS Ngay
         UNION ALL
         SELECT DATEADD(DAY, 1, Ngay)

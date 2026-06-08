@@ -1,15 +1,22 @@
 USE InventoryDB;
 GO
 
--- =============================================
--- 1. STORED PROCEDURE WRAPPING CURSOR: CẢNH BÁO SẢN PHẨM DƯỚI TỒN TỐI THIỂU
--- =============================================
+SET ANSI_NULLS ON;
+SET ANSI_PADDING ON;
+SET ANSI_WARNINGS ON;
+SET ARITHABORT ON;
+SET CONCAT_NULL_YIELDS_NULL ON;
+SET NUMERIC_ROUNDABORT OFF;
+SET QUOTED_IDENTIFIER ON;
+GO
+
+-- 1. SP wrapping cursor: Alert on low stock
 CREATE OR ALTER PROCEDURE sp_CursorCanhBaoTon
 AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- Bảng tạm chứa kết quả cảnh báo để trả về cho Client / Web UI
+
     DECLARE @Result TABLE (
         MaSP INT,
         TenSP NVARCHAR(200),
@@ -25,7 +32,7 @@ BEGIN
             @SoLuong INT, 
             @TonToiThieu INT;
             
-    -- Khai báo Cursor duyệt qua các sản phẩm có số lượng tồn dưới mức tối thiểu
+    -- Cursor for low stock products
     DECLARE cur_CanhBao CURSOR LOCAL FAST_FORWARD FOR
     SELECT tk.MaSP, sp.TenSP, k.TenKho, tk.SoLuong, sp.TonToiThieu
     FROM TonKho tk
@@ -38,7 +45,7 @@ BEGIN
     
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        -- Ghi thông tin cảnh báo vào bảng tạm
+
         INSERT INTO @Result (MaSP, TenSP, TenKho, SoLuong, TonToiThieu, CanhBao)
         VALUES (
             @MaSP, 
@@ -49,7 +56,7 @@ BEGIN
             CONCAT(N'Cảnh báo: Sản phẩm [', @TenSP, N'] tại kho [', @TenKho, N'] có số lượng tồn hiện tại là ', @SoLuong, N', dưới mức tối thiểu là ', @TonToiThieu, N'!')
         );
         
-        -- In thông báo ra cửa sổ Messages của SQL Server (đáp ứng đúng yêu cầu của Cursor truyền thống)
+        -- Print alert message to SQL Server Messages window
         PRINT CONCAT(N'Cảnh báo: Sản phẩm [', @TenSP, N'] tại kho [', @TenKho, N'] có số lượng tồn hiện tại là ', @SoLuong, N', dưới mức tối thiểu là ', @TonToiThieu, N'!');
         
         FETCH NEXT FROM cur_CanhBao INTO @MaSP, @TenSP, @TenKho, @SoLuong, @TonToiThieu;
@@ -58,14 +65,12 @@ BEGIN
     CLOSE cur_CanhBao;
     DEALLOCATE cur_CanhBao;
     
-    -- Trả về tập kết quả để Web UI có thể hiển thị
+
     SELECT * FROM @Result;
 END;
 GO
 
--- =============================================
--- 2. STORED PROCEDURE WRAPPING CURSOR: TÍNH TỒN KHO CUỐI KỲ CỦA CÁC SẢN PHẨM
--- =============================================
+-- 2. SP wrapping cursor: Calculate closing stock
 CREATE OR ALTER PROCEDURE sp_CursorTonCuoiKy
     @MaKho INT = NULL,
     @TuNgay DATE,
@@ -74,7 +79,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- Bảng tạm chứa kết quả báo cáo
+
     DECLARE @Result TABLE (
         MaKho INT,
         TenKho NVARCHAR(100),
@@ -93,7 +98,7 @@ BEGIN
             @CurTenSP NVARCHAR(200), 
             @CurDonVi NVARCHAR(50);
             
-    -- Khai báo Cursor duyệt qua toàn bộ các mặt hàng đang có trong từng kho
+    -- Cursor for warehouse stock
     DECLARE cur_TonKho CURSOR LOCAL FAST_FORWARD FOR
     SELECT tk.MaKho, k.TenKho, tk.MaSP, sp.TenSP, sp.DonVi
     FROM TonKho tk
@@ -106,11 +111,11 @@ BEGIN
     
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        -- 1. Lấy tồn kho hiện tại làm điểm tựa
+
         DECLARE @TonHienTai INT = 0;
         SELECT @TonHienTai = SoLuong FROM TonKho WHERE MaSP = @CurMaSP AND MaKho = @CurMaKho;
         
-        -- 2. Tính số lượng đã nhập kể từ TuNgay đến hiện tại
+        -- 2. Calculate imported qty since @TuNgay to present
         DECLARE @NhapSauTuNgay INT = 0;
         SELECT @NhapSauTuNgay = COALESCE(SUM(ct.SoLuong), 0)
         FROM CT_PhieuNhap ct
@@ -120,7 +125,7 @@ BEGIN
           AND ct.MaSP = @CurMaSP 
           AND CAST(pn.NgayDuyet AS DATE) >= @TuNgay;
           
-        -- 3. Tính số lượng đã xuất kể từ TuNgay đến hiện tại
+        -- 3. Calculate exported qty since @TuNgay to present
         DECLARE @XuatSauTuNgay INT = 0;
         SELECT @XuatSauTuNgay = COALESCE(SUM(ct.SoLuong), 0)
         FROM CT_PhieuXuat ct
@@ -130,7 +135,7 @@ BEGIN
           AND ct.MaSP = @CurMaSP 
           AND CAST(px.NgayDuyet AS DATE) >= @TuNgay;
           
-        -- 4. Tính số lượng nhập trong kỳ (giữa TuNgay và DenNgay)
+        -- 4. Calculate period imports
         DECLARE @NhapTrongKy INT = 0;
         SELECT @NhapTrongKy = COALESCE(SUM(ct.SoLuong), 0)
         FROM CT_PhieuNhap ct
@@ -140,7 +145,7 @@ BEGIN
           AND ct.MaSP = @CurMaSP 
           AND CAST(pn.NgayDuyet AS DATE) BETWEEN @TuNgay AND @DenNgay;
           
-        -- 5. Tính số lượng xuất trong kỳ (giữa TuNgay và DenNgay)
+        -- 5. Calculate period exports
         DECLARE @XuatTrongKy INT = 0;
         SELECT @XuatTrongKy = COALESCE(SUM(ct.SoLuong), 0)
         FROM CT_PhieuXuat ct
@@ -150,13 +155,13 @@ BEGIN
           AND ct.MaSP = @CurMaSP 
           AND CAST(px.NgayDuyet AS DATE) BETWEEN @TuNgay AND @DenNgay;
           
-        -- 6. Tính ngược về tồn đầu kỳ
+        -- 6. Calculate opening stock
         DECLARE @TonDauKy INT = @TonHienTai - @NhapSauTuNgay + @XuatSauTuNgay;
         
-        -- 7. Tính tồn cuối kỳ
+        -- 7. Calculate closing stock
         DECLARE @TonCuoiKy INT = @TonDauKy + @NhapTrongKy - @XuatTrongKy;
         
-        -- Đưa kết quả vào bảng tạm
+
         INSERT INTO @Result (MaKho, TenKho, MaSP, TenSP, DonVi, TonDauKy, NhapTrongKy, XuatTrongKy, TonCuoiKy)
         VALUES (@CurMaKho, @CurTenKho, @CurMaSP, @CurTenSP, @CurDonVi, @TonDauKy, @NhapTrongKy, @XuatTrongKy, @TonCuoiKy);
         
@@ -166,7 +171,7 @@ BEGIN
     CLOSE cur_TonKho;
     DEALLOCATE cur_TonKho;
     
-    -- Trả ra kết quả
+
     SELECT * FROM @Result ORDER BY TenKho, TenSP;
 END;
 GO

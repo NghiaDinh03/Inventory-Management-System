@@ -1,9 +1,16 @@
 USE InventoryDB;
 GO
 
--- =============================================
--- 1. TỒN KHO HIỆN TẠI
--- =============================================
+SET ANSI_NULLS ON;
+SET ANSI_PADDING ON;
+SET ANSI_WARNINGS ON;
+SET ARITHABORT ON;
+SET CONCAT_NULL_YIELDS_NULL ON;
+SET NUMERIC_ROUNDABORT OFF;
+SET QUOTED_IDENTIFIER ON;
+GO
+
+-- 1. View current stock level
 CREATE OR ALTER VIEW v_TonKhoHienTai AS
 SELECT
     tk.MaTonKho,
@@ -25,9 +32,7 @@ FROM TonKho tk
 WHERE sp.TrangThai = 1;
 GO
 
--- =============================================
--- 2. SẢN PHẨM DƯỚI MỨC TỒN TỐI THIỂU
--- =============================================
+-- 2. View products below minimum stock level
 CREATE OR ALTER VIEW v_SanPhamDuoiTonToiThieu AS
 SELECT
     sp.MaSP,
@@ -46,9 +51,7 @@ WHERE tk.SoLuong < sp.TonToiThieu
     AND sp.TrangThai = 1;
 GO
 
--- =============================================
--- 3. NHẬP XUẤT THEO NGÀY
--- =============================================
+-- 3. View import/export metrics grouped by date
 CREATE OR ALTER VIEW v_NhapXuatTheoNgay AS
 SELECT
     Ngay,
@@ -78,9 +81,7 @@ FROM (
 GROUP BY Ngay;
 GO
 
--- =============================================
--- 4. CHI TIẾT PHIẾU NHẬP
--- =============================================
+-- 4. View purchase order details
 CREATE OR ALTER VIEW v_ChiTietPhieuNhap AS
 SELECT
     pn.MaPN,
@@ -109,9 +110,7 @@ FROM PhieuNhap pn
     LEFT JOIN SanPham sp ON ct.MaSP = sp.MaSP;
 GO
 
--- =============================================
--- 5. CHI TIẾT PHIẾU XUẤT
--- =============================================
+-- 5. View goods issue details
 CREATE OR ALTER VIEW v_ChiTietPhieuXuat AS
 SELECT
     px.MaPX,
@@ -138,9 +137,7 @@ FROM PhieuXuat px
     LEFT JOIN SanPham sp ON ct.MaSP = sp.MaSP;
 GO
 
--- =============================================
--- 6. DOANH THU THEO THÁNG
--- =============================================
+-- 6. View monthly revenue/costs
 CREATE OR ALTER VIEW v_DoanhThuTheoThang AS
 SELECT
     YEAR(px.NgayLap) AS Nam,
@@ -154,9 +151,7 @@ WHERE px.TrangThai = N'ĐãDuyệt'
 GROUP BY YEAR(px.NgayLap), MONTH(px.NgayLap);
 GO
 
--- =============================================
--- 7. TOP SẢN PHẨM XUẤT NHIỀU
--- =============================================
+-- 7. View top exported products
 CREATE OR ALTER VIEW v_TopSanPhamXuatNhieu AS
 SELECT TOP 10
     sp.MaSP,
@@ -174,9 +169,7 @@ GROUP BY sp.MaSP, sp.TenSP, sp.DonVi, dm.TenDanhMuc
 ORDER BY TongSoLuongXuat DESC;
 GO
 
--- =============================================
--- 8. PHIẾU GẦN ĐÂY (10 phiếu mới nhất)
--- =============================================
+-- 8. View recent orders (top 10 newest)
 CREATE OR ALTER VIEW v_PhieuGanDay AS
 SELECT TOP 10 *
 FROM (
@@ -205,9 +198,7 @@ FROM (
 ORDER BY NgayLap DESC;
 GO
 
--- =============================================
--- 9. THỐNG KÊ TỔNG QUÁT (Dashboard cards)
--- =============================================
+-- 9. View aggregate statistics for Dashboard cards
 CREATE OR ALTER VIEW v_ThongKeTongQuat AS
 SELECT
     (SELECT COUNT(*) FROM SanPham WHERE TrangThai = 1) AS TongSanPham,
@@ -220,5 +211,5 @@ SELECT
     (SELECT COUNT(*) FROM PhieuXuat WHERE TrangThai = N'Nháp') AS PhieuXuatChuaDuyet;
 GO
 
-PRINT N'02_create-views.sql hoàn tất.';
+PRINT N'02_create-views.sql completed.';
 GO

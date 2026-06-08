@@ -1,9 +1,16 @@
 USE InventoryDB;
 GO
 
--- =============================================
--- 1. TRIGGER: CẬP NHẬT TỒN KHO SAU KHI NHẬP (TRÊN CT_PHIEUNHAP)
--- =============================================
+SET ANSI_NULLS ON;
+SET ANSI_PADDING ON;
+SET ANSI_WARNINGS ON;
+SET ARITHABORT ON;
+SET CONCAT_NULL_YIELDS_NULL ON;
+SET NUMERIC_ROUNDABORT OFF;
+SET QUOTED_IDENTIFIER ON;
+GO
+
+-- 1. Trigger: Update stock level after import
 CREATE OR ALTER TRIGGER trg_CapNhatTonKho_SauNhap
 ON CT_PhieuNhap
 AFTER INSERT
@@ -11,7 +18,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- Chỉ cập nhật nếu phiếu nhập đã được duyệt
+    -- Only update if order is approved
     UPDATE tk
     SET tk.SoLuong = tk.SoLuong + i.SoLuong
     FROM TonKho tk
@@ -19,7 +26,7 @@ BEGIN
     JOIN PhieuNhap pn ON i.MaPN = pn.MaPN
     WHERE pn.TrangThai = N'ĐãDuyệt' AND tk.MaKho = pn.MaKho;
 
-    -- Thêm mới dòng TonKho nếu chưa tồn tại
+    -- Insert new TonKho if it does not exist
     INSERT INTO TonKho (MaSP, MaKho, SoLuong)
     SELECT i.MaSP, pn.MaKho, i.SoLuong
     FROM inserted i
@@ -31,9 +38,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 2. TRIGGER: CẬP NHẬT TỒN KHO SAU KHI XUẤT (TRÊN CT_PHIEUXUAT)
--- =============================================
+-- 2. Trigger: Validate and update stock after export
 CREATE OR ALTER TRIGGER trg_XuatKho_KiemTraVaCapNhat
 ON CT_PhieuXuat
 INSTEAD OF INSERT
@@ -41,14 +46,14 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- 1. Với phiếu chưa duyệt: INSERT bình thường, không kiểm tra tồn kho
+    -- 1. Draft status: insert normally
     INSERT INTO CT_PhieuXuat (MaPX, MaSP, SoLuong, DonGia)
     SELECT i.MaPX, i.MaSP, i.SoLuong, i.DonGia
     FROM inserted i
     JOIN PhieuXuat px ON i.MaPX = px.MaPX
     WHERE px.TrangThai != N'ĐãDuyệt';
     
-    -- 2. Với phiếu đã duyệt: cần kiểm tra tồn kho và cập nhật trừ tồn kho
+    -- 2. Approved status: validate and update stock
     IF EXISTS (
         SELECT 1 
         FROM inserted i
@@ -56,7 +61,7 @@ BEGIN
         WHERE px.TrangThai = N'ĐãDuyệt'
     )
     BEGIN
-        -- Kiểm tra xem có mặt hàng nào bị thiếu hàng không
+        -- Check for insufficient stock
         IF EXISTS (
             SELECT 1
             FROM inserted i
@@ -71,7 +76,7 @@ BEGIN
             RETURN;
         END;
         
-        -- Thực hiện trừ tồn kho
+        -- Deduct stock level
         UPDATE tk
         SET tk.SoLuong = tk.SoLuong - i.SoLuong
         FROM TonKho tk
@@ -79,7 +84,7 @@ BEGIN
         JOIN PhieuXuat px ON i.MaPX = px.MaPX
         WHERE px.TrangThai = N'ĐãDuyệt' AND tk.MaKho = px.MaKho;
         
-        -- INSERT chi tiết phiếu xuất vào bảng
+        -- Insert details into CT_PhieuXuat
         INSERT INTO CT_PhieuXuat (MaPX, MaSP, SoLuong, DonGia)
         SELECT i.MaPX, i.MaSP, i.SoLuong, i.DonGia
         FROM inserted i
@@ -89,9 +94,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 3. TRIGGER: TỰ ĐỘNG CẬP NHẬT TỔNG TIỀN PHIẾU NHẬP
--- =============================================
+-- 3. Trigger: Auto calculate total amount for Purchase Order
 CREATE OR ALTER TRIGGER trg_CapNhatTongTien_PN
 ON CT_PhieuNhap
 AFTER INSERT, UPDATE, DELETE
@@ -108,9 +111,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 4. TRIGGER: TỰ ĐỘNG CẬP NHẬT TỔNG TIỀN PHIẾU XUẤT
--- =============================================
+-- 4. Trigger: Auto calculate total amount for Goods Issue
 CREATE OR ALTER TRIGGER trg_CapNhatTongTien_PX
 ON CT_PhieuXuat
 AFTER INSERT, UPDATE, DELETE
@@ -127,9 +128,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 5. TRIGGER: TỰ ĐỘNG TẠO SỐ PHIẾU NHẬP
--- =============================================
+-- 5. Trigger: Auto generate purchase order code
 CREATE OR ALTER TRIGGER trg_TaoSoPhieu_PN
 ON PhieuNhap
 AFTER INSERT
@@ -151,9 +150,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 6. TRIGGER: TỰ ĐỘNG TẠO SỐ PHIẾU XUẤT
--- =============================================
+-- 6. Trigger: Auto generate goods issue code
 CREATE OR ALTER TRIGGER trg_TaoSoPhieu_PX
 ON PhieuXuat
 AFTER INSERT
@@ -175,9 +172,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 7. TRIGGER: CHẶN XÓA SẢN PHẨM ĐÃ CÓ PHIẾU PHÁT SINH
--- =============================================
+-- 7. Trigger: Prevent deleting products with existing transactions
 CREATE OR ALTER TRIGGER trg_ChanXoaSP_DaCoPhieu
 ON SanPham
 INSTEAD OF DELETE
@@ -197,17 +192,15 @@ BEGIN
         RETURN;
     END;
     
-    -- Xóa các dòng TonKho liên quan trước
+    -- Delete related Stock records first
     DELETE FROM TonKho WHERE MaSP IN (SELECT MaSP FROM deleted);
     
-    -- Xóa sản phẩm
+    -- Delete product
     DELETE FROM SanPham WHERE MaSP IN (SELECT MaSP FROM deleted);
 END;
 GO
 
--- =============================================
--- 8. TRIGGER: PHIẾU NHẬP - CẬP NHẬT TỒN KHO KHI DUYỆT/HỦY
--- =============================================
+-- 8. Trigger: Update stock on purchase order approval/cancellation
 CREATE OR ALTER TRIGGER trg_PhieuNhap_CapNhatTonKho
 ON PhieuNhap
 AFTER UPDATE
@@ -215,13 +208,13 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- Case 1: Duyệt phiếu (Nháp -> ĐãDuyệt)
+    -- Case 1: Approve order (Draft -> Approved)
     IF EXISTS (
         SELECT 1 FROM inserted i JOIN deleted d ON i.MaPN = d.MaPN
         WHERE i.TrangThai = N'ĐãDuyệt' AND d.TrangThai = N'Nháp'
     )
     BEGIN
-        -- Cập nhật cộng tồn kho cho các bản ghi đã có
+        -- Add to stock
         UPDATE tk
         SET tk.SoLuong = tk.SoLuong + ct.SoLuong
         FROM TonKho tk
@@ -230,7 +223,7 @@ BEGIN
         JOIN deleted d ON i.MaPN = d.MaPN
         WHERE i.TrangThai = N'ĐãDuyệt' AND d.TrangThai = N'Nháp' AND tk.MaKho = i.MaKho;
         
-        -- Chèn mới nếu chưa từng có tồn kho cho sản phẩm ở kho này
+        -- Insert if stock record not exists
         INSERT INTO TonKho (MaSP, MaKho, SoLuong)
         SELECT ct.MaSP, i.MaKho, ct.SoLuong
         FROM CT_PhieuNhap ct
@@ -243,13 +236,13 @@ BEGIN
           );
     END;
     
-    -- Case 2: Hủy phiếu (ĐãDuyệt -> ĐãHủy)
+    -- Case 2: Cancel order (Approved -> Cancelled)
     IF EXISTS (
         SELECT 1 FROM inserted i JOIN deleted d ON i.MaPN = d.MaPN
         WHERE i.TrangThai = N'ĐãHủy' AND d.TrangThai = N'ĐãDuyệt'
     )
     BEGIN
-        -- Kiểm tra xem trừ xong có âm không
+        -- Validate if stock would go negative
         IF EXISTS (
             SELECT 1 
             FROM CT_PhieuNhap ct
@@ -265,7 +258,7 @@ BEGIN
             RETURN;
         END;
         
-        -- Trừ tồn kho
+        -- Deduct stock
         UPDATE tk
         SET tk.SoLuong = tk.SoLuong - ct.SoLuong
         FROM TonKho tk
@@ -277,9 +270,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 9. TRIGGER: PHIẾU XUẤT - CẬP NHẬT TỒN KHO KHI DUYỆT/HỦY
--- =============================================
+-- 9. Trigger: Update stock on goods issue approval/cancellation
 CREATE OR ALTER TRIGGER trg_PhieuXuat_CapNhatTonKho
 ON PhieuXuat
 AFTER UPDATE
@@ -287,13 +278,13 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- Case 1: Duyệt phiếu (Nháp -> ĐãDuyệt)
+    -- Case 1: Approve issue (Draft -> Approved)
     IF EXISTS (
         SELECT 1 FROM inserted i JOIN deleted d ON i.MaPX = d.MaPX
         WHERE i.TrangThai = N'ĐãDuyệt' AND d.TrangThai = N'Nháp'
     )
     BEGIN
-        -- Kiểm tra xem đủ tồn kho không
+        -- Check stock level
         IF EXISTS (
             SELECT 1 
             FROM CT_PhieuXuat ct
@@ -309,7 +300,7 @@ BEGIN
             RETURN;
         END;
         
-        -- Trừ tồn kho
+        -- Deduct stock
         UPDATE tk
         SET tk.SoLuong = tk.SoLuong - ct.SoLuong
         FROM TonKho tk
@@ -319,13 +310,13 @@ BEGIN
         WHERE i.TrangThai = N'ĐãDuyệt' AND d.TrangThai = N'Nháp' AND tk.MaKho = i.MaKho;
     END;
     
-    -- Case 2: Hủy phiếu (ĐãDuyệt -> ĐãHủy)
+    -- Case 2: Cancel issue (Approved -> Cancelled)
     IF EXISTS (
         SELECT 1 FROM inserted i JOIN deleted d ON i.MaPX = d.MaPX
         WHERE i.TrangThai = N'ĐãHủy' AND d.TrangThai = N'ĐãDuyệt'
     )
     BEGIN
-        -- Cộng lại tồn kho
+        -- Revert stock level
         UPDATE tk
         SET tk.SoLuong = tk.SoLuong + ct.SoLuong
         FROM TonKho tk
@@ -334,7 +325,7 @@ BEGIN
         JOIN deleted d ON i.MaPX = d.MaPX
         WHERE i.TrangThai = N'ĐãHủy' AND d.TrangThai = N'ĐãDuyệt' AND tk.MaKho = i.MaKho;
         
-        -- Chèn mới nếu chưa từng có tồn kho cho sản phẩm ở kho này (hiếm gặp nhưng đảm bảo an toàn)
+        -- Insert new stock if not exists
         INSERT INTO TonKho (MaSP, MaKho, SoLuong)
         SELECT ct.MaSP, i.MaKho, ct.SoLuong
         FROM CT_PhieuXuat ct

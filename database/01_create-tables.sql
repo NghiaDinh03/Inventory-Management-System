@@ -14,9 +14,16 @@ GO
 USE InventoryDB;
 GO
 
--- =============================================
--- DANH MỤC
--- =============================================
+SET ANSI_NULLS ON;
+SET ANSI_PADDING ON;
+SET ANSI_WARNINGS ON;
+SET ARITHABORT ON;
+SET CONCAT_NULL_YIELDS_NULL ON;
+SET NUMERIC_ROUNDABORT OFF;
+SET QUOTED_IDENTIFIER ON;
+GO
+
+-- Category table
 CREATE TABLE DanhMuc (
     MaDanhMuc   INT IDENTITY(1,1) PRIMARY KEY,
     TenDanhMuc  NVARCHAR(100) NOT NULL UNIQUE,
@@ -24,9 +31,7 @@ CREATE TABLE DanhMuc (
 );
 GO
 
--- =============================================
--- NHÀ CUNG CẤP
--- =============================================
+-- Supplier table
 CREATE TABLE NhaCungCap (
     MaNCC       INT IDENTITY(1,1) PRIMARY KEY,
     TenNCC      NVARCHAR(200) NOT NULL,
@@ -38,9 +43,7 @@ CREATE TABLE NhaCungCap (
 );
 GO
 
--- =============================================
--- KHO
--- =============================================
+-- Warehouse table
 CREATE TABLE Kho (
     MaKho       INT IDENTITY(1,1) PRIMARY KEY,
     TenKho      NVARCHAR(100) NOT NULL,
@@ -49,9 +52,7 @@ CREATE TABLE Kho (
 );
 GO
 
--- =============================================
--- SẢN PHẨM
--- =============================================
+-- Product table
 CREATE TABLE SanPham (
     MaSP        INT IDENTITY(1,1) PRIMARY KEY,
     TenSP       NVARCHAR(200) NOT NULL,
@@ -75,9 +76,7 @@ CREATE NONCLUSTERED INDEX IX_SanPham_TenSP ON SanPham(TenSP);
 CREATE NONCLUSTERED INDEX IX_SanPham_MaVach ON SanPham(MaVach) WHERE MaVach IS NOT NULL;
 GO
 
--- =============================================
--- NHÂN VIÊN
--- =============================================
+-- Employee table
 CREATE TABLE NhanVien (
     MaNV        INT IDENTITY(1,1) PRIMARY KEY,
     HoTen       NVARCHAR(100) NOT NULL,
@@ -88,9 +87,7 @@ CREATE TABLE NhanVien (
 );
 GO
 
--- =============================================
--- TÀI KHOẢN
--- =============================================
+-- Account table
 CREATE TABLE TaiKhoan (
     MaTK        INT IDENTITY(1,1) PRIMARY KEY,
     TenDangNhap VARCHAR(50) NOT NULL UNIQUE,
@@ -103,9 +100,7 @@ CREATE TABLE TaiKhoan (
 );
 GO
 
--- =============================================
--- PHIẾU NHẬP
--- =============================================
+-- Purchase Order table
 CREATE TABLE PhieuNhap (
     MaPN        INT IDENTITY(1,1) PRIMARY KEY,
     SoPhieu     VARCHAR(20) NULL UNIQUE,
@@ -128,9 +123,7 @@ GO
 CREATE NONCLUSTERED INDEX IX_PhieuNhap_NgayLap ON PhieuNhap(NgayLap);
 GO
 
--- =============================================
--- CHI TIẾT PHIẾU NHẬP
--- =============================================
+-- Purchase Order Details table
 CREATE TABLE CT_PhieuNhap (
     MaCTPN      INT IDENTITY(1,1) PRIMARY KEY,
     MaPN        INT NOT NULL,
@@ -147,9 +140,7 @@ GO
 CREATE NONCLUSTERED INDEX IX_CTPN_MaPN ON CT_PhieuNhap(MaPN);
 GO
 
--- =============================================
--- PHIẾU XUẤT
--- =============================================
+-- Goods Issue table
 CREATE TABLE PhieuXuat (
     MaPX        INT IDENTITY(1,1) PRIMARY KEY,
     SoPhieu     VARCHAR(20) NULL UNIQUE,
@@ -171,9 +162,7 @@ GO
 CREATE NONCLUSTERED INDEX IX_PhieuXuat_NgayLap ON PhieuXuat(NgayLap);
 GO
 
--- =============================================
--- CHI TIẾT PHIẾU XUẤT
--- =============================================
+-- Goods Issue Details table
 CREATE TABLE CT_PhieuXuat (
     MaCTPX      INT IDENTITY(1,1) PRIMARY KEY,
     MaPX        INT NOT NULL,
@@ -190,9 +179,7 @@ GO
 CREATE NONCLUSTERED INDEX IX_CTPX_MaPX ON CT_PhieuXuat(MaPX);
 GO
 
--- =============================================
--- TỒN KHO
--- =============================================
+-- Stock table
 CREATE TABLE TonKho (
     MaTonKho    INT IDENTITY(1,1) PRIMARY KEY,
     MaSP        INT NOT NULL,
@@ -205,9 +192,7 @@ CREATE TABLE TonKho (
 );
 GO
 
--- =============================================
--- LỊCH SỬ HOẠT ĐỘNG
--- =============================================
+-- Activity Log table
 CREATE TABLE LichSuHoatDong (
     MaLog           BIGINT IDENTITY(1,1) PRIMARY KEY,
     BangLienQuan    VARCHAR(50) NOT NULL,
@@ -220,5 +205,5 @@ CREATE TABLE LichSuHoatDong (
 );
 GO
 
-PRINT N'01_create-tables.sql hoàn tất.';
+PRINT N'01_create-tables.sql completed.';
 GO

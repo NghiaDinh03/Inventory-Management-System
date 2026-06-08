@@ -1,9 +1,16 @@
 USE InventoryDB;
 GO
 
--- =============================================
--- TẠO TABLE-VALUED PARAMETER TYPE CHO CHI TIẾT PHIẾU
--- =============================================
+SET ANSI_NULLS ON;
+SET ANSI_PADDING ON;
+SET ANSI_WARNINGS ON;
+SET ARITHABORT ON;
+SET CONCAT_NULL_YIELDS_NULL ON;
+SET NUMERIC_ROUNDABORT OFF;
+SET QUOTED_IDENTIFIER ON;
+GO
+
+-- Create Table-Valued Parameter Type for Order Details
 IF EXISTS (SELECT * FROM sys.types WHERE name = 'ChiTietPhieuType' AND is_table_type = 1)
 BEGIN
     DROP TYPE ChiTietPhieuType;
@@ -17,9 +24,7 @@ CREATE TYPE ChiTietPhieuType AS TABLE (
 );
 GO
 
--- =============================================
--- 1. STORED PROCEDURE: TẠO PHIẾU NHẬP
--- =============================================
+-- 1. SP: Create Purchase Order
 CREATE OR ALTER PROCEDURE sp_TaoPhieuNhap
     @MaNCC INT,
     @MaKho INT,
@@ -33,19 +38,19 @@ BEGIN
     BEGIN TRY
         DECLARE @MaPN INT;
         
-        -- Thêm phiếu nhập mới ở trạng thái Nháp
+
         INSERT INTO PhieuNhap (MaNCC, MaKho, MaNV, TrangThai, GhiChu)
         VALUES (@MaNCC, @MaKho, @MaNV, N'Nháp', @GhiChu);
         
         SET @MaPN = SCOPE_IDENTITY();
         
-        -- Thêm các dòng chi tiết phiếu nhập
+
         INSERT INTO CT_PhieuNhap (MaPN, MaSP, SoLuong, DonGia)
         SELECT @MaPN, MaSP, SoLuong, DonGia FROM @ChiTiet;
         
         COMMIT TRANSACTION;
         
-        -- Trả về ID của phiếu nhập vừa tạo
+
         SELECT @MaPN AS MaPN;
     END TRY
     BEGIN CATCH
@@ -55,9 +60,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 2. STORED PROCEDURE: TẠO PHIẾU XUẤT
--- =============================================
+-- 2. SP: Create Goods Issue
 CREATE OR ALTER PROCEDURE sp_TaoPhieuXuat
     @MaKho INT,
     @MaNV INT,
@@ -71,19 +74,19 @@ BEGIN
     BEGIN TRY
         DECLARE @MaPX INT;
         
-        -- Thêm phiếu xuất mới ở trạng thái Nháp
+
         INSERT INTO PhieuXuat (MaKho, MaNV, NguoiNhan, TrangThai, GhiChu)
         VALUES (@MaKho, @MaNV, @NguoiNhan, N'Nháp', @GhiChu);
         
         SET @MaPX = SCOPE_IDENTITY();
         
-        -- Thêm các dòng chi tiết phiếu xuất
+
         INSERT INTO CT_PhieuXuat (MaPX, MaSP, SoLuong, DonGia)
         SELECT @MaPX, MaSP, SoLuong, DonGia FROM @ChiTiet;
         
         COMMIT TRANSACTION;
         
-        -- Trả về ID của phiếu xuất vừa tạo
+
         SELECT @MaPX AS MaPX;
     END TRY
     BEGIN CATCH
@@ -93,9 +96,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 3. STORED PROCEDURE: DUYỆT PHIẾU (NHẬP/XUẤT)
--- =============================================
+-- 3. SP: Approve Purchase Order or Goods Issue
 CREATE OR ALTER PROCEDURE sp_DuyetPhieu
     @LoaiPhieu VARCHAR(2), -- 'PN' hoặc 'PX'
     @MaPhieu INT,
@@ -107,13 +108,13 @@ BEGIN
     BEGIN TRY
         IF @LoaiPhieu = 'PN'
         BEGIN
-            -- Kiểm tra xem đã duyệt chưa
+
             IF EXISTS (SELECT 1 FROM PhieuNhap WHERE MaPN = @MaPhieu AND TrangThai = N'ĐãDuyệt')
             BEGIN
                 THROW 50001, N'Phiếu nhập này đã được duyệt trước đó.', 1;
             END
             
-            -- Cập nhật trạng thái phiếu nhập
+
             UPDATE PhieuNhap
             SET TrangThai = N'ĐãDuyệt', 
                 NgayDuyet = GETDATE(), 
@@ -122,13 +123,13 @@ BEGIN
         END
         ELSE IF @LoaiPhieu = 'PX'
         BEGIN
-            -- Kiểm tra xem đã duyệt chưa
+
             IF EXISTS (SELECT 1 FROM PhieuXuat WHERE MaPX = @MaPhieu AND TrangThai = N'ĐãDuyệt')
             BEGIN
                 THROW 50002, N'Phiếu xuất này đã được duyệt trước đó.', 1;
             END
             
-            -- Cập nhật trạng thái phiếu xuất
+
             UPDATE PhieuXuat
             SET TrangThai = N'ĐãDuyệt', 
                 NgayDuyet = GETDATE(), 
@@ -149,9 +150,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 4. STORED PROCEDURE: HỦY PHIỆU (NHẬP/XUẤT)
--- =============================================
+-- 4. SP: Cancel Purchase Order or Goods Issue
 CREATE OR ALTER PROCEDURE sp_HuyPhieu
     @LoaiPhieu VARCHAR(2), -- 'PN' hoặc 'PX'
     @MaPhieu INT,
@@ -176,7 +175,7 @@ BEGIN
                 THROW 50005, N'Phiếu nhập này đã bị hủy trước đó.', 1;
             END
             
-            -- Cập nhật trạng thái phiếu nhập sang ĐãHủy
+
             UPDATE PhieuNhap
             SET TrangThai = N'ĐãHủy', 
                 GhiChu = CONCAT(GhiChu, N' | Lý do hủy: ', @LyDo),
@@ -197,7 +196,7 @@ BEGIN
                 THROW 50008, N'Phiếu xuất này đã bị hủy trước đó.', 1;
             END
             
-            -- Cập nhật trạng thái phiếu xuất sang ĐãHủy
+
             UPDATE PhieuXuat
             SET TrangThai = N'ĐãHủy', 
                 GhiChu = CONCAT(GhiChu, N' | Lý do hủy: ', @LyDo),
@@ -218,9 +217,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 5. STORED PROCEDURE: BÁO CÁO TỒN KHO CHI TIẾT
--- =============================================
+-- 5. SP: Detailed Stock Report
 CREATE OR ALTER PROCEDURE sp_BaoCaoTonKho
     @MaKho INT = NULL,
     @TuNgay DATE,
@@ -229,7 +226,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- Lấy tồn kho hiện tại làm mốc
+
     WITH CurrentStock AS (
         SELECT 
             tk.MaKho,
@@ -244,7 +241,7 @@ BEGIN
         JOIN Kho k ON tk.MaKho = k.MaKho
         WHERE (@MaKho IS NULL OR tk.MaKho = @MaKho)
     ),
-    -- Tổng số lượng nhập tính từ mốc TuNgay đến thời điểm hiện tại
+    -- Total imported qty from @TuNgay to present
     NhapSauTuNgay AS (
         SELECT 
             pn.MaKho,
@@ -255,7 +252,7 @@ BEGIN
         WHERE pn.TrangThai = N'ĐãDuyệt' AND CAST(pn.NgayDuyet AS DATE) >= @TuNgay
         GROUP BY pn.MaKho, ct.MaSP
     ),
-    -- Tổng số lượng xuất tính từ mốc TuNgay đến thời điểm hiện tại
+    -- Total exported qty from @TuNgay to present
     XuatSauTuNgay AS (
         SELECT 
             px.MaKho,
@@ -266,7 +263,7 @@ BEGIN
         WHERE px.TrangThai = N'ĐãDuyệt' AND CAST(px.NgayDuyet AS DATE) >= @TuNgay
         GROUP BY px.MaKho, ct.MaSP
     ),
-    -- Nhập trong kỳ (từ TuNgay đến DenNgay)
+    -- Imports within period
     NhapTrongKy AS (
         SELECT 
             pn.MaKho,
@@ -277,7 +274,7 @@ BEGIN
         WHERE pn.TrangThai = N'ĐãDuyệt' AND CAST(pn.NgayDuyet AS DATE) BETWEEN @TuNgay AND @DenNgay
         GROUP BY pn.MaKho, ct.MaSP
     ),
-    -- Xuất trong kỳ (từ TuNgay đến DenNgay)
+    -- Exports within period
     XuatTrongKy AS (
         SELECT 
             px.MaKho,
@@ -294,11 +291,11 @@ BEGIN
         cs.MaSP,
         cs.TenSP,
         cs.DonVi,
-        -- Tồn đầu kỳ = Tồn hiện tại - Nhập từ mốc TuNgay đến nay + Xuất từ mốc TuNgay đến nay
+        -- Opening Qty = Current - Imports to Date + Exports to Date
         (cs.TonHienTai - COALESCE(ns.SLNhap, 0) + COALESCE(xs.SLXuat, 0)) AS TonDauKy,
         COALESCE(ntk.SLNhap, 0) AS NhapTrongKy,
         COALESCE(xtk.SLXuat, 0) AS XuatTrongKy,
-        -- Tồn cuối kỳ = Tồn đầu kỳ + Nhập trong kỳ - Xuất trong kỳ
+        -- Closing Qty = Opening + Period Imports - Period Exports
         (cs.TonHienTai - COALESCE(ns.SLNhap, 0) + COALESCE(xs.SLXuat, 0) + COALESCE(ntk.SLNhap, 0) - COALESCE(xtk.SLXuat, 0)) AS TonCuoiKy,
         cs.GiaNhap,
         ((cs.TonHienTai - COALESCE(ns.SLNhap, 0) + COALESCE(xs.SLXuat, 0) + COALESCE(ntk.SLNhap, 0) - COALESCE(xtk.SLXuat, 0)) * cs.GiaNhap) AS GiaTriCuoiKy
@@ -311,9 +308,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 6. STORED PROCEDURE: BÁO CÁO NHẬP HÀNG THEO NHÀ CUNG CẤP
--- =============================================
+-- 6. SP: Purchase Report by Supplier
 CREATE OR ALTER PROCEDURE sp_BaoCaoNhapTheoNCC
     @MaNCC INT = NULL,
     @TuNgay DATE,
@@ -346,9 +341,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 7. STORED PROCEDURE: BÁO CÁO XUẤT HÀNG THEO SẢN PHẨM
--- =============================================
+-- 7. SP: Goods Issue Report by Product
 CREATE OR ALTER PROCEDURE sp_BaoCaoXuatTheoSP
     @MaSP INT = NULL,
     @TuNgay DATE,
@@ -380,9 +373,7 @@ BEGIN
 END;
 GO
 
--- =============================================
--- 8. STORED PROCEDURE: ĐỔI MẬT KHẨU
--- =============================================
+-- 8. SP: Change Account Password
 CREATE OR ALTER PROCEDURE sp_DoiMatKhau
     @MaTK INT,
     @MatKhauCu VARCHAR(256),
