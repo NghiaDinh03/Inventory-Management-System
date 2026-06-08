@@ -1,0 +1,59 @@
+@model IMS.Web.Models.Kho
+@{
+    ViewData["Title"] = "Sửa kho hàng";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card-custom">
+            <div class="card-title-custom">
+                <span><i class="fa-solid fa-pen-to-square text-primary me-2"></i>Chỉnh sửa thông tin kho hàng</span>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <span>@error.ErrorMessage</span><br />
+                    }
+                </div>
+            }
+
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="MaKho" />
+                
+                <div class="mb-3">
+                    <label class="form-label-custom" asp-for="TenKho">Tên kho hàng <span class="text-danger">*</span></label>
+                    <input type="text" asp-for="TenKho" class="form-control-custom w-100" placeholder="Nhập tên kho hàng..." required />
+                    <span asp-validation-for="TenKho" class="text-danger text-sm"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label-custom" asp-for="DiaChi">Địa chỉ kho</label>
+                    <input type="text" asp-for="DiaChi" class="form-control-custom w-100" placeholder="Nhập địa chỉ vị trí kho..." />
+                    <span asp-validation-for="DiaChi" class="text-danger text-sm"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label-custom">Trạng thái hoạt động</label>
+                    <div class="form-check form-switch mt-2">
+                        <input class="form-check-input" type="checkbox" role="switch" id="trangThaiSwitch" asp-for="TrangThai">
+                        <label class="form-check-label text-secondary" for="trangThaiSwitch" style="font-size: 14px;">Kho hàng đang hoạt động</label>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/Kho" class="btn-custom btn-secondary-custom">
+                        <i class="fa-solid fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="submit" class="btn-custom btn-primary-custom">
+                        Cập nhật <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

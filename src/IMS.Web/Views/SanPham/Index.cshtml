@@ -1,0 +1,122 @@
+@model IEnumerable<IMS.Web.Models.SanPham>
+@{
+    ViewData["Title"] = "Sản phẩm";
+}
+
+<div class="card-custom">
+    <div class="card-title-custom">
+        <span><i class="fa-solid fa-box text-primary me-2"></i>Danh sách sản phẩm</span>
+        <a href="/SanPham/Create" class="btn-custom btn-primary-custom py-2">
+            Thêm mới <i class="fa-solid fa-plus"></i>
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-custom table-hover datatable-custom">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Mã</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Danh mục</th>
+                    <th>Đơn vị</th>
+                    <th>Giá nhập</th>
+                    <th>Giá bán</th>
+                    <th>Mã vạch</th>
+                    <th>Hạn mức tối thiểu</th>
+                    <th>Trạng thái</th>
+                    <th style="width: 120px; text-align: center;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold text-secondary">#@item.MaSP</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                @if (!string.IsNullOrEmpty(item.HinhAnh))
+                                {
+                                    <img src="@item.HinhAnh" alt="@item.TenSP" class="rounded border" style="width: 40px; height: 40px; object-fit: cover;" onerror="this.src='/images/default-product.png'" />
+                                }
+                                else
+                                {
+                                    <div class="rounded border bg-light d-flex align-items-center justify-content-center text-muted fw-bold" style="width: 40px; height: 40px; font-size: 11px;">
+                                        BOX
+                                    </div>
+                                }
+                                <div>
+                                    <div class="fw-bold text-primary">@item.TenSP</div>
+                                    <div class="text-xs text-muted" style="font-size: 11px;">@item.MoTa</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@(item.DanhMuc?.TenDanhMuc ?? "Không xác định")</td>
+                        <td>@item.DonVi</td>
+                        <td class="fw-bold text-success">@item.GiaNhap.ToString("N0") đ</td>
+                        <td class="fw-bold text-info">@item.GiaBan.ToString("N0") đ</td>
+                        <td><code class="text-dark">@item.MaVach</code></td>
+                        <td style="text-align: center;"><span class="badge bg-secondary px-2 py-1">@item.TonToiThieu</span></td>
+                        <td>
+                            <span class="badge-custom @(item.TrangThai ? "badge-status-duyet" : "badge-status-huy")">
+                                @(item.TrangThai ? "Đang kinh doanh" : "Ngừng bán")
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="/SanPham/Edit/@item.MaSP" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa" onclick="confirmDelete(@item.MaSP, '@item.TenSP')">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<form id="deleteForm" method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id, name) {
+            Swal.fire({
+                title: 'Xác nhận xóa?',
+                text: `Bạn có chắc chắn muốn xóa sản phẩm "${name}"? Nếu sản phẩm đã phát sinh phiếu nhập/xuất, CSDL sẽ tự động chặn và ném lỗi bảo vệ an toàn.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Đồng ý xóa',
+                cancelButtonText: 'Hủy bỏ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var form = document.getElementById('deleteForm');
+                    form.action = '/SanPham/Delete/' + id;
+                    form.submit();
+                }
+            });
+        }
+    </script>
+}

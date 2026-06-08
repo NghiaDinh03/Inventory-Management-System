@@ -1,0 +1,50 @@
+@model IMS.Web.Models.DanhMuc
+@{
+    ViewData["Title"] = "Thêm danh mục";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card-custom">
+            <div class="card-title-custom">
+                <span><i class="fa-solid fa-plus text-primary me-2"></i>Thêm danh mục sản phẩm mới</span>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <span>@error.ErrorMessage</span><br />
+                    }
+                </div>
+            }
+
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                
+                <div class="mb-3">
+                    <label class="form-label-custom" asp-for="TenDanhMuc">Tên danh mục <span class="text-danger">*</span></label>
+                    <input type="text" asp-for="TenDanhMuc" class="form-control-custom w-100" placeholder="Nhập tên danh mục (ví dụ: Điện gia dụng)..." required />
+                    <span asp-validation-for="TenDanhMuc" class="text-danger text-sm"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label-custom" asp-for="MoTa">Mô tả danh mục</label>
+                    <textarea asp-for="MoTa" rows="4" class="form-control-custom w-100" placeholder="Nhập mô tả ngắn về danh mục này..."></textarea>
+                    <span asp-validation-for="MoTa" class="text-danger text-sm"></span>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/DanhMuc" class="btn-custom btn-secondary-custom">
+                        <i class="fa-solid fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="submit" class="btn-custom btn-primary-custom">
+                        Lưu danh mục <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

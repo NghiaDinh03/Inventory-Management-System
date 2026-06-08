@@ -1,0 +1,84 @@
+@using System.Security.Claims
+
+<div class="app-sidebar">
+    <div class="sidebar-brand">
+        <i class="fa-solid fa-boxes-stacked"></i>
+        <span>IMS Antigravity</span>
+    </div>
+    
+    <div class="sidebar-menu">
+        <div class="menu-category">Chính</div>
+        <a href="/" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+            <i class="fa-solid fa-chart-line"></i>
+            Tổng quan
+        </a>
+
+        <div class="menu-category">Nghiệp vụ kho</div>
+        <a href="/PhieuNhap" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "PhieuNhap" ? "active" : "")">
+            <i class="fa-solid fa-file-import"></i>
+            Phiếu Nhập Kho
+        </a>
+        <a href="/PhieuXuat" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "PhieuXuat" ? "active" : "")">
+            <i class="fa-solid fa-file-export"></i>
+            Phiếu Xuất Kho
+        </a>
+        <a href="/TonKho" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "TonKho" ? "active" : "")">
+            <i class="fa-solid fa-warehouse"></i>
+            Báo cáo Tồn Kho
+        </a>
+
+        <div class="menu-category">Danh mục hệ thống</div>
+        <a href="/SanPham" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "SanPham" ? "active" : "")">
+            <i class="fa-solid fa-box"></i>
+            Sản phẩm
+        </a>
+        <a href="/DanhMuc" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "DanhMuc" ? "active" : "")">
+            <i class="fa-solid fa-tags"></i>
+            Danh mục
+        </a>
+        <a href="/NhaCungCap" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "NhaCungCap" ? "active" : "")">
+            <i class="fa-solid fa-truck-field"></i>
+            Nhà cung cấp
+        </a>
+        <a href="/Kho" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Kho" ? "active" : "")">
+            <i class="fa-solid fa-map-location-dot"></i>
+            Kho hàng
+        </a>
+
+        <div class="menu-category">Nâng cao & Demo</div>
+        <a href="/Demo" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Demo" ? "active" : "")">
+            <i class="fa-solid fa-flask"></i>
+            Demo SP/Trigger (B1-B5)
+        </a>
+        
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/HeThong" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "HeThong" ? "active" : "")">
+                <i class="fa-solid fa-gears"></i>
+                Sao lưu & Phục hồi
+            </a>
+        }
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2 mb-2 px-2 text-white">
+            <div class="user-avatar">
+                @(User.FindFirst(ClaimTypes.GivenName)?.Value?.Substring(0, 1).ToUpper() ?? "U")
+            </div>
+            <div class="overflow-hidden">
+                <div class="text-truncate fw-bold text-sm" style="font-size: 13px;">
+                    @User.FindFirst(ClaimTypes.GivenName)?.Value
+                </div>
+                <div class="text-truncate text-muted" style="font-size: 11px;">
+                    @(User.IsInRole("Admin") ? "Quản trị viên" : "Thủ kho")
+                </div>
+            </div>
+        </div>
+        <a href="/TaiKhoan/DoiMatKhau" class="menu-item py-2">
+            <i class="fa-solid fa-key"></i> Đổi mật khẩu
+        </a>
+        <a href="/TaiKhoan/Logout" class="menu-item py-2 text-danger">
+            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+        </a>
+    </div>
+</div>

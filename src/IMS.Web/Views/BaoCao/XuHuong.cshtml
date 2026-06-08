@@ -1,0 +1,234 @@
+@{
+    ViewData["Title"] = "Phân tích xu hướng & Doanh số";
+    var topSanPham = ViewBag.TopSanPham as List<IMS.Web.Models.Views.TopSanPhamXuatNhieuView> ?? new List<IMS.Web.Models.Views.TopSanPhamXuatNhieuView>();
+    var doanhThuTheoThang = ViewBag.DoanhThuTheoThang as List<IMS.Web.Models.Views.DoanhThuTheoThangView> ?? new List<IMS.Web.Models.Views.DoanhThuTheoThangView>();
+}
+
+<div class="row g-4 mb-4">
+    <!-- Cột trái: Biểu đồ Doanh thu theo tháng -->
+    <div class="col-lg-6">
+        <div class="card-custom">
+            <div class="card-title-custom">
+                <span><i class="fa-solid fa-chart-line text-primary me-2"></i>Biểu đồ doanh số bán hàng theo tháng</span>
+            </div>
+            <div style="height: 300px; position: relative;">
+                <canvas id="chartDoanhThuThang"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột phải: Biểu đồ Top 10 sản phẩm xuất nhiều nhất -->
+    <div class="col-lg-6">
+        <div class="card-custom">
+            <div class="card-title-custom">
+                <span><i class="fa-solid fa-chart-column text-primary me-2"></i>Top sản phẩm xuất kho nhiều nhất</span>
+            </div>
+            <div style="height: 300px; position: relative;">
+                <canvas id="chartTopSP"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Bảng doanh thu chi tiết -->
+    <div class="col-lg-6">
+        <div class="card-custom">
+            <div class="card-title-custom mb-3">
+                <span><i class="fa-solid fa-table text-primary me-2"></i>Bảng doanh số chi tiết theo tháng</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-custom table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tháng / Năm</th>
+                            <th style="text-align: center;">Số lượng phiếu xuất</th>
+                            <th style="text-align: center;">Tổng số lượng xuất</th>
+                            <th style="text-align: right;">Tổng doanh số xuất</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (doanhThuTheoThang.Any())
+                        {
+                            foreach (var item in doanhThuTheoThang.OrderByDescending(d => d.Nam).ThenByDescending(d => d.Thang))
+                            {
+                                <tr>
+                                    <td class="fw-bold text-primary">Tháng @item.Thang / @item.Nam</td>
+                                    <td style="text-align: center;">@item.SoPhieu.ToString("N0")</td>
+                                    <td style="text-align: center;" class="fw-bold">@item.TongSoLuong.ToString("N0")</td>
+                                    <td class="text-end fw-bold text-success">@item.TongDoanhThu.ToString("N0") đ</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">Chưa phát sinh doanh số xuất kho nào.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng sản phẩm bán chạy chi tiết -->
+    <div class="col-lg-6">
+        <div class="card-custom">
+            <div class="card-title-custom mb-3">
+                <span><i class="fa-solid fa-table text-primary me-2"></i>Bảng xếp hạng sản phẩm bán chạy (Top 10)</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-custom table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px; text-align: center;">Hạng</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Danh mục</th>
+                            <th style="text-align: center;">Số lượng xuất</th>
+                            <th style="text-align: right;">Giá trị xuất</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (topSanPham.Any())
+                        {
+                            int idx = 1;
+                            foreach (var item in topSanPham)
+                            {
+                                <tr>
+                                    <td style="text-align: center;">
+                                        <span class="badge @(idx == 1 ? "bg-warning text-dark" : idx == 2 ? "bg-secondary" : idx == 3 ? "bg-danger" : "bg-light text-dark") rounded-pill px-2 py-1">
+                                            @idx
+                                        </span>
+                                    </td>
+                                    <td class="fw-bold text-primary">@item.TenSP</td>
+                                    <td>@item.TenDanhMuc</td>
+                                    <td style="text-align: center;" class="fw-bold">@item.TongSoLuongXuat.ToString("N0") @item.DonVi</td>
+                                    <td class="text-end fw-bold text-success">@item.TongGiaTriXuat.ToString("N0") đ</td>
+                                </tr>
+                                idx++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">Chưa có sản phẩm nào xuất kho.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 1. Biểu đồ doanh thu theo tháng
+            var labelsDt = [];
+            var dataDt = [];
+
+            @foreach (var item in doanhThuTheoThang.OrderBy(d => d.Nam).ThenBy(d => d.Thang))
+            {
+                <text>
+                    labelsDt.push("T" + @item.Thang + "/" + @item.Nam);
+                    dataDt.push(@item.TongDoanhThu);
+                </text>
+            }
+
+            var ctxDt = document.getElementById('chartDoanhThuThang').getContext('2d');
+            new Chart(ctxDt, {
+                type: 'line',
+                data: {
+                    labels: labelsDt,
+                    datasets: [{
+                        label: 'Doanh số bán ra (VND)',
+                        data: dataDt,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#7c3aed',
+                        pointBorderColor: '#fff',
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
+                            ticks: {
+                                font: { family: 'Plus Jakarta Sans' }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { family: 'Plus Jakarta Sans' }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Biểu đồ Top 10 sản phẩm xuất nhiều nhất
+            var labelsSp = [];
+            var dataSp = [];
+
+            @foreach (var item in topSanPham)
+            {
+                <text>
+                    labelsSp.push("@item.TenSP");
+                    dataSp.push(@item.TongSoLuongXuat);
+                </text>
+            }
+
+            var ctxSp = document.getElementById('chartTopSP').getContext('2d');
+            new Chart(ctxSp, {
+                type: 'bar',
+                data: {
+                    labels: labelsSp,
+                    datasets: [{
+                        label: 'Số lượng xuất kho',
+                        data: dataSp,
+                        backgroundColor: 'rgba(6, 182, 212, 0.85)',
+                        borderColor: 'rgba(6, 182, 212, 1)',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Vẽ thanh ngang
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
+                            ticks: {
+                                font: { family: 'Plus Jakarta Sans' }
+                            }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { family: 'Plus Jakarta Sans' }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

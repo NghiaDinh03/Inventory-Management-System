@@ -1,0 +1,92 @@
+@using System.Data
+@model DataTable
+@{
+    ViewData["Title"] = "Báo cáo tồn kho theo kỳ";
+}
+
+<!-- Bộ lọc -->
+<div class="card-custom mb-4">
+    <div class="card-title-custom">
+        <span><i class="fa-solid fa-filter text-primary me-2"></i>Lọc dữ liệu kỳ báo cáo</span>
+    </div>
+    <form method="get" action="/BaoCao/TonKhoKy" class="row align-items-end g-3">
+        <div class="col-md-4">
+            <label class="form-label-custom">Chọn kho hàng</label>
+            <select name="maKho" class="form-control-custom w-100" asp-items="ViewBag.Khos">
+                <option value="">-- Tất cả các kho hàng --</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label-custom">Từ ngày</label>
+            <input type="date" name="tuNgay" class="form-control-custom w-100" value="@ViewBag.TuNgay" required />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label-custom">Đến ngày</label>
+            <input type="date" name="denNgay" class="form-control-custom w-100" value="@ViewBag.DenNgay" required />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn-custom btn-primary-custom w-100 py-2 justify-content-center">
+                Xem <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Bảng hiển thị -->
+<div class="card-custom">
+    <div class="card-title-custom">
+        <span>
+            <i class="fa-solid fa-table text-primary me-2"></i>
+            Tồn kho từ ngày <strong>@DateTime.Parse(ViewBag.TuNgay).ToString("dd/MM/yyyy")</strong> đến <strong>@DateTime.Parse(ViewBag.DenNgay).ToString("dd/MM/yyyy")</strong>
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-custom table-hover datatable-custom">
+            <thead>
+                <tr>
+                    <th>Kho hàng</th>
+                    <th style="width: 80px;">Mã SP</th>
+                    <th>Tên sản phẩm</th>
+                    <th>ĐVT</th>
+                    <th style="text-align: center;">Tồn đầu kỳ</th>
+                    <th style="text-align: center; color: var(--primary);">Nhập trong kỳ</th>
+                    <th style="text-align: center; color: var(--info);">Xuất trong kỳ</th>
+                    <th style="text-align: center; background-color: rgba(16, 185, 129, 0.05);">Tồn cuối kỳ</th>
+                    <th style="text-align: right;">Giá nhập</th>
+                    <th style="text-align: right; background-color: rgba(16, 185, 129, 0.05);">Giá trị cuối kỳ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Rows.Count > 0)
+                {
+                    foreach (DataRow row in Model.Rows)
+                    {
+                        <tr>
+                            <td class="fw-bold text-secondary">@row["TenKho"]</td>
+                            <td class="fw-bold text-muted">#@row["MaSP"]</td>
+                            <td class="fw-bold text-primary">@row["TenSP"]</td>
+                            <td>@row["DonVi"]</td>
+                            <td style="text-align: center;">@Convert.ToInt32(row["TonDauKy"]).ToString("N0")</td>
+                            <td style="text-align: center;" class="text-primary fw-bold">@Convert.ToInt32(row["NhapTrongKy"]).ToString("N0")</td>
+                            <td style="text-align: center;" class="text-info fw-bold">@Convert.ToInt32(row["XuatTrongKy"]).ToString("N0")</td>
+                            <td style="text-align: center; background-color: rgba(16, 185, 129, 0.03);" class="text-success fw-bold">
+                                @Convert.ToInt32(row["TonCuoiKy"]).ToString("N0")
+                            </td>
+                            <td class="text-end">@Convert.ToDecimal(row["GiaNhap"]).ToString("N0") đ</td>
+                            <td class="text-end fw-bold text-success" style="background-color: rgba(16, 185, 129, 0.03);">
+                                @Convert.ToDecimal(row["GiaTriCuoiKy"]).ToString("N0") đ
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="10" class="text-center text-muted py-4">Không có dữ liệu trong khoảng thời gian đã chọn.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

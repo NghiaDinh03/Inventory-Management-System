@@ -1,0 +1,88 @@
+@model IEnumerable<IMS.Web.Models.Views.TonKhoHienTaiView>
+@{
+    ViewData["Title"] = "Báo cáo tồn kho hiện tại";
+}
+
+<!-- Bộ lọc theo Kho -->
+<div class="card-custom mb-4">
+    <div class="card-title-custom">
+        <span><i class="fa-solid fa-filter text-primary me-2"></i>Lọc dữ liệu tồn kho</span>
+    </div>
+    <form method="get" action="/TonKho" class="row align-items-end g-3">
+        <div class="col-md-6">
+            <label class="form-label-custom">Lọc theo kho hàng</label>
+            <select name="maKho" class="form-control-custom w-100" asp-items="ViewBag.Khos" onchange="this.form.submit()">
+                <option value="">-- Tất cả các kho hàng --</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <a href="/TonKho" class="btn-custom btn-secondary-custom w-100 py-2 justify-content-center">
+                <i class="fa-solid fa-sync"></i> Thiết lập lại
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Bảng hiển thị tồn kho hiện tại -->
+<div class="card-custom">
+    <div class="card-title-custom">
+        <span><i class="fa-solid fa-warehouse text-primary me-2"></i>Tồn kho thực tế</span>
+        <span class="badge bg-primary px-3 py-2">Tổng số dòng: @Model.Count()</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-custom table-hover datatable-custom">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Mã SP</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Danh mục</th>
+                    <th>Đơn vị</th>
+                    <th>Kho hàng</th>
+                    <th style="text-align: center;">Số lượng tồn</th>
+                    <th style="text-align: right;">Giá trị tồn</th>
+                    <th>Mức tối thiểu</th>
+                    <th style="text-align: center;">Cảnh báo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    bool canNhap = item.SoLuong < item.TonToiThieu;
+                    <tr class="@(canNhap ? "table-danger table-opacity-10" : "")">
+                        <td class="fw-bold text-secondary">#@item.MaSP</td>
+                        <td>
+                            <div class="fw-bold text-primary">@item.TenSP</div>
+                            @if (!string.IsNullOrEmpty(item.MaVach))
+                            {
+                                <code class="text-xs text-muted" style="font-size: 10px;">@item.MaVach</code>
+                            }
+                        </td>
+                        <td>@item.TenDanhMuc</td>
+                        <td>@item.DonVi</td>
+                        <td class="fw-bold text-secondary">@item.TenKho</td>
+                        <td style="text-align: center;" class="fw-bold @(canNhap ? "text-danger" : "text-dark")">
+                            @item.SoLuong.ToString("N0")
+                        </td>
+                        <td class="text-end fw-bold text-success">@item.GiaTri.ToString("N0") đ</td>
+                        <td style="text-align: center;"><span class="badge bg-secondary">@item.TonToiThieu</span></td>
+                        <td style="text-align: center;">
+                            @if (canNhap)
+                            {
+                                <span class="badge bg-danger">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i> Tồn thấp
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">
+                                    <i class="fa-solid fa-circle-check me-1"></i> An toàn
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

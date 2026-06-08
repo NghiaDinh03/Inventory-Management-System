@@ -1,0 +1,95 @@
+@model IEnumerable<IMS.Web.Models.Kho>
+@{
+    ViewData["Title"] = "Kho hàng";
+}
+
+<div class="card-custom">
+    <div class="card-title-custom">
+        <span><i class="fa-solid fa-map-location-dot text-primary me-2"></i>Danh sách kho hàng</span>
+        <a href="/Kho/Create" class="btn-custom btn-primary-custom py-2">
+            Thêm mới <i class="fa-solid fa-plus"></i>
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-custom table-hover datatable-custom">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Mã</th>
+                    <th>Tên kho hàng</th>
+                    <th>Địa chỉ</th>
+                    <th>Trạng thái</th>
+                    <th style="width: 150px; text-align: center;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold text-secondary">#@item.MaKho</td>
+                        <td class="fw-bold text-primary">@item.TenKho</td>
+                        <td>@item.DiaChi</td>
+                        <td>
+                            <span class="badge-custom @(item.TrangThai ? "badge-status-duyet" : "badge-status-huy")">
+                                @(item.TrangThai ? "Đang hoạt động" : "Tạm ngưng")
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="/Kho/Edit/@item.MaKho" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa" onclick="confirmDelete(@item.MaKho, '@item.TenKho')">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<form id="deleteForm" method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id, name) {
+            Swal.fire({
+                title: 'Xác nhận xóa?',
+                text: `Bạn có chắc chắn muốn xóa kho hàng "${name}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Đồng ý xóa',
+                cancelButtonText: 'Hủy bỏ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var form = document.getElementById('deleteForm');
+                    form.action = '/Kho/Delete/' + id;
+                    form.submit();
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,90 @@
+@model IEnumerable<IMS.Web.Models.DanhMuc>
+@{
+    ViewData["Title"] = "Danh mục sản phẩm";
+}
+
+<div class="card-custom">
+    <div class="card-title-custom">
+        <span><i class="fa-solid fa-tags text-primary me-2"></i>Danh sách danh mục sản phẩm</span>
+        <a href="/DanhMuc/Create" class="btn-custom btn-primary-custom py-2">
+            Thêm mới <i class="fa-solid fa-plus"></i>
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-custom table-hover datatable-custom">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Mã</th>
+                    <th>Tên danh mục</th>
+                    <th>Mô tả</th>
+                    <th style="width: 150px; text-align: center;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold text-secondary">#@item.MaDanhMuc</td>
+                        <td class="fw-bold text-primary">@item.TenDanhMuc</td>
+                        <td>@item.MoTa</td>
+                        <td style="text-align: center;">
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="/DanhMuc/Edit/@item.MaDanhMuc" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa" onclick="confirmDelete(@item.MaDanhMuc, '@item.TenDanhMuc')">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Form ẩn để gửi request POST xóa -->
+<form id="deleteForm" method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id, name) {
+            Swal.fire({
+                title: 'Xác nhận xóa?',
+                text: `Bạn có chắc chắn muốn xóa danh mục "${name}"? Hành động này không thể hoàn tác!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Đồng ý xóa',
+                cancelButtonText: 'Hủy bỏ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var form = document.getElementById('deleteForm');
+                    form.action = '/DanhMuc/Delete/' + id;
+                    form.submit();
+                }
+            });
+        }
+    </script>
+}

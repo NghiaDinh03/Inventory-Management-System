@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Quản Lý Kho</title>
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- FontAwesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+    <!-- Custom site.css -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+</head>
+<body>
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <div class="app-container">
+            <!-- Sidebar -->
+            @await Html.PartialAsync("_Sidebar")
+
+            <!-- Content Area -->
+            <div class="app-content">
+                <!-- Top Navbar -->
+                @await Html.PartialAsync("_Navbar")
+
+                <!-- Main Content -->
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+
+                <!-- Footer -->
+                <footer class="app-footer">
+                    <div>&copy; 2026 - Quản Lý Hàng Tồn Kho - Đồ Án Môn IE103</div>
+                </footer>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container-fluid p-0">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+    }
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+

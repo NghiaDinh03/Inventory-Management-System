@@ -1,0 +1,22 @@
+@using System.Security.Claims
+
+<div class="app-navbar">
+    <div class="nav-title d-flex align-items-center gap-2">
+        <button class="btn btn-sm btn-link d-lg-none text-dark p-0 me-2" id="sidebarToggle">
+            <i class="fa-solid fa-bars fs-4"></i>
+        </button>
+        <span>@ViewData["Title"]</span>
+    </div>
+    
+    <div class="nav-user">
+        <div class="d-none d-md-flex flex-column text-end">
+            <span class="fw-semibold text-sm">@User.FindFirst(ClaimTypes.GivenName)?.Value</span>
+            <span class="text-muted text-xs" style="font-size: 11px;">
+                @(User.IsInRole("Admin") ? "Quản trị viên" : "Thủ kho")
+            </span>
+        </div>
+        <div class="user-avatar ms-2">
+            @(User.FindFirst(ClaimTypes.GivenName)?.Value?.Substring(0, 1).ToUpper() ?? "U")
+        </div>
+    </div>
+</div>
