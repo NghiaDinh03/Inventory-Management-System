@@ -1,5 +1,25 @@
 #!/bin/bash
-# Chờ SQL Server khởi động hoàn toàn
+# Setup background logging
+LOG_FILE="/logs/db_init.log"
+if [ -d "/logs" ]; then
+    touch "$LOG_FILE" 2>/dev/null
+    if [ $? -eq 0 ]; then
+        exec > >(tee -i "$LOG_FILE") 2>&1
+        echo "Logging database initialization to $LOG_FILE"
+    else
+        mkdir -p /tmp/logs
+        LOG_FILE="/tmp/logs/db_init.log"
+        exec > >(tee -i "$LOG_FILE") 2>&1
+        echo "Warning: /logs is not writable. Logging to $LOG_FILE"
+    fi
+else
+    mkdir -p /tmp/logs
+    LOG_FILE="/tmp/logs/db_init.log"
+    exec > >(tee -i "$LOG_FILE") 2>&1
+    echo "Warning: /logs does not exist. Logging to $LOG_FILE"
+fi
+
+# Wait for SQL Server to start up completely
 echo "Waiting for SQL Server to be ready..."
 for i in {1..30}; do
     /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P "$MSSQL_SA_PASSWORD" -C -Q "SELECT 1" &>/dev/null
@@ -11,7 +31,7 @@ for i in {1..30}; do
     sleep 2
 done
 
-# Chạy các script SQL theo đúng thứ tự
+# Execute SQL scripts in the correct order
 echo "Executing 01_create-tables.sql..."
 /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P "$MSSQL_SA_PASSWORD" -C -i /database/01_create-tables.sql
 

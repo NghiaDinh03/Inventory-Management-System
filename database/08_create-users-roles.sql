@@ -4,13 +4,13 @@ GO
 -- 1. Create server logins
 IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = 'ims_admin_login')
 BEGIN
-    CREATE LOGIN ims_admin_login WITH PASSWORD = 'AdminLogin@2026', DEFAULT_DATABASE = InventoryDB;
+    CREATE LOGIN ims_admin_login WITH PASSWORD = 'Admin_login_password_2026', DEFAULT_DATABASE = InventoryDB;
 END;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = 'ims_nvkho_login')
 BEGIN
-    CREATE LOGIN ims_nvkho_login WITH PASSWORD = 'NVKhoLogin@2026', DEFAULT_DATABASE = InventoryDB;
+    CREATE LOGIN ims_nvkho_login WITH PASSWORD = 'Nvkho_login_password_2026', DEFAULT_DATABASE = InventoryDB;
 END;
 GO
 

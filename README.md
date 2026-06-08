@@ -44,7 +44,21 @@ docker-compose up --build -d
 | Web App | http://localhost:8080 |
 | DbGate | http://localhost:3000 |
 
-Tài khoản mặc định: `admin` / `Admin@2026`
+Tài khoản mặc định đăng nhập Web:
+- **Tài khoản:** `admin` / **Mật khẩu:** `Admin_password_2026`
+- **Tài khoản:** `nvkho1` / **Mật khẩu:** `Nvkho_password_2026`
+
+Thông tin kết nối Database trên DbGate (http://localhost:3000):
+- **DBMS:** Microsoft SQL Server
+- **Server/Host:** `sqlserver`
+- **Port:** `1433`
+- **User:** `sa`
+- **Password:** `Sa_strong_password_2026`
+- **Database:** `InventoryDB`
+
+Thư mục lưu log debug (được mount ra máy host):
+- `./logs/app.log` (Log của ứng dụng Web)
+- `./logs/db_init.log` (Log của quá trình khởi tạo Database)
 
 ---
 

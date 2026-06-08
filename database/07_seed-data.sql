@@ -10,36 +10,6 @@ SET NUMERIC_ROUNDABORT OFF;
 SET QUOTED_IDENTIFIER ON;
 GO
 
--- Clean up old data
-DELETE FROM LichSuHoatDong;
-DELETE FROM TonKho;
-DELETE FROM CT_PhieuXuat;
-DELETE FROM PhieuXuat;
-DELETE FROM CT_PhieuNhap;
-DELETE FROM PhieuNhap;
-DELETE FROM TaiKhoan;
-DELETE FROM NhanVien;
-DELETE FROM SanPham;
-DELETE FROM Kho;
-DELETE FROM NhaCungCap;
-DELETE FROM DanhMuc;
-GO
-
--- Reset identity values
-DBCC CHECKIDENT ('DanhMuc', RESEED, 0);
-DBCC CHECKIDENT ('NhaCungCap', RESEED, 0);
-DBCC CHECKIDENT ('Kho', RESEED, 0);
-DBCC CHECKIDENT ('SanPham', RESEED, 0);
-DBCC CHECKIDENT ('NhanVien', RESEED, 0);
-DBCC CHECKIDENT ('TaiKhoan', RESEED, 0);
-DBCC CHECKIDENT ('PhieuNhap', RESEED, 0);
-DBCC CHECKIDENT ('CT_PhieuNhap', RESEED, 0);
-DBCC CHECKIDENT ('PhieuXuat', RESEED, 0);
-DBCC CHECKIDENT ('CT_PhieuXuat', RESEED, 0);
-DBCC CHECKIDENT ('TonKho', RESEED, 0);
-DBCC CHECKIDENT ('LichSuHoatDong', RESEED, 0);
-GO
-
 -- 1. Seed data: DanhMuc
 INSERT INTO DanhMuc (TenDanhMuc, MoTa) VALUES
 (N'Điện tử & Linh kiện', N'Điện thoại, máy tính, linh kiện phần cứng'),
@@ -99,11 +69,11 @@ INSERT INTO NhanVien (HoTen, ChucVu, SoDienThoai, Email, TrangThai) VALUES
 (N'Hoàng Văn Nam', N'Nhân viên kiểm kho', '0934567890', 'nam.hoang@inventory.com', 1);
 GO
 
--- 6. Seed data: TaiKhoan (Default passwords are Admin@2026 and NVKho@2026)
+-- 6. Seed data: TaiKhoan (Default passwords are Admin_password_2026 and Nvkho_password_2026)
 INSERT INTO TaiKhoan (TenDangNhap, MatKhau, MaNV, VaiTro, TrangThai) VALUES
-('admin', CONVERT(VARCHAR(64), HASHBYTES('SHA2_256', 'Admin@2026'), 2), 1, 'Admin', 1),
-('nvkho1', CONVERT(VARCHAR(64), HASHBYTES('SHA2_256', 'NVKho@2026'), 2), 2, 'NVKho', 1),
-('nvkho2', CONVERT(VARCHAR(64), HASHBYTES('SHA2_256', 'NVKho@2026'), 2), 3, 'NVKho', 1);
+('admin', CONVERT(VARCHAR(64), HASHBYTES('SHA2_256', 'Admin_password_2026'), 2), 1, 'Admin', 1),
+('nvkho1', CONVERT(VARCHAR(64), HASHBYTES('SHA2_256', 'Nvkho_password_2026'), 2), 2, 'NVKho', 1),
+('nvkho2', CONVERT(VARCHAR(64), HASHBYTES('SHA2_256', 'Nvkho_password_2026'), 2), 3, 'NVKho', 1);
 GO
 
 -- 7. Seed data: TonKho
