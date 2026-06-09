@@ -34,11 +34,11 @@ BEGIN
             
     -- Cursor for low stock products
     DECLARE cur_CanhBao CURSOR LOCAL FAST_FORWARD FOR
-    SELECT tk.MaSP, sp.TenSP, k.TenKho, tk.SoLuong, sp.TonToiThieu
+    SELECT tk.MaSP, sp.TenSP, k.TenKho, tk.SoLuongTon, sp.TonToiThieu
     FROM TonKho tk
     JOIN SanPham sp ON tk.MaSP = sp.MaSP
     JOIN Kho k ON tk.MaKho = k.MaKho
-    WHERE tk.SoLuong < sp.TonToiThieu;
+    WHERE tk.SoLuongTon < sp.TonToiThieu;
     
     OPEN cur_CanhBao;
     FETCH NEXT FROM cur_CanhBao INTO @MaSP, @TenSP, @TenKho, @SoLuong, @TonToiThieu;
@@ -113,7 +113,7 @@ BEGIN
     BEGIN
 
         DECLARE @TonHienTai INT = 0;
-        SELECT @TonHienTai = SoLuong FROM TonKho WHERE MaSP = @CurMaSP AND MaKho = @CurMaKho;
+        SELECT @TonHienTai = SoLuongTon FROM TonKho WHERE MaSP = @CurMaSP AND MaKho = @CurMaKho;
         
         -- 2. Calculate imported qty since @TuNgay to present
         DECLARE @NhapSauTuNgay INT = 0;

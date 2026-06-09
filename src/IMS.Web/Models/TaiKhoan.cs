@@ -24,8 +24,10 @@ namespace IMS.Web.Models
         public NhanVien? NhanVien { get; set; }
 
         [Required(ErrorMessage = "Vui lòng chọn vai trò")]
-        [StringLength(20)]
-        public string VaiTro { get; set; } = "NVKho";
+        public int MaVT { get; set; }
+
+        [ForeignKey("MaVT")]
+        public VaiTro? VaiTro { get; set; }
 
         public bool TrangThai { get; set; } = true;
     }

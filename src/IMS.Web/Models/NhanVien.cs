@@ -24,11 +24,26 @@ namespace IMS.Web.Models
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string? Email { get; set; }
 
+        [DataType(DataType.Date)]
+        public DateTime? NgaySinh { get; set; }
+
+        [StringLength(12, ErrorMessage = "CCCD phải đúng 12 ký tự")]
+        public string? CCCD { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime? NgayCap { get; set; }
+
+        [StringLength(100, ErrorMessage = "Nơi cấp không quá 100 ký tự")]
+        public string? NoiCap { get; set; }
+
+        public bool? GioiTinh { get; set; }
+
         public bool TrangThai { get; set; } = true;
 
         public TaiKhoan? TaiKhoan { get; set; }
 
         public ICollection<PhieuNhap>? PhieuNhaps { get; set; }
         public ICollection<PhieuXuat>? PhieuXuats { get; set; }
+        public ICollection<LichSuHoatDong>? LichSuHoatDongs { get; set; }
     }
 }

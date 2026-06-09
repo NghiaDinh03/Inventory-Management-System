@@ -7,7 +7,7 @@
     <div class="card-title-custom">
         <span><i class="fa-solid fa-box text-primary me-2"></i>Danh sách sản phẩm</span>
         <a href="/SanPham/Create" class="btn-custom btn-primary-custom py-2">
-            Thêm mới <i class="fa-solid fa-plus"></i>
+            Add New <i class="fa-solid fa-plus"></i>
         </a>
     </div>
 
@@ -35,6 +35,7 @@
                     <th>Tên sản phẩm</th>
                     <th>Danh mục</th>
                     <th>Đơn vị</th>
+                    <th>Trọng lượng</th>
                     <th>Giá nhập</th>
                     <th>Giá bán</th>
                     <th>Mã vạch</th>
@@ -68,6 +69,7 @@
                         </td>
                         <td>@(item.DanhMuc?.TenDanhMuc ?? "Không xác định")</td>
                         <td>@item.DonVi</td>
+                        <td class="fw-bold">@item.TrongLuong.ToString("N3") kg</td>
                         <td class="fw-bold text-success">@item.GiaNhap.ToString("N0") đ</td>
                         <td class="fw-bold text-info">@item.GiaBan.ToString("N0") đ</td>
                         <td><code class="text-dark">@item.MaVach</code></td>
@@ -79,10 +81,10 @@
                         </td>
                         <td style="text-align: center;">
                             <div class="d-flex justify-content-center gap-2">
-                                <a href="/SanPham/Edit/@item.MaSP" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                <a href="/SanPham/Edit/@item.MaSP" class="btn btn-sm btn-outline-primary" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa" onclick="confirmDelete(@item.MaSP, '@item.TenSP')">
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="confirmDelete(@item.MaSP, '@item.TenSP')">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>

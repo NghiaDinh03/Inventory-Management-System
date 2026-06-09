@@ -11,6 +11,7 @@ namespace IMS.Web.Models.Views
         public int MaKho { get; set; }
         public string TenKho { get; set; } = null!;
         public int SoLuong { get; set; }
+        public decimal TrongLuongTon { get; set; }
         public int TonToiThieu { get; set; }
         public decimal GiaNhap { get; set; }
         public decimal GiaTri { get; set; }

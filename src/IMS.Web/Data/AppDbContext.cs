@@ -23,6 +23,9 @@ namespace IMS.Web.Data
         public DbSet<ChiTietPhieuXuat> ChiTietPhieuXuats { get; set; } = null!;
         public DbSet<TonKho> TonKhos { get; set; } = null!;
         public DbSet<LichSuHoatDong> LichSuHoatDongs { get; set; } = null!;
+        public DbSet<VaiTro> VaiTros { get; set; } = null!;
+        public DbSet<Gia> Gias { get; set; } = null!;
+        public DbSet<NCC_SanPham> NCC_SanPhams { get; set; } = null!;
 
         // 7 Views (No key, read-only query mapping)
         public DbSet<TonKhoHienTaiView> TonKhoHienTaiViews { get; set; } = null!;
@@ -43,12 +46,20 @@ namespace IMS.Web.Data
                 entity.HasIndex(e => e.TenDanhMuc).IsUnique();
             });
 
+            modelBuilder.Entity<NhanVien>(entity =>
+            {
+                entity.HasIndex(e => e.CCCD).IsUnique().HasFilter("[CCCD] IS NOT NULL");
+                entity.Property(e => e.NgaySinh).HasColumnType("date");
+                entity.Property(e => e.NgayCap).HasColumnType("date");
+            });
+
             modelBuilder.Entity<SanPham>(entity =>
             {
                 entity.HasIndex(e => e.TenSP);
                 entity.HasIndex(e => e.MaVach).IsUnique().HasFilter("[MaVach] IS NOT NULL");
                 entity.Property(e => e.GiaNhap).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.GiaBan).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.TrongLuong).HasColumnType("decimal(10,3)");
 
                 entity.HasOne(d => d.DanhMuc)
                     .WithMany(p => p.SanPhams)
@@ -64,6 +75,41 @@ namespace IMS.Web.Data
                 entity.HasOne(d => d.NhanVien)
                     .WithOne(p => p.TaiKhoan)
                     .HasForeignKey<TaiKhoan>(d => d.MaNV)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.VaiTro)
+                    .WithMany(p => p.TaiKhoans)
+                    .HasForeignKey(d => d.MaVT)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<VaiTro>(entity =>
+            {
+                entity.HasIndex(e => e.TenVaiTro).IsUnique();
+            });
+
+            modelBuilder.Entity<Gia>(entity =>
+            {
+                entity.Property(e => e.DonGiaNhap).HasColumnType("decimal(18,2)");
+                entity.HasOne(d => d.SanPham)
+                    .WithMany(p => p.GiaNhaps)
+                    .HasForeignKey(d => d.MaSP)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<NCC_SanPham>(entity =>
+            {
+                entity.HasKey(e => new { e.MaNCC, e.MaSP });
+                entity.Property(e => e.GiaNhap).HasColumnType("decimal(18,2)");
+
+                entity.HasOne(d => d.NhaCungCap)
+                    .WithMany(p => p.NCC_SanPhams)
+                    .HasForeignKey(d => d.MaNCC)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.SanPham)
+                    .WithMany(p => p.NCC_SanPhams)
+                    .HasForeignKey(d => d.MaSP)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -86,12 +132,18 @@ namespace IMS.Web.Data
                     .WithMany(p => p.PhieuNhaps)
                     .HasForeignKey(d => d.MaNV)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.NhanVienDuyet)
+                    .WithMany()
+                    .HasForeignKey(d => d.MaNV_Duyet)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<ChiTietPhieuNhap>(entity =>
             {
                 entity.Property(e => e.DonGia).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.ThanhTien).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.TrongLuong).HasColumnType("decimal(10,3)");
 
                 entity.HasOne(d => d.PhieuNhap)
                     .WithMany(p => p.ChiTietPhieuNhaps)
@@ -118,12 +170,18 @@ namespace IMS.Web.Data
                     .WithMany(p => p.PhieuXuats)
                     .HasForeignKey(d => d.MaNV)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.NhanVienDuyet)
+                    .WithMany()
+                    .HasForeignKey(d => d.MaNV_Duyet)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<ChiTietPhieuXuat>(entity =>
             {
                 entity.Property(e => e.DonGia).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.ThanhTien).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.TrongLuong).HasColumnType("decimal(10,3)");
 
                 entity.HasOne(d => d.PhieuXuat)
                     .WithMany(p => p.ChiTietPhieuXuats)
@@ -139,6 +197,7 @@ namespace IMS.Web.Data
             modelBuilder.Entity<TonKho>(entity =>
             {
                 entity.HasIndex(e => new { e.MaSP, e.MaKho }).IsUnique();
+                entity.Property(e => e.TrongLuongTon).HasColumnType("decimal(12,3)");
 
                 entity.HasOne(d => d.SanPham)
                     .WithMany(p => p.TonKhos)
@@ -148,6 +207,14 @@ namespace IMS.Web.Data
                 entity.HasOne(d => d.Kho)
                     .WithMany(p => p.TonKhos)
                     .HasForeignKey(d => d.MaKho)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<LichSuHoatDong>(entity =>
+            {
+                entity.HasOne(d => d.NhanVien)
+                    .WithMany(p => p.LichSuHoatDongs)
+                    .HasForeignKey(d => d.MaNV)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 

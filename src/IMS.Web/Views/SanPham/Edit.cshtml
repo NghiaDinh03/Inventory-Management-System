@@ -4,7 +4,7 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-10">
+    <div class="col-xl-8 col-lg-10">
         <div class="card-custom">
             <div class="card-title-custom">
                 <span><i class="fa-solid fa-pen-to-square text-primary me-2"></i>Chỉnh sửa thông tin sản phẩm</span>
@@ -42,19 +42,25 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label class="form-label-custom" asp-for="DonVi">Đơn vị tính <span class="text-danger">*</span></label>
                         <input type="text" asp-for="DonVi" class="form-control-custom w-100" required />
                         <span asp-validation-for="DonVi" class="text-danger text-sm"></span>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label-custom" asp-for="TrongLuong">Trọng lượng (kg) <span class="text-danger">*</span></label>
+                        <input type="number" asp-for="TrongLuong" class="form-control-custom w-100" min="0" step="0.001" required />
+                        <span asp-validation-for="TrongLuong" class="text-danger text-sm"></span>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
                         <label class="form-label-custom" asp-for="MaVach">Mã vạch sản phẩm</label>
                         <input type="text" asp-for="MaVach" class="form-control-custom w-100" />
                         <span asp-validation-for="MaVach" class="text-danger text-sm"></span>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label class="form-label-custom" asp-for="TonToiThieu">Hạn mức tồn tối thiểu</label>
                         <input type="number" asp-for="TonToiThieu" class="form-control-custom w-100" min="0" />
                         <span asp-validation-for="TonToiThieu" class="text-danger text-sm"></span>
@@ -97,10 +103,10 @@
 
                 <div class="d-flex justify-content-end gap-2">
                     <a href="/SanPham" class="btn-custom btn-secondary-custom">
-                        <i class="fa-solid fa-chevron-left"></i> Quay lại
+                        <i class="fa-solid fa-chevron-left"></i> Back
                     </a>
                     <button type="submit" class="btn-custom btn-primary-custom">
-                        Cập nhật <i class="fa-solid fa-floppy-disk"></i>
+                        Update <i class="fa-solid fa-floppy-disk"></i>
                     </button>
                 </div>
             </form>

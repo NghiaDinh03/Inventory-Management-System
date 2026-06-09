@@ -84,7 +84,7 @@ EXEC sp_TaoPhieuNhap
             <div class="demo-step">
                 <div class="demo-step-title">B4: Nút thực thi nghiệp vụ</div>
                 <button class="btn-custom btn-primary-custom py-2" onclick="runDemo('RUN_SP', 'GET_AFTER_SP', 'tbl-sp-after')">
-                    Thực thi sp_TaoPhieuNhap <i class="fa-solid fa-play"></i>
+                    Execute sp_TaoPhieuNhap <i class="fa-solid fa-play"></i>
                 </button>
             </div>
 
@@ -140,10 +140,10 @@ EXEC sp_DuyetPhieu @@LoaiPhieu = 'PX', @@MaPhieu = @@MaPX, @@MaNV = 1;
                 <div class="demo-step-title">B4: Nút thực thi nghiệp vụ</div>
                 <div class="d-flex gap-2">
                     <button class="btn-custom btn-primary-custom py-2" onclick="runDemo('RUN_TRIGGER_PASS', 'GET_AFTER_TRIGGER_PASS', 'tbl-trigger-after')">
-                        Duyệt xuất ĐỦ hàng (Xuất 2 sản phẩm) <i class="fa-solid fa-check-double"></i>
+                        Approve - SUFFICIENT Stock (Export 2 items) <i class="fa-solid fa-check-double"></i>
                     </button>
                     <button class="btn-custom btn-primary-custom py-2" style="background: var(--danger);" onclick="runDemoFail('RUN_TRIGGER_FAIL')">
-                        Duyệt xuất THIẾU hàng (Xuất 100 sản phẩm) <i class="fa-solid fa-triangle-exclamation"></i>
+                        Approve - INSUFFICIENT Stock (Export 100 items) <i class="fa-solid fa-triangle-exclamation"></i>
                     </button>
                 </div>
             </div>
@@ -199,7 +199,7 @@ SELECT
             <div class="demo-step">
                 <div class="demo-step-title">B4: Nút thực thi nghiệp vụ</div>
                 <button class="btn-custom btn-primary-custom py-2" onclick="runDemo('RUN_FUNCTION', 'RUN_FUNCTION', 'tbl-func-after')">
-                    Thực thi gọi các Hàm SQL <i class="fa-solid fa-calculator"></i>
+                    Execute SQL Functions <i class="fa-solid fa-calculator"></i>
                 </button>
             </div>
 
@@ -252,7 +252,7 @@ EXEC sp_CursorCanhBaoTon;
             <div class="demo-step">
                 <div class="demo-step-title">B4: Nút thực thi nghiệp vụ</div>
                 <button class="btn-custom btn-primary-custom py-2" onclick="runDemo('RUN_CURSOR', 'RUN_CURSOR', 'tbl-cursor-after')">
-                    Thực thi thủ tục chứa Cursor <i class="fa-solid fa-arrows-spin"></i>
+                    Execute Cursor Procedure <i class="fa-solid fa-arrows-spin"></i>
                 </button>
             </div>
 

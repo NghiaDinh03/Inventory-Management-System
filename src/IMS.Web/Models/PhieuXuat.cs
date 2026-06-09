@@ -28,6 +28,11 @@ namespace IMS.Web.Models
         [ForeignKey("MaNV")]
         public NhanVien? NhanVien { get; set; }
 
+        public int? MaNV_Duyet { get; set; }
+
+        [ForeignKey("MaNV_Duyet")]
+        public NhanVien? NhanVienDuyet { get; set; }
+
         [StringLength(200, ErrorMessage = "Tên người nhận không quá 200 ký tự")]
         public string? NguoiNhan { get; set; }
 

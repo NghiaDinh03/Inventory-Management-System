@@ -16,20 +16,20 @@ $(document).ready(function () {
     if ($.fn.DataTable) {
         $('.datatable-custom').DataTable({
             language: {
-                processing: "Đang xử lý...",
-                search: "Tìm kiếm:",
-                lengthMenu: "Hiển thị _MENU_ mục",
-                info: "Hiển thị từ _START_ đến _END_ trong tổng số _TOTAL_ mục",
-                infoEmpty: "Hiển thị 0 mục trong tổng số 0 mục",
-                infoFiltered: "(được lọc từ _MAX_ mục hệ thống)",
-                loadingRecords: "Đang tải dữ liệu...",
-                zeroRecords: "Không tìm thấy kết quả phù hợp",
-                emptyTable: "Không có dữ liệu trong bảng",
+                processing: "Processing...",
+                search: "Search:",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                infoEmpty: "Showing 0 to 0 of 0 entries",
+                infoFiltered: "(filtered from _MAX_ total entries)",
+                loadingRecords: "Loading...",
+                zeroRecords: "No matching records found",
+                emptyTable: "No data available in table",
                 paginate: {
-                    first: "Đầu tiên",
-                    previous: "Trước",
-                    next: "Tiếp theo",
-                    last: "Cuối cùng"
+                    first: "First",
+                    previous: "Previous",
+                    next: "Next",
+                    last: "Last"
                 }
             },
             pageLength: 10,

@@ -11,7 +11,7 @@
 <div class="app-sidebar">
     <div class="sidebar-brand">
         <i class="fa-solid fa-boxes-stacked text-white"></i>
-        <span>IMS Antigravity</span>
+        <span>IMS Logistics</span>
     </div>
     
     <div class="sidebar-menu">
@@ -112,25 +112,39 @@
         </div>
     </div>
 
-    <div class="sidebar-footer">
-        <div class="d-flex align-items-center gap-2 mb-2 px-2 text-white">
+    <div class="sidebar-footer dropdown">
+        <div class="d-flex align-items-center gap-2 px-2 text-white dropdown-toggle" 
+             id="userProfileDropdown" 
+             data-bs-toggle="dropdown" 
+             aria-expanded="false" 
+             style="cursor: pointer; padding: 8px; border-radius: var(--radius-sm); transition: background-color 0.2s ease;">
             <div class="user-avatar">
                 @(User.FindFirst(ClaimTypes.GivenName)?.Value?.Substring(0, 1).ToUpper() ?? "U")
             </div>
-            <div class="overflow-hidden">
-                <div class="text-truncate fw-bold text-sm" style="font-size: 13px;">
+            <div class="overflow-hidden flex-grow-1">
+                <div class="text-truncate fw-bold text-sm" style="font-size: 13px; max-width: 130px;">
                     @User.FindFirst(ClaimTypes.GivenName)?.Value
                 </div>
                 <div class="text-truncate text-muted" style="font-size: 11px;">
                     @(User.IsInRole("Admin") ? "Quản trị viên" : "Thủ kho")
                 </div>
             </div>
+            <i class="fa-solid fa-ellipsis-vertical ms-auto text-muted" style="font-size: 14px;"></i>
         </div>
-        <a href="/TaiKhoan/DoiMatKhau" class="menu-item py-2">
-            <i class="fa-solid fa-key"></i> Đổi mật khẩu
-        </a>
-        <a href="/TaiKhoan/Logout" class="menu-item py-2 text-danger">
-            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-        </a>
+        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-start shadow w-100 border-0" 
+            aria-labelledby="userProfileDropdown" 
+            style="background-color: #1e293b; font-size: 13px; border-radius: var(--radius-sm); margin-bottom: 8px;">
+            <li>
+                <a class="dropdown-item py-2" href="/TaiKhoan/DoiMatKhau">
+                    <i class="fa-solid fa-key me-2 text-muted"></i> Đổi mật khẩu
+                </a>
+            </li>
+            <li><hr class="dropdown-divider" style="border-color: rgba(255,255,255,0.1);"></li>
+            <li>
+                <a class="dropdown-item py-2 text-danger" href="/TaiKhoan/Logout">
+                    <i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất
+                </a>
+            </li>
+        </ul>
     </div>
 </div>

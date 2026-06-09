@@ -34,6 +34,11 @@ namespace IMS.Web.Models
         [ForeignKey("MaNV")]
         public NhanVien? NhanVien { get; set; }
 
+        public int? MaNV_Duyet { get; set; }
+
+        [ForeignKey("MaNV_Duyet")]
+        public NhanVien? NhanVienDuyet { get; set; }
+
         [Required]
         [StringLength(20)]
         public string TrangThai { get; set; } = "Nháp";

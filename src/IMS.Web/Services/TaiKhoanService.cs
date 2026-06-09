@@ -22,6 +22,7 @@ namespace IMS.Web.Services
             
             return await _context.TaiKhoans
                 .Include(t => t.NhanVien)
+                .Include(t => t.VaiTro)
                 .FirstOrDefaultAsync(t => t.TenDangNhap == username 
                                        && t.MatKhau == passwordHash 
                                        && t.TrangThai == true);

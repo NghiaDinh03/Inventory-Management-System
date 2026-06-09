@@ -49,7 +49,7 @@ namespace IMS.Web.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, taiKhoan.TenDangNhap),
-                new Claim(ClaimTypes.Role, taiKhoan.VaiTro),
+                new Claim(ClaimTypes.Role, taiKhoan.VaiTro?.TenVaiTro ?? "NVKho"),
                 new Claim(ClaimTypes.GivenName, taiKhoan.NhanVien?.HoTen ?? taiKhoan.TenDangNhap),
                 new Claim(ClaimTypes.NameIdentifier, taiKhoan.MaTK.ToString()),
                 new Claim("MaNV", taiKhoan.MaNV.ToString())
@@ -70,7 +70,7 @@ namespace IMS.Web.Controllers
 
             // Store user info in Session
             HttpContext.Session.SetString("TenNV", taiKhoan.NhanVien?.HoTen ?? taiKhoan.TenDangNhap);
-            HttpContext.Session.SetString("VaiTro", taiKhoan.VaiTro);
+            HttpContext.Session.SetString("VaiTro", taiKhoan.VaiTro?.TenVaiTro ?? "NVKho");
             HttpContext.Session.SetInt32("MaNV", taiKhoan.MaNV);
 
             return RedirectToAction("Index", "Home");

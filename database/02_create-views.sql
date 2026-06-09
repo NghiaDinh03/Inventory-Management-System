@@ -18,16 +18,17 @@ SELECT
     sp.TenSP,
     sp.DonVi,
     sp.MaVach,
-    dm.TenDanhMuc,
+    dm.TenDanhMucSP AS TenDanhMuc,
     k.MaKho,
     k.TenKho,
-    tk.SoLuong,
+    tk.SoLuongTon AS SoLuong,
+    tk.TrongLuongTon,
     sp.TonToiThieu,
     sp.GiaNhap,
-    CAST(tk.SoLuong * sp.GiaNhap AS DECIMAL(18,2)) AS GiaTri
+    CAST(tk.SoLuongTon * sp.GiaNhap AS DECIMAL(18,2)) AS GiaTri
 FROM TonKho tk
     INNER JOIN SanPham sp ON tk.MaSP = sp.MaSP
-    INNER JOIN DanhMuc dm ON sp.MaDanhMuc = dm.MaDanhMuc
+    INNER JOIN DanhMucSanPham dm ON sp.MaDanhMucSP = dm.MaDanhMucSP
     INNER JOIN Kho k ON tk.MaKho = k.MaKho
 WHERE sp.TrangThai = 1;
 GO
@@ -38,16 +39,16 @@ SELECT
     sp.MaSP,
     sp.TenSP,
     sp.DonVi,
-    dm.TenDanhMuc,
+    dm.TenDanhMucSP AS TenDanhMuc,
     k.TenKho,
-    tk.SoLuong,
+    tk.SoLuongTon AS SoLuong,
     sp.TonToiThieu,
-    (sp.TonToiThieu - tk.SoLuong) AS CanNhapThem
+    (sp.TonToiThieu - tk.SoLuongTon) AS CanNhapThem
 FROM TonKho tk
     INNER JOIN SanPham sp ON tk.MaSP = sp.MaSP
-    INNER JOIN DanhMuc dm ON sp.MaDanhMuc = dm.MaDanhMuc
+    INNER JOIN DanhMucSanPham dm ON sp.MaDanhMucSP = dm.MaDanhMucSP
     INNER JOIN Kho k ON tk.MaKho = k.MaKho
-WHERE tk.SoLuong < sp.TonToiThieu
+WHERE tk.SoLuongTon < sp.TonToiThieu
     AND sp.TrangThai = 1;
 GO
 
@@ -95,17 +96,20 @@ SELECT
     ncc.TenNCC,
     k.TenKho,
     nv.HoTen AS NguoiLap,
+    nvd.HoTen AS NguoiDuyet,
     ct.MaCTPN,
     sp.MaSP,
     sp.TenSP,
     sp.DonVi,
     ct.SoLuong,
+    ct.TrongLuong,
     ct.DonGia,
     ct.ThanhTien
 FROM PhieuNhap pn
     INNER JOIN NhaCungCap ncc ON pn.MaNCC = ncc.MaNCC
     INNER JOIN Kho k ON pn.MaKho = k.MaKho
     INNER JOIN NhanVien nv ON pn.MaNV = nv.MaNV
+    LEFT JOIN NhanVien nvd ON pn.MaNV_Duyet = nvd.MaNV
     LEFT JOIN CT_PhieuNhap ct ON pn.MaPN = ct.MaPN
     LEFT JOIN SanPham sp ON ct.MaSP = sp.MaSP;
 GO
@@ -123,16 +127,19 @@ SELECT
     px.NguoiNhan,
     k.TenKho,
     nv.HoTen AS NguoiLap,
+    nvd.HoTen AS NguoiDuyet,
     ct.MaCTPX,
     sp.MaSP,
     sp.TenSP,
     sp.DonVi,
     ct.SoLuong,
+    ct.TrongLuong,
     ct.DonGia,
     ct.ThanhTien
 FROM PhieuXuat px
     INNER JOIN Kho k ON px.MaKho = k.MaKho
     INNER JOIN NhanVien nv ON px.MaNV = nv.MaNV
+    LEFT JOIN NhanVien nvd ON px.MaNV_Duyet = nvd.MaNV
     LEFT JOIN CT_PhieuXuat ct ON px.MaPX = ct.MaPX
     LEFT JOIN SanPham sp ON ct.MaSP = sp.MaSP;
 GO
@@ -157,15 +164,15 @@ SELECT TOP 10
     sp.MaSP,
     sp.TenSP,
     sp.DonVi,
-    dm.TenDanhMuc,
+    dm.TenDanhMucSP AS TenDanhMuc,
     SUM(ct.SoLuong) AS TongSoLuongXuat,
     SUM(ct.ThanhTien) AS TongGiaTriXuat
 FROM CT_PhieuXuat ct
     INNER JOIN PhieuXuat px ON ct.MaPX = px.MaPX
     INNER JOIN SanPham sp ON ct.MaSP = sp.MaSP
-    INNER JOIN DanhMuc dm ON sp.MaDanhMuc = dm.MaDanhMuc
+    INNER JOIN DanhMucSanPham dm ON sp.MaDanhMucSP = dm.MaDanhMucSP
 WHERE px.TrangThai = N'ĐãDuyệt'
-GROUP BY sp.MaSP, sp.TenSP, sp.DonVi, dm.TenDanhMuc
+GROUP BY sp.MaSP, sp.TenSP, sp.DonVi, dm.TenDanhMucSP
 ORDER BY TongSoLuongXuat DESC;
 GO
 
@@ -204,7 +211,7 @@ SELECT
     (SELECT COUNT(*) FROM SanPham WHERE TrangThai = 1) AS TongSanPham,
     (SELECT COUNT(*) FROM NhaCungCap WHERE TrangThai = 1) AS TongNCC,
     (SELECT COUNT(*) FROM Kho WHERE TrangThai = 1) AS TongKho,
-    (SELECT ISNULL(SUM(CAST(SoLuong * sp.GiaNhap AS DECIMAL(18,2))), 0)
+    (SELECT ISNULL(SUM(CAST(SoLuongTon * sp.GiaNhap AS DECIMAL(18,2))), 0)
      FROM TonKho tk INNER JOIN SanPham sp ON tk.MaSP = sp.MaSP) AS TongGiaTriTon,
     (SELECT COUNT(*) FROM v_SanPhamDuoiTonToiThieu) AS SoSPCanhBao,
     (SELECT COUNT(*) FROM PhieuNhap WHERE TrangThai = N'Nháp') AS PhieuNhapChuaDuyet,

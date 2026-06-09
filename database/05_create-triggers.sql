@@ -10,91 +10,39 @@ SET NUMERIC_ROUNDABORT OFF;
 SET QUOTED_IDENTIFIER ON;
 GO
 
--- 1. Trigger: Update stock level after import
-CREATE OR ALTER TRIGGER trg_CapNhatTonKho_SauNhap
+-- 1. Trigger: Tự động tính trọng lượng chi tiết phiếu nhập khi thêm/sửa
+CREATE OR ALTER TRIGGER trg_CTPhieuNhap_TinhTrongLuong
 ON CT_PhieuNhap
-AFTER INSERT
+AFTER INSERT, UPDATE
 AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- Only update if order is approved
-    UPDATE tk
-    SET tk.SoLuong = tk.SoLuong + i.SoLuong
-    FROM TonKho tk
-    JOIN inserted i ON tk.MaSP = i.MaSP
-    JOIN PhieuNhap pn ON i.MaPN = pn.MaPN
-    WHERE pn.TrangThai = N'ĐãDuyệt' AND tk.MaKho = pn.MaKho;
-
-    -- Insert new TonKho if it does not exist
-    INSERT INTO TonKho (MaSP, MaKho, SoLuong)
-    SELECT i.MaSP, pn.MaKho, i.SoLuong
-    FROM inserted i
-    JOIN PhieuNhap pn ON i.MaPN = pn.MaPN
-    WHERE pn.TrangThai = N'ĐãDuyệt'
-      AND NOT EXISTS (
-          SELECT 1 FROM TonKho tk WHERE tk.MaSP = i.MaSP AND tk.MaKho = pn.MaKho
-      );
+    UPDATE ct
+    SET ct.TrongLuong = ct.SoLuong * sp.TrongLuong
+    FROM CT_PhieuNhap ct
+    INNER JOIN inserted i ON ct.MaCTPN = i.MaCTPN
+    INNER JOIN SanPham sp ON ct.MaSP = sp.MaSP;
 END;
 GO
 
--- 2. Trigger: Validate and update stock after export
-CREATE OR ALTER TRIGGER trg_XuatKho_KiemTraVaCapNhat
+-- 2. Trigger: Tự động tính trọng lượng chi tiết phiếu xuất khi thêm/sửa
+CREATE OR ALTER TRIGGER trg_CTPhieuXuat_TinhTrongLuong
 ON CT_PhieuXuat
-INSTEAD OF INSERT
+AFTER INSERT, UPDATE
 AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- 1. Draft status: insert normally
-    INSERT INTO CT_PhieuXuat (MaPX, MaSP, SoLuong, DonGia)
-    SELECT i.MaPX, i.MaSP, i.SoLuong, i.DonGia
-    FROM inserted i
-    JOIN PhieuXuat px ON i.MaPX = px.MaPX
-    WHERE px.TrangThai != N'ĐãDuyệt';
-    
-    -- 2. Approved status: validate and update stock
-    IF EXISTS (
-        SELECT 1 
-        FROM inserted i
-        JOIN PhieuXuat px ON i.MaPX = px.MaPX
-        WHERE px.TrangThai = N'ĐãDuyệt'
-    )
-    BEGIN
-        -- Check for insufficient stock
-        IF EXISTS (
-            SELECT 1
-            FROM inserted i
-            JOIN PhieuXuat px ON i.MaPX = px.MaPX
-            LEFT JOIN TonKho tk ON i.MaSP = tk.MaSP AND px.MaKho = tk.MaKho
-            WHERE px.TrangThai = N'ĐãDuyệt'
-              AND (tk.SoLuong IS NULL OR tk.SoLuong < i.SoLuong)
-        )
-        BEGIN
-            RAISERROR (N'Không đủ hàng tồn kho để xuất.', 16, 1);
-            ROLLBACK TRANSACTION;
-            RETURN;
-        END;
-        
-        -- Deduct stock level
-        UPDATE tk
-        SET tk.SoLuong = tk.SoLuong - i.SoLuong
-        FROM TonKho tk
-        JOIN inserted i ON tk.MaSP = i.MaSP
-        JOIN PhieuXuat px ON i.MaPX = px.MaPX
-        WHERE px.TrangThai = N'ĐãDuyệt' AND tk.MaKho = px.MaKho;
-        
-        -- Insert details into CT_PhieuXuat
-        INSERT INTO CT_PhieuXuat (MaPX, MaSP, SoLuong, DonGia)
-        SELECT i.MaPX, i.MaSP, i.SoLuong, i.DonGia
-        FROM inserted i
-        JOIN PhieuXuat px ON i.MaPX = px.MaPX
-        WHERE px.TrangThai = N'ĐãDuyệt';
-    END;
+    UPDATE ct
+    SET ct.TrongLuong = ct.SoLuong * sp.TrongLuong
+    FROM CT_PhieuXuat ct
+    INNER JOIN inserted i ON ct.MaCTPX = i.MaCTPX
+    INNER JOIN SanPham sp ON ct.MaSP = sp.MaSP;
 END;
 GO
 
--- 3. Trigger: Auto calculate total amount for Purchase Order
+-- 3. Trigger: Tính tổng tiền phiếu nhập
 CREATE OR ALTER TRIGGER trg_CapNhatTongTien_PN
 ON CT_PhieuNhap
 AFTER INSERT, UPDATE, DELETE
@@ -111,7 +59,7 @@ BEGIN
 END;
 GO
 
--- 4. Trigger: Auto calculate total amount for Goods Issue
+-- 4. Trigger: Tính tổng tiền phiếu xuất
 CREATE OR ALTER TRIGGER trg_CapNhatTongTien_PX
 ON CT_PhieuXuat
 AFTER INSERT, UPDATE, DELETE
@@ -128,7 +76,7 @@ BEGIN
 END;
 GO
 
--- 5. Trigger: Auto generate purchase order code
+-- 5. Trigger: Tự động sinh số phiếu nhập
 CREATE OR ALTER TRIGGER trg_TaoSoPhieu_PN
 ON PhieuNhap
 AFTER INSERT
@@ -150,7 +98,7 @@ BEGIN
 END;
 GO
 
--- 6. Trigger: Auto generate goods issue code
+-- 6. Trigger: Tự động sinh số phiếu xuất
 CREATE OR ALTER TRIGGER trg_TaoSoPhieu_PX
 ON PhieuXuat
 AFTER INSERT
@@ -172,7 +120,7 @@ BEGIN
 END;
 GO
 
--- 7. Trigger: Prevent deleting products with existing transactions
+-- 7. Trigger: Chặn xóa sản phẩm khi đã phát sinh chứng từ
 CREATE OR ALTER TRIGGER trg_ChanXoaSP_DaCoPhieu
 ON SanPham
 INSTEAD OF DELETE
@@ -192,15 +140,17 @@ BEGIN
         RETURN;
     END;
     
-    -- Delete related Stock records first
+    -- Xóa liên kết tồn kho và liên kết NCC trước
     DELETE FROM TonKho WHERE MaSP IN (SELECT MaSP FROM deleted);
+    DELETE FROM NCC_SanPham WHERE MaSP IN (SELECT MaSP FROM deleted);
+    DELETE FROM Gia WHERE MaSP IN (SELECT MaSP FROM deleted);
     
-    -- Delete product
+    -- Xóa sản phẩm
     DELETE FROM SanPham WHERE MaSP IN (SELECT MaSP FROM deleted);
 END;
 GO
 
--- 8. Trigger: Update stock on purchase order approval/cancellation
+-- 8. Trigger: Cập nhật Số lượng tồn, Trọng lượng tồn và Giá nhập lịch sử khi duyệt/hủy phiếu nhập
 CREATE OR ALTER TRIGGER trg_PhieuNhap_CapNhatTonKho
 ON PhieuNhap
 AFTER UPDATE
@@ -208,49 +158,60 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- Case 1: Approve order (Draft -> Approved)
+    -- Trường hợp 1: Duyệt phiếu nhập (Nháp -> ĐãDuyệt)
     IF EXISTS (
         SELECT 1 FROM inserted i JOIN deleted d ON i.MaPN = d.MaPN
         WHERE i.TrangThai = N'ĐãDuyệt' AND d.TrangThai = N'Nháp'
     )
     BEGIN
-        -- Add to stock
+        -- Cập nhật tồn kho hiện có
         UPDATE tk
-        SET tk.SoLuong = tk.SoLuong + ct.SoLuong
+        SET tk.SoLuongTon = tk.SoLuongTon + ct.SoLuong,
+            tk.TrongLuongTon = tk.TrongLuongTon + (ct.SoLuong * sp.TrongLuong)
         FROM TonKho tk
-        JOIN CT_PhieuNhap ct ON tk.MaSP = ct.MaSP
-        JOIN inserted i ON ct.MaPN = i.MaPN
-        JOIN deleted d ON i.MaPN = d.MaPN
+        INNER JOIN CT_PhieuNhap ct ON tk.MaSP = ct.MaSP
+        INNER JOIN SanPham sp ON ct.MaSP = sp.MaSP
+        INNER JOIN inserted i ON ct.MaPN = i.MaPN
+        INNER JOIN deleted d ON i.MaPN = d.MaPN
         WHERE i.TrangThai = N'ĐãDuyệt' AND d.TrangThai = N'Nháp' AND tk.MaKho = i.MaKho;
         
-        -- Insert if stock record not exists
-        INSERT INTO TonKho (MaSP, MaKho, SoLuong)
-        SELECT ct.MaSP, i.MaKho, ct.SoLuong
+        -- Tạo mới bản ghi tồn kho nếu sản phẩm chưa từng tồn tại ở kho này
+        INSERT INTO TonKho (MaSP, MaKho, SoLuongTon, TrongLuongTon)
+        SELECT ct.MaSP, i.MaKho, ct.SoLuong, (ct.SoLuong * sp.TrongLuong)
         FROM CT_PhieuNhap ct
-        JOIN inserted i ON ct.MaPN = i.MaPN
-        JOIN deleted d ON i.MaPN = d.MaPN
+        INNER JOIN SanPham sp ON ct.MaSP = sp.MaSP
+        INNER JOIN inserted i ON ct.MaPN = i.MaPN
+        INNER JOIN deleted d ON i.MaPN = d.MaPN
         WHERE i.TrangThai = N'ĐãDuyệt' AND d.TrangThai = N'Nháp'
           AND NOT EXISTS (
               SELECT 1 FROM TonKho tk 
               WHERE tk.MaSP = ct.MaSP AND tk.MaKho = i.MaKho
           );
+
+        -- Tự động chèn lịch sử giá nhập mới vào bảng Gia
+        INSERT INTO Gia (MaSP, NgayLap, DonGiaNhap)
+        SELECT ct.MaSP, GETDATE(), ct.DonGia
+        FROM CT_PhieuNhap ct
+        INNER JOIN inserted i ON ct.MaPN = i.MaPN
+        INNER JOIN deleted d ON i.MaPN = d.MaPN
+        WHERE i.TrangThai = N'ĐãDuyệt' AND d.TrangThai = N'Nháp';
     END;
     
-    -- Case 2: Cancel order (Approved -> Cancelled)
+    -- Trường hợp 2: Hủy phiếu nhập đã duyệt (ĐãDuyệt -> ĐãHủy)
     IF EXISTS (
         SELECT 1 FROM inserted i JOIN deleted d ON i.MaPN = d.MaPN
         WHERE i.TrangThai = N'ĐãHủy' AND d.TrangThai = N'ĐãDuyệt'
     )
     BEGIN
-        -- Validate if stock would go negative
+        -- Kiểm tra xem nếu hủy thì tồn kho có bị âm không
         IF EXISTS (
             SELECT 1 
             FROM CT_PhieuNhap ct
-            JOIN inserted i ON ct.MaPN = i.MaPN
-            JOIN deleted d ON i.MaPN = d.MaPN
-            JOIN TonKho tk ON ct.MaSP = tk.MaSP AND tk.MaKho = i.MaKho
+            INNER JOIN inserted i ON ct.MaPN = i.MaPN
+            INNER JOIN deleted d ON i.MaPN = d.MaPN
+            INNER JOIN TonKho tk ON ct.MaSP = tk.MaSP AND tk.MaKho = i.MaKho
             WHERE i.TrangThai = N'ĐãHủy' AND d.TrangThai = N'ĐãDuyệt'
-              AND (tk.SoLuong - ct.SoLuong) < 0
+              AND (tk.SoLuongTon - ct.SoLuong) < 0
         )
         BEGIN
             RAISERROR (N'Không thể hủy phiếu nhập vì số lượng tồn kho sẽ bị âm.', 16, 1);
@@ -258,19 +219,21 @@ BEGIN
             RETURN;
         END;
         
-        -- Deduct stock
+        -- Trừ tồn kho
         UPDATE tk
-        SET tk.SoLuong = tk.SoLuong - ct.SoLuong
+        SET tk.SoLuongTon = tk.SoLuongTon - ct.SoLuong,
+            tk.TrongLuongTon = tk.TrongLuongTon - (ct.SoLuong * sp.TrongLuong)
         FROM TonKho tk
-        JOIN CT_PhieuNhap ct ON tk.MaSP = ct.MaSP
-        JOIN inserted i ON ct.MaPN = i.MaPN
-        JOIN deleted d ON i.MaPN = d.MaPN
+        INNER JOIN CT_PhieuNhap ct ON tk.MaSP = ct.MaSP
+        INNER JOIN SanPham sp ON ct.MaSP = sp.MaSP
+        INNER JOIN inserted i ON ct.MaPN = i.MaPN
+        INNER JOIN deleted d ON i.MaPN = d.MaPN
         WHERE i.TrangThai = N'ĐãHủy' AND d.TrangThai = N'ĐãDuyệt' AND tk.MaKho = i.MaKho;
     END;
 END;
 GO
 
--- 9. Trigger: Update stock on goods issue approval/cancellation
+-- 9. Trigger: Cập nhật Số lượng tồn, Trọng lượng tồn khi duyệt/hủy phiếu xuất
 CREATE OR ALTER TRIGGER trg_PhieuXuat_CapNhatTonKho
 ON PhieuXuat
 AFTER UPDATE
@@ -278,21 +241,21 @@ AS
 BEGIN
     SET NOCOUNT ON;
     
-    -- Case 1: Approve issue (Draft -> Approved)
+    -- Trường hợp 1: Duyệt phiếu xuất (Nháp -> ĐãDuyệt)
     IF EXISTS (
         SELECT 1 FROM inserted i JOIN deleted d ON i.MaPX = d.MaPX
         WHERE i.TrangThai = N'ĐãDuyệt' AND d.TrangThai = N'Nháp'
     )
     BEGIN
-        -- Check stock level
+        -- Kiểm tra xem đủ tồn kho để xuất không
         IF EXISTS (
             SELECT 1 
             FROM CT_PhieuXuat ct
-            JOIN inserted i ON ct.MaPX = i.MaPX
-            JOIN deleted d ON i.MaPX = d.MaPX
+            INNER JOIN inserted i ON ct.MaPX = i.MaPX
+            INNER JOIN deleted d ON i.MaPX = d.MaPX
             LEFT JOIN TonKho tk ON ct.MaSP = tk.MaSP AND tk.MaKho = i.MaKho
             WHERE i.TrangThai = N'ĐãDuyệt' AND d.TrangThai = N'Nháp'
-              AND (tk.SoLuong IS NULL OR tk.SoLuong < ct.SoLuong)
+              AND (tk.SoLuongTon IS NULL OR tk.SoLuongTon < ct.SoLuong)
         )
         BEGIN
             RAISERROR (N'Không đủ hàng tồn kho để xuất.', 16, 1);
@@ -300,37 +263,42 @@ BEGIN
             RETURN;
         END;
         
-        -- Deduct stock
+        -- Trừ tồn kho
         UPDATE tk
-        SET tk.SoLuong = tk.SoLuong - ct.SoLuong
+        SET tk.SoLuongTon = tk.SoLuongTon - ct.SoLuong,
+            tk.TrongLuongTon = tk.TrongLuongTon - (ct.SoLuong * sp.TrongLuong)
         FROM TonKho tk
-        JOIN CT_PhieuXuat ct ON tk.MaSP = ct.MaSP
-        JOIN inserted i ON ct.MaPX = i.MaPX
-        JOIN deleted d ON i.MaPX = d.MaPX
+        INNER JOIN CT_PhieuXuat ct ON tk.MaSP = ct.MaSP
+        INNER JOIN SanPham sp ON ct.MaSP = sp.MaSP
+        INNER JOIN inserted i ON ct.MaPX = i.MaPX
+        INNER JOIN deleted d ON i.MaPX = d.MaPX
         WHERE i.TrangThai = N'ĐãDuyệt' AND d.TrangThai = N'Nháp' AND tk.MaKho = i.MaKho;
     END;
     
-    -- Case 2: Cancel issue (Approved -> Cancelled)
+    -- Trường hợp 2: Hủy phiếu xuất đã duyệt (ĐãDuyệt -> ĐãHủy)
     IF EXISTS (
         SELECT 1 FROM inserted i JOIN deleted d ON i.MaPX = d.MaPX
         WHERE i.TrangThai = N'ĐãHủy' AND d.TrangThai = N'ĐãDuyệt'
     )
     BEGIN
-        -- Revert stock level
+        -- Cộng lại tồn kho
         UPDATE tk
-        SET tk.SoLuong = tk.SoLuong + ct.SoLuong
+        SET tk.SoLuongTon = tk.SoLuongTon + ct.SoLuong,
+            tk.TrongLuongTon = tk.TrongLuongTon + (ct.SoLuong * sp.TrongLuong)
         FROM TonKho tk
-        JOIN CT_PhieuXuat ct ON tk.MaSP = ct.MaSP
-        JOIN inserted i ON ct.MaPX = i.MaPX
-        JOIN deleted d ON i.MaPX = d.MaPX
+        INNER JOIN CT_PhieuXuat ct ON tk.MaSP = ct.MaSP
+        INNER JOIN SanPham sp ON ct.MaSP = sp.MaSP
+        INNER JOIN inserted i ON ct.MaPX = i.MaPX
+        INNER JOIN deleted d ON i.MaPX = d.MaPX
         WHERE i.TrangThai = N'ĐãHủy' AND d.TrangThai = N'ĐãDuyệt' AND tk.MaKho = i.MaKho;
         
-        -- Insert new stock if not exists
-        INSERT INTO TonKho (MaSP, MaKho, SoLuong)
-        SELECT ct.MaSP, i.MaKho, ct.SoLuong
+        -- Thêm tồn kho mới nếu trước đó đã bị xóa (hiếm gặp nhưng vẫn phòng ngừa)
+        INSERT INTO TonKho (MaSP, MaKho, SoLuongTon, TrongLuongTon)
+        SELECT ct.MaSP, i.MaKho, ct.SoLuong, (ct.SoLuong * sp.TrongLuong)
         FROM CT_PhieuXuat ct
-        JOIN inserted i ON ct.MaPX = i.MaPX
-        JOIN deleted d ON i.MaPX = d.MaPX
+        INNER JOIN SanPham sp ON ct.MaSP = sp.MaSP
+        INNER JOIN inserted i ON ct.MaPX = i.MaPX
+        INNER JOIN deleted d ON i.MaPX = d.MaPX
         WHERE i.TrangThai = N'ĐãHủy' AND d.TrangThai = N'ĐãDuyệt'
           AND NOT EXISTS (
               SELECT 1 FROM TonKho tk 

@@ -7,7 +7,7 @@
     <div class="card-title-custom">
         <span><i class="fa-solid fa-map-location-dot text-primary me-2"></i>Danh sách kho hàng</span>
         <a href="/Kho/Create" class="btn-custom btn-primary-custom py-2">
-            Thêm mới <i class="fa-solid fa-plus"></i>
+            Add New <i class="fa-solid fa-plus"></i>
         </a>
     </div>
 
@@ -52,10 +52,10 @@
                         </td>
                         <td style="text-align: center;">
                             <div class="d-flex justify-content-center gap-2">
-                                <a href="/Kho/Edit/@item.MaKho" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                <a href="/Kho/Edit/@item.MaKho" class="btn btn-sm btn-outline-primary" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa" onclick="confirmDelete(@item.MaKho, '@item.TenKho')">
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="confirmDelete(@item.MaKho, '@item.TenKho')">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>

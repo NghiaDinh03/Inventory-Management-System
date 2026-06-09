@@ -17,7 +17,7 @@
         </div>
         <div class="col-md-3">
             <a href="/TonKho" class="btn-custom btn-secondary-custom w-100 py-2 justify-content-center">
-                <i class="fa-solid fa-sync"></i> Thiết lập lại
+                <i class="fa-solid fa-sync"></i> Reset
             </a>
         </div>
     </form>
@@ -40,6 +40,7 @@
                     <th>Đơn vị</th>
                     <th>Kho hàng</th>
                     <th style="text-align: center;">Số lượng tồn</th>
+                    <th style="text-align: center;">Trọng lượng tồn</th>
                     <th style="text-align: right;">Giá trị tồn</th>
                     <th>Mức tối thiểu</th>
                     <th style="text-align: center;">Cảnh báo</th>
@@ -63,6 +64,9 @@
                         <td class="fw-bold text-secondary">@item.TenKho</td>
                         <td style="text-align: center;" class="fw-bold @(canNhap ? "text-danger" : "text-dark")">
                             @item.SoLuong.ToString("N0")
+                        </td>
+                        <td style="text-align: center;" class="fw-bold text-secondary">
+                            @item.TrongLuongTon.ToString("N3") kg
                         </td>
                         <td class="text-end fw-bold text-success">@item.GiaTri.ToString("N0") đ</td>
                         <td style="text-align: center;"><span class="badge bg-secondary">@item.TonToiThieu</span></td>

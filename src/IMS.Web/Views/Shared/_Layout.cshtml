@@ -24,13 +24,15 @@
 
             <!-- Content Area -->
             <div class="app-content">
-                <!-- Top Navbar -->
-                @await Html.PartialAsync("_Navbar")
+                <div class="content-container d-flex flex-column flex-grow-1">
+                    <!-- Top Navbar -->
+                    @await Html.PartialAsync("_Navbar")
 
-                <!-- Main Content -->
-                <main role="main" class="pb-3">
-                    @RenderBody()
-                </main>
+                    <!-- Main Content -->
+                    <main role="main" class="pb-3 flex-grow-1">
+                        @RenderBody()
+                    </main>
+                </div>
 
                 <!-- Footer -->
                 <footer class="app-footer">

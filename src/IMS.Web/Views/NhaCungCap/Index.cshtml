@@ -7,7 +7,7 @@
     <div class="card-title-custom">
         <span><i class="fa-solid fa-truck-field text-primary me-2"></i>Danh sách nhà cung cấp</span>
         <a href="/NhaCungCap/Create" class="btn-custom btn-primary-custom py-2">
-            Thêm mới <i class="fa-solid fa-plus"></i>
+            Add New <i class="fa-solid fa-plus"></i>
         </a>
     </div>
 
@@ -53,15 +53,15 @@
                         <td>@item.DiaChi</td>
                         <td>
                             <span class="badge-custom @(item.TrangThai ? "badge-status-duyet" : "badge-status-huy")">
-                                @(item.TrangThai ? "Đang hợp tác" : "Ngừng hợp tác")
+                                @(item.TrangThai ? "Hoạt động" : "Tạm ngưng")
                             </span>
                         </td>
                         <td style="text-align: center;">
                             <div class="d-flex justify-content-center gap-2">
-                                <a href="/NhaCungCap/Edit/@item.MaNCC" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                <a href="/NhaCungCap/Edit/@item.MaNCC" class="btn btn-sm btn-outline-primary" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa" onclick="confirmDelete(@item.MaNCC, '@item.TenNCC')">
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="confirmDelete(@item.MaNCC, '@item.TenNCC')">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>

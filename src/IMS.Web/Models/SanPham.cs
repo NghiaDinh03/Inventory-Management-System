@@ -14,6 +14,7 @@ namespace IMS.Web.Models
         public string TenSP { get; set; } = null!;
 
         [Required(ErrorMessage = "Vui lòng chọn danh mục")]
+        [Column("MaDanhMucSP")]
         public int MaDanhMuc { get; set; }
         
         [ForeignKey("MaDanhMuc")]
@@ -25,6 +26,10 @@ namespace IMS.Web.Models
 
         [StringLength(50, ErrorMessage = "Mã vạch không quá 50 ký tự")]
         public string? MaVach { get; set; }
+
+        [Required(ErrorMessage = "Trọng lượng không được để trống")]
+        [Range(0, double.MaxValue, ErrorMessage = "Trọng lượng phải lớn hơn hoặc bằng 0")]
+        public decimal TrongLuong { get; set; } = 0;
 
         [Required(ErrorMessage = "Giá nhập không được để trống")]
         [Range(0, double.MaxValue, ErrorMessage = "Giá nhập phải lớn hơn hoặc bằng 0")]
@@ -50,5 +55,7 @@ namespace IMS.Web.Models
         public ICollection<ChiTietPhieuNhap>? ChiTietPhieuNhaps { get; set; }
         public ICollection<ChiTietPhieuXuat>? ChiTietPhieuXuats { get; set; }
         public ICollection<TonKho>? TonKhos { get; set; }
+        public ICollection<Gia>? GiaNhaps { get; set; }
+        public ICollection<NCC_SanPham>? NCC_SanPhams { get; set; }
     }
 }

@@ -23,6 +23,11 @@ namespace IMS.Web.Models
 
         [Required(ErrorMessage = "Số lượng tồn kho không được để trống")]
         [Range(0, int.MaxValue, ErrorMessage = "Số lượng tồn kho phải lớn hơn hoặc bằng 0")]
+        [Column("SoLuongTon")]
         public int SoLuong { get; set; } = 0;
+
+        [Required(ErrorMessage = "Trọng lượng tồn kho không được để trống")]
+        [Range(0, double.MaxValue, ErrorMessage = "Trọng lượng tồn kho phải lớn hơn hoặc bằng 0")]
+        public decimal TrongLuongTon { get; set; } = 0;
     }
 }

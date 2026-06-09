@@ -118,7 +118,7 @@ BEGIN
             UPDATE PhieuNhap
             SET TrangThai = N'ĐãDuyệt', 
                 NgayDuyet = GETDATE(), 
-                MaNV = @MaNV
+                MaNV_Duyet = @MaNV
             WHERE MaPN = @MaPhieu;
         END
         ELSE IF @LoaiPhieu = 'PX'
@@ -133,7 +133,7 @@ BEGIN
             UPDATE PhieuXuat
             SET TrangThai = N'ĐãDuyệt', 
                 NgayDuyet = GETDATE(), 
-                MaNV = @MaNV
+                MaNV_Duyet = @MaNV
             WHERE MaPX = @MaPhieu;
         END
         ELSE
@@ -179,7 +179,7 @@ BEGIN
             UPDATE PhieuNhap
             SET TrangThai = N'ĐãHủy', 
                 GhiChu = CONCAT(GhiChu, N' | Lý do hủy: ', @LyDo),
-                MaNV = @MaNV
+                MaNV_Duyet = @MaNV
             WHERE MaPN = @MaPhieu;
         END
         ELSE IF @LoaiPhieu = 'PX'
@@ -200,7 +200,7 @@ BEGIN
             UPDATE PhieuXuat
             SET TrangThai = N'ĐãHủy', 
                 GhiChu = CONCAT(GhiChu, N' | Lý do hủy: ', @LyDo),
-                MaNV = @MaNV
+                MaNV_Duyet = @MaNV
             WHERE MaPX = @MaPhieu;
         END
         ELSE
@@ -234,7 +234,7 @@ BEGIN
             tk.MaSP,
             sp.TenSP,
             sp.DonVi,
-            tk.SoLuong AS TonHienTai,
+            tk.SoLuongTon AS TonHienTai,
             sp.GiaNhap
         FROM TonKho tk
         JOIN SanPham sp ON tk.MaSP = sp.MaSP

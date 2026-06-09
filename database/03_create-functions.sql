@@ -12,15 +12,15 @@ GO
 
 -- 1. Get stock quantity of a product in a warehouse
 CREATE OR ALTER FUNCTION fn_TinhTonKho (
-    @MaSP INT,
-    @MaKho INT
+     @MaSP INT,
+     @MaKho INT
 )
 RETURNS INT
 AS
 BEGIN
     DECLARE @SoLuong INT = 0;
     
-    SELECT @SoLuong = COALESCE(SoLuong, 0)
+    SELECT @SoLuong = COALESCE(SoLuongTon, 0)
     FROM TonKho
     WHERE MaSP = @MaSP AND MaKho = @MaKho;
     
@@ -37,7 +37,7 @@ AS
 BEGIN
     DECLARE @TongGiaTri DECIMAL(18,2) = 0;
     
-    SELECT @TongGiaTri = COALESCE(SUM(tk.SoLuong * sp.GiaNhap), 0)
+    SELECT @TongGiaTri = COALESCE(SUM(tk.SoLuongTon * sp.GiaNhap), 0)
     FROM TonKho tk
     JOIN SanPham sp ON tk.MaSP = sp.MaSP
     WHERE tk.MaKho = @MaKho;
@@ -83,7 +83,7 @@ RETURN (
         sp.MaSP,
         sp.TenSP,
         sp.DonVi,
-        COALESCE(tk.SoLuong, 0) AS SoLuong,
+        COALESCE(tk.SoLuongTon, 0) AS SoLuong,
         sp.GiaNhap
     FROM SanPham sp
     LEFT JOIN TonKho tk ON sp.MaSP = tk.MaSP AND tk.MaKho = @MaKho

@@ -30,5 +30,6 @@ namespace IMS.Web.Models
         public bool TrangThai { get; set; } = true;
 
         public ICollection<PhieuNhap>? PhieuNhaps { get; set; }
+        public ICollection<NCC_SanPham>? NCC_SanPhams { get; set; }
     }
 }

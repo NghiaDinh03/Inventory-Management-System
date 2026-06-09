@@ -43,7 +43,7 @@
 
         <!-- Form chọn sản phẩm thêm vào chi tiết -->
         <h5 class="font-title fw-bold text-secondary mb-3"><i class="fa-solid fa-cart-plus me-2"></i>Thêm sản phẩm nhập kho</h5>
-        <div class="row g-3 align-items-end mb-4 bg-light p-3 rounded border">
+        <div class="row g-3 align-items-end mb-4 p-4 rounded-3" style="background-color: #f8fafc; border: 1px dashed var(--primary-light);">
             <div class="col-md-5">
                 <label class="form-label-custom">Sản phẩm</label>
                 <select id="selectSP" class="form-control-custom w-100" onchange="onProductSelectChange()">
@@ -66,7 +66,7 @@
             </div>
             <div class="col-md-2">
                 <button type="button" class="btn-custom btn-primary-custom w-100 py-2 justify-content-center" onclick="addProductToGrid()">
-                    Thêm <i class="fa-solid fa-plus"></i>
+                    Add <i class="fa-solid fa-plus"></i>
                 </button>
             </div>
         </div>
@@ -104,10 +104,10 @@
 
         <div class="d-flex justify-content-end gap-2">
             <a href="/PhieuNhap" class="btn-custom btn-secondary-custom">
-                <i class="fa-solid fa-chevron-left"></i> Quay lại
+                <i class="fa-solid fa-chevron-left"></i> Back
             </a>
             <button type="submit" class="btn-custom btn-primary-custom">
-                Lập phiếu nháp <i class="fa-solid fa-floppy-disk"></i>
+                Save Draft <i class="fa-solid fa-floppy-disk"></i>
             </button>
         </div>
     </form>

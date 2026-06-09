@@ -32,6 +32,7 @@ namespace IMS.Web.Services
                 .Include(p => p.NhaCungCap)
                 .Include(p => p.Kho)
                 .Include(p => p.NhanVien)
+                .Include(p => p.NhanVienDuyet)
                 .Include(p => p.ChiTietPhieuNhaps!)
                     .ThenInclude(ct => ct.SanPham)
                 .FirstOrDefaultAsync(p => p.MaPN == id);

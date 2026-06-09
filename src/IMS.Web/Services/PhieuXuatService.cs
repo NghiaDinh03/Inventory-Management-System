@@ -30,6 +30,7 @@ namespace IMS.Web.Services
             return await _context.PhieuXuats
                 .Include(p => p.Kho)
                 .Include(p => p.NhanVien)
+                .Include(p => p.NhanVienDuyet)
                 .Include(p => p.ChiTietPhieuXuats!)
                     .ThenInclude(ct => ct.SanPham)
                 .FirstOrDefaultAsync(p => p.MaPX == id);
