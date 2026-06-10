@@ -218,5 +218,98 @@ SELECT
     (SELECT COUNT(*) FROM PhieuXuat WHERE TrangThai = N'Nháp') AS PhieuXuatChuaDuyet;
 GO
 
+
+-- 10. View actual stock level by bin and lot
+CREATE OR ALTER VIEW v_TonKhoThucTeTheoBin AS
+SELECT
+    tb.MaTonBin,
+    sp.MaSP,
+    sp.TenSP,
+    sp.DonVi,
+    sp.MaVach,
+    k.MaKho,
+    k.TenKho,
+    bl.MaBin,
+    bl.KhuVuc,
+    bl.Day,
+    bl.Ke,
+    bl.Tang,
+    bl.O,
+    lh.MaLo,
+    lh.SoLo,
+    lh.NgayHetHan,
+    tb.SoLuong,
+    tb.NgayNhapBin
+FROM TonKhoTheoBin tb
+    INNER JOIN SanPham sp ON tb.MaSP = sp.MaSP
+    INNER JOIN BinLocation bl ON tb.MaBin = bl.MaBin
+    INNER JOIN Kho k ON bl.MaKho = k.MaKho
+    INNER JOIN LoHang lh ON tb.MaLo = lh.MaLo;
+GO
+
+-- 11. View warnings for batch expiry dates (within 30 days)
+CREATE OR ALTER VIEW v_CanhBaoHanDung AS
+SELECT
+    lh.MaLo,
+    lh.SoLo,
+    sp.MaSP,
+    sp.TenSP,
+    lh.NgaySanXuat,
+    lh.NgayHetHan,
+    DATEDIFF(day, GETDATE(), lh.NgayHetHan) AS SongayConLai,
+    lh.TrangThai
+FROM LoHang lh
+    INNER JOIN SanPham sp ON lh.MaSP = sp.MaSP
+WHERE lh.NgayHetHan <= DATEADD(day, 30, GETDATE())
+  AND lh.TrangThai = N'KhảDụng';
+GO
+
+-- 12. View picking queue sorted by FEFO (First Expired First Out)
+CREATE OR ALTER VIEW v_PickingQueue AS
+SELECT
+    tb.MaBin,
+    k.TenKho,
+    bl.KhuVuc,
+    bl.Day,
+    bl.Ke,
+    bl.Tang,
+    bl.O,
+    sp.MaSP,
+    sp.TenSP,
+    lh.SoLo,
+    lh.NgayHetHan,
+    tb.SoLuong
+FROM TonKhoTheoBin tb
+    INNER JOIN SanPham sp ON tb.MaSP = sp.MaSP
+    INNER JOIN BinLocation bl ON tb.MaBin = bl.MaBin
+    INNER JOIN Kho k ON bl.MaKho = k.MaKho
+    INNER JOIN LoHang lh ON tb.MaLo = lh.MaLo
+WHERE tb.SoLuong > 0
+  AND lh.TrangThai = N'KhảDụng';
+GO
+
+-- 13. View suggested putaway capacity of bins
+CREATE OR ALTER VIEW v_GoiYPutaway AS
+SELECT
+    bl.MaBin,
+    k.TenKho,
+    bl.KhuVuc,
+    bl.Day,
+    bl.Ke,
+    bl.Tang,
+    bl.O,
+    bl.TheTichToiDa,
+    bl.TrongLuongToiDa,
+    bl.TrangThai,
+    COALESCE(SUM(tb.SoLuong * sp.TrongLuong), 0) AS TrongLuongHienTai,
+    CAST(bl.TrongLuongToiDa - COALESCE(SUM(tb.SoLuong * sp.TrongLuong), 0) AS DECIMAL(10,2)) AS TrongLuongConLai
+FROM BinLocation bl
+    INNER JOIN Kho k ON bl.MaKho = k.MaKho
+    LEFT JOIN TonKhoTheoBin tb ON bl.MaBin = tb.MaBin
+    LEFT JOIN SanPham sp ON tb.MaSP = sp.MaSP
+GROUP BY bl.MaBin, k.TenKho, bl.KhuVuc, bl.Day, bl.Ke, bl.Tang, bl.O, bl.TheTichToiDa, bl.TrongLuongToiDa, bl.TrangThai;
+GO
+
 PRINT N'02_create-views.sql completed.';
 GO
+

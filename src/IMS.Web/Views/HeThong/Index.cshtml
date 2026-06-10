@@ -6,31 +6,31 @@
     <div class="d-flex align-items-center gap-3">
         <i class="fa-solid fa-circle-info fs-3"></i>
         <div>
-            <h5 class="fw-bold mb-1">Tính năng quản trị hệ thống</h5>
+            <h5 class="fw-bold mb-1">Chức năng quản trị hệ thống</h5>
             <p class="mb-0 text-sm" style="font-size: 13px;">
-                Chức năng này cho phép quản trị viên sao lưu dữ liệu hiện tại thành tệp tin <code>.bak</code> hoặc khôi phục trạng thái hệ thống về một mốc thời gian trước đó.
+                Tính năng này cho phép quản trị viên sao lưu cơ sở dữ liệu hiện tại thành tệp tin <code>.bak</code> hoặc phục hồi trạng thái hệ thống về một thời điểm trước đó.
             </p>
         </div>
     </div>
 </div>
 
 <div class="row g-4">
-    <!-- Cột trái: Sao lưu dữ liệu (Backup) -->
+    <!-- Left Column: Database Backup -->
     <div class="col-md-6">
         <div class="card-custom h-100" style="border-top: 4px solid var(--success);">
             <div class="card-title-custom border-bottom pb-3 mb-3">
-                <span><i class="fa-solid fa-download text-success me-2"></i>Sao lưu cơ sở dữ liệu</span>
+                <span><i class="fa-solid fa-download text-success me-2"></i>Sao lưu CSDL (Backup)</span>
             </div>
             
             <p class="text-secondary text-sm mb-4" style="font-size: 14px;">
-                Tạo một bản sao lưu toàn bộ cơ sở dữ liệu (Full Backup) của hệ thống. Tệp tin sao lưu sẽ được lưu trữ an toàn trong vùng nhớ của container SQL Server tại đường dẫn <code>/var/opt/mssql/data/</code>.
+                Tạo một bản sao lưu đầy đủ (Full Backup) của cơ sở dữ liệu hệ thống. Tệp sao lưu sẽ được lưu trữ an toàn trong thư mục dữ liệu mặc định của container SQL Server tại đường dẫn <code>/var/opt/mssql/data/</code>.
             </p>
             
             @if (TempData["Success"] != null && TempData["BackupFilename"] != null)
             {
                 <div class="p-3 bg-success-subtle border border-success-subtle rounded text-success-emphasis mb-4" style="font-size: 13px;">
                     <i class="fa-solid fa-circle-check me-1"></i> @TempData["Success"]<br />
-                    <strong>Tên tệp tin vừa tạo:</strong> <code class="bg-white px-2 py-1 border rounded text-dark mt-2 d-inline-block">@TempData["BackupFilename"]</code>
+                    <strong>Tên file đã tạo:</strong> <code class="bg-white px-2 py-1 border rounded text-dark mt-2 d-inline-block">@TempData["BackupFilename"]</code>
                 </div>
             }
             else if (TempData["Success"] != null)
@@ -48,30 +48,30 @@
             }
  
             <div class="mt-auto">
-                <form asp-action="Backup" method="post" onsubmit="showLoading('Backing up database...')">
+                <form asp-action="Backup" method="post" onsubmit="showLoading('Đang tiến hành sao lưu cơ sở dữ liệu...')">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn-custom btn-primary-custom w-100 justify-content-center py-3 fs-5" style="background: var(--success-gradient); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);">
-                        Backup Now <i class="fa-solid fa-download"></i>
+                        Sao lưu ngay <i class="fa-solid fa-download"></i>
                     </button>
                 </form>
             </div>
         </div>
     </div>
  
-    <!-- Cột phải: Phục hồi dữ liệu (Restore) -->
+    <!-- Right Column: Database Restore -->
     <div class="col-md-6">
         <div class="card-custom h-100 d-flex flex-column" style="border-top: 4px solid var(--danger);">
             <div class="card-title-custom border-bottom pb-3 mb-3">
-                <span><i class="fa-solid fa-upload text-danger me-2"></i>Phục hồi cơ sở dữ liệu</span>
+                <span><i class="fa-solid fa-upload text-danger me-2"></i>Phục hồi CSDL (Restore)</span>
             </div>
 
             <p class="text-secondary text-sm mb-4" style="font-size: 14px;">
-                Khôi phục lại toàn bộ dữ liệu hệ thống từ một tệp tin sao lưu <code>.bak</code> sẵn có.
+                Phục hồi trạng thái cơ sở dữ liệu của hệ thống từ một tệp sao lưu <code>.bak</code> có sẵn.
             </p>
 
             <div class="alert alert-warning border-warning-subtle bg-warning-subtle text-warning-emphasis p-3 rounded mb-4" style="font-size: 12px;">
                 <i class="fa-solid fa-circle-radiation me-1"></i>
-                <strong>Cảnh báo nguy hiểm:</strong> Quá trình khôi phục sẽ ghi đè hoàn toàn cơ sở dữ liệu hiện tại và ngắt kết nối các tài khoản khác đang thao tác trên hệ thống!
+                <strong>Cảnh báo quan trọng:</strong> Quá trình phục hồi sẽ ghi đè hoàn toàn dữ liệu hiện tại và ngắt kết nối của tất cả các phiên làm việc khác trên hệ thống!
             </div>
 
             <form asp-action="Restore" method="post" id="formRestore" class="mt-auto">
@@ -80,11 +80,11 @@
                     <label class="form-label-custom">Tên file sao lưu cần phục hồi</label>
                     <input type="text" name="backupFilename" id="backupFilename" class="form-control-custom w-100" 
                            placeholder="Ví dụ: InventoryDB_Backup_20260609_120000.bak..." required />
-                    <small class="text-muted" style="font-size: 11px;">Tệp tin phải nằm trong thư mục lưu trữ dữ liệu của SQL Server.</small>
+                    <small class="text-muted" style="font-size: 11px;">Tệp tin sao lưu phải nằm trong thư mục dữ liệu mặc định của SQL Server.</small>
                 </div>
 
                 <button type="button" class="btn-custom btn-primary-custom w-100 justify-content-center py-3 fs-5" style="background: var(--danger); box-shadow: 0 4px 14px rgba(239, 68, 68, 0.2);" onclick="confirmRestore()">
-                    Restore Now <i class="fa-solid fa-upload"></i>
+                    Phục hồi ngay <i class="fa-solid fa-upload"></i>
                 </button>
             </form>
         </div>
@@ -93,6 +93,7 @@
 
 @section Scripts {
     <script>
+        // Show loading spinner during backup/restore
         function showLoading(text) {
             Swal.fire({
                 title: text,
@@ -104,22 +105,23 @@
             });
         }
 
+        // Show confirm dialog before restoring database
         function confirmRestore() {
             var filename = document.getElementById('backupFilename').value.trim();
             if (!filename) {
-                Swal.fire('Cảnh báo', 'Vui lòng điền tên file backup cần phục hồi.', 'warning');
+                Swal.fire('Cảnh báo', 'Vui lòng điền tên file sao lưu cần phục hồi.', 'warning');
                 return;
             }
 
             Swal.fire({
-                title: 'XÁC NHẬN PHỤC HỒI?',
-                html: `Bạn có chắc chắn muốn khôi phục dữ liệu từ tệp tin <strong>${filename}</strong>?<br/>Toàn bộ dữ liệu hiện tại sẽ bị xóa sạch và thay thế!`,
+                title: 'XÁC NHẬN PHỤC HỒI DỮ LIỆU?',
+                html: `Bạn có chắc chắn muốn phục hồi cơ sở dữ liệu từ file <strong>${filename}</strong>?<br/>Toàn bộ dữ liệu hiện tại sẽ bị ghi đè vĩnh viễn!`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#64748b',
-                confirmButtonText: 'Đồng ý khôi phục',
-                cancelButtonText: 'Hủy bỏ'
+                confirmButtonText: 'Đồng ý phục hồi',
+                cancelButtonText: 'Hủy'
             }).then((result) => {
                 if (result.isConfirmed) {
                     showLoading('Đang phục hồi cơ sở dữ liệu...');

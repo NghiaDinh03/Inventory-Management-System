@@ -7,7 +7,7 @@
     <div class="col-xl-8 col-lg-10">
         <div class="card-custom">
             <div class="card-title-custom">
-                <span><i class="fa-solid fa-plus text-primary me-2"></i>Thêm kho hàng mới</span>
+                <span><i class="fa-solid fa-plus text-primary me-2"></i>Thêm mới kho hàng</span>
             </div>
 
             @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
@@ -31,25 +31,25 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label-custom" asp-for="DiaChi">Địa chỉ kho</label>
-                    <input type="text" asp-for="DiaChi" class="form-control-custom w-100" placeholder="Nhập địa chỉ vị trí kho..." />
+                    <label class="form-label-custom" asp-for="DiaChi">Địa chỉ kho hàng</label>
+                    <input type="text" asp-for="DiaChi" class="form-control-custom w-100" placeholder="Nhập địa chỉ kho hàng..." />
                     <span asp-validation-for="DiaChi" class="text-danger text-sm"></span>
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label-custom">Trạng thái hoạt động</label>
+                    <label class="form-label-custom">Trạng thái</label>
                     <div class="form-check form-switch mt-2">
                         <input class="form-check-input" type="checkbox" role="switch" id="trangThaiSwitch" asp-for="TrangThai" checked>
-                        <label class="form-check-label text-secondary" for="trangThaiSwitch" style="font-size: 14px;">Kho hàng đang hoạt động</label>
+                        <label class="form-check-label text-secondary" for="trangThaiSwitch" style="font-size: 14px;">Hoạt động (Kho đang mở cửa vận hành)</label>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
                     <a href="/Kho" class="btn-custom btn-secondary-custom">
-                        <i class="fa-solid fa-chevron-left"></i> Back
+                        <i class="fa-solid fa-chevron-left"></i> Quay lại
                     </a>
                     <button type="submit" class="btn-custom btn-primary-custom">
-                        Save <i class="fa-solid fa-floppy-disk"></i>
+                        Lưu <i class="fa-solid fa-floppy-disk"></i>
                     </button>
                 </div>
             </form>

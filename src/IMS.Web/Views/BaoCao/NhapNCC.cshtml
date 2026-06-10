@@ -1,13 +1,13 @@
 @using System.Data
 @model DataTable
 @{
-    ViewData["Title"] = "Báo cáo nhập hàng theo NCC";
+    ViewData["Title"] = "Báo cáo nhập kho theo nhà cung cấp";
 }
 
-<!-- Bộ lọc -->
+<!-- Filters section -->
 <div class="card-custom mb-4">
     <div class="card-title-custom">
-        <span><i class="fa-solid fa-filter text-primary me-2"></i>Lọc dữ liệu nhập hàng</span>
+        <span><i class="fa-solid fa-filter text-primary me-2"></i>Lọc dữ liệu nhập kho</span>
     </div>
     <form method="get" action="/BaoCao/NhapNCC" class="row align-items-end g-3">
         <div class="col-md-4">
@@ -26,18 +26,18 @@
         </div>
         <div class="col-md-2">
             <button type="submit" class="btn-custom btn-primary-custom w-100 py-2 justify-content-center">
-                Filter <i class="fa-solid fa-magnifying-glass"></i>
+                Lọc báo cáo <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </div>
     </form>
 </div>
 
-<!-- Bảng hiển thị -->
+<!-- Report table list -->
 <div class="card-custom">
     <div class="card-title-custom">
         <span>
             <i class="fa-solid fa-list-ol text-primary me-2"></i>
-            Chi tiết nhập kho từ <strong>@DateTime.Parse(ViewBag.TuNgay).ToString("dd/MM/yyyy")</strong> đến <strong>@DateTime.Parse(ViewBag.DenNgay).ToString("dd/MM/yyyy")</strong>
+            Chi tiết nhập kho từ ngày <strong>@DateTime.Parse(ViewBag.TuNgay).ToString("dd/MM/yyyy")</strong> đến ngày <strong>@DateTime.Parse(ViewBag.DenNgay).ToString("dd/MM/yyyy")</strong>
         </span>
     </div>
 
@@ -59,11 +59,9 @@
             <tbody>
                 @if (Model != null && Model.Rows.Count > 0)
                 {
-                    decimal tongCong = 0;
                     foreach (DataRow row in Model.Rows)
                     {
                         var thanhTien = Convert.ToDecimal(row["ThanhTien"]);
-                        tongCong += thanhTien;
                         <tr>
                             <td class="fw-bold text-dark">@row["SoPhieu"]</td>
                             <td>@Convert.ToDateTime(row["NgayDuyet"]).ToString("dd/MM/yyyy HH:mm")</td>
@@ -71,8 +69,8 @@
                             <td class="fw-bold text-secondary">@row["TenKho"]</td>
                             <td class="fw-bold text-primary">@row["TenSP"]</td>
                             <td style="text-align: center;" class="fw-bold">@Convert.ToInt32(row["SoLuong"]).ToString("N0")</td>
-                            <td class="text-end">@Convert.ToDecimal(row["DonGia"]).ToString("N0") đ</td>
-                            <td class="text-end fw-bold text-success">@thanhTien.ToString("N0") đ</td>
+                            <td class="text-end">@Convert.ToDecimal(row["DonGia"]).ToString("N0") VND</td>
+                            <td class="text-end fw-bold text-success">@thanhTien.ToString("N0") VND</td>
                             <td>@row["NguoiLap"]</td>
                         </tr>
                     }

@@ -1,5 +1,5 @@
 @{
-    Layout = null; // Không dùng layout chung để tránh hiển thị Sidebar/Navbar
+    Layout = null; // Avoid rendering common layout
 }
 
 <!DOCTYPE html>
@@ -189,7 +189,7 @@
             <div class="login-logo">
                 <i class="fa-solid fa-boxes-stacked text-white"></i>
             </div>
-            <div class="login-title">HỆ THỐNG QUẢN KHO</div>
+            <div class="login-title">HỆ THỐNG KHO IMS</div>
             <div class="login-subtitle">Vui lòng đăng nhập để tiếp tục làm việc</div>
         </div>
 
@@ -225,15 +225,15 @@
             </div>
 
             <button type="submit" class="btn-login">
-                Login <i class="fa-solid fa-arrow-right-to-bracket ms-1"></i>
+                Đăng nhập <i class="fa-solid fa-arrow-right-to-bracket ms-1"></i>
             </button>
         </form>
 
         <div class="demo-accounts">
-            <div class="fw-bold mb-2">Tài khoản thử nghiệm (Click để điền nhanh):</div>
+            <div class="fw-bold mb-2">Tài khoản thử nghiệm (Click để tự điền):</div>
             <div>
                 <span class="demo-acc-badge" onclick="fillCredentials('admin', 'Admin_password_2026')">
-                    Admin: admin / Admin_password_2026
+                    Quản trị viên: admin / Admin_password_2026
                 </span>
                 <span class="demo-acc-badge" onclick="fillCredentials('nvkho1', 'Nvkho_password_2026')">
                     Thủ kho: nvkho1 / Nvkho_password_2026
@@ -243,6 +243,7 @@
     </div>
 
     <script>
+        // Auto-fill credentials helper
         function fillCredentials(user, pass) {
             document.getElementById('username').value = user;
             document.getElementById('password').value = pass;

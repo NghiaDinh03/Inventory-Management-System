@@ -1,57 +1,57 @@
 @model IMS.Web.Models.DashboardViewModel
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Bảng điều khiển";
 }
 
 <div class="dashboard-wrapper">
 
-    <!-- KPI Row: 6 thẻ thống kê -->
+    <!-- KPI Grid: 6 metric cards -->
     <div class="kpi-grid mb-4">
 
         <div class="kpi-card kpi-blue">
             <div class="kpi-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Total Products</div>
+                <div class="kpi-label">Tổng sản phẩm</div>
                 <div class="kpi-value">@Model.ThongKe.TongSanPham.ToString("N0")</div>
-                <div class="kpi-sub">Active SKUs</div>
+                <div class="kpi-sub">Mã SKU hoạt động</div>
             </div>
         </div>
 
         <div class="kpi-card kpi-emerald">
             <div class="kpi-icon"><i class="fa-solid fa-truck-field"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Suppliers</div>
+                <div class="kpi-label">Nhà cung cấp</div>
                 <div class="kpi-value">@Model.ThongKe.TongNCC.ToString("N0")</div>
-                <div class="kpi-sub">Active Partners</div>
+                <div class="kpi-sub">Đối tác hoạt động</div>
             </div>
         </div>
 
         <div class="kpi-card kpi-amber">
             <div class="kpi-icon"><i class="fa-solid fa-warehouse"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Warehouses</div>
+                <div class="kpi-label">Kho hàng</div>
                 <div class="kpi-value">@Model.ThongKe.TongKho.ToString("N0")</div>
-                <div class="kpi-sub">Active Warehouses</div>
+                <div class="kpi-sub">Kho đang hoạt động</div>
             </div>
         </div>
 
         <div class="kpi-card kpi-violet">
             <div class="kpi-icon"><i class="fa-solid fa-coins"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Inventory Value</div>
-                <div class="kpi-value kpi-value--sm">@Model.ThongKe.TongGiaTriTon.ToString("N0") đ</div>
-                <div class="kpi-sub">Total Value</div>
+                <div class="kpi-label">Giá trị tồn kho</div>
+                <div class="kpi-value kpi-value--sm">@Model.ThongKe.TongGiaTriTon.ToString("N0") VND</div>
+                <div class="kpi-sub">Tổng giá trị tiền hàng</div>
             </div>
         </div>
 
         <div class="kpi-card kpi-rose">
             <div class="kpi-icon"><i class="fa-solid fa-file-circle-exclamation"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Pending Approval</div>
+                <div class="kpi-label">Phiếu chờ duyệt</div>
                 <div class="kpi-value">@(Model.ThongKe.PhieuNhapChuaDuyet + Model.ThongKe.PhieuXuatChuaDuyet)</div>
                 <div class="kpi-sub">
-                    <span class="kpi-tag kpi-tag--nhap">In: @Model.ThongKe.PhieuNhapChuaDuyet</span>
-                    <span class="kpi-tag kpi-tag--xuat">Out: @Model.ThongKe.PhieuXuatChuaDuyet</span>
+                    <span class="kpi-tag kpi-tag--nhap">Nhập: @Model.ThongKe.PhieuNhapChuaDuyet</span>
+                    <span class="kpi-tag kpi-tag--xuat">Xuất: @Model.ThongKe.PhieuXuatChuaDuyet</span>
                 </div>
             </div>
         </div>
@@ -59,50 +59,50 @@
         <div class="kpi-card @(Model.ThongKe.SoSPCanhBao > 0 ? "kpi-danger" : "kpi-teal")">
             <div class="kpi-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
             <div class="kpi-body">
-                <div class="kpi-label">Low Stock Alerts</div>
+                <div class="kpi-label">Cảnh báo tồn kho</div>
                 <div class="kpi-value">@Model.ThongKe.SoSPCanhBao</div>
-                <div class="kpi-sub">@(Model.ThongKe.SoSPCanhBao == 0 ? "All Safe" : "Restock Needed")</div>
+                <div class="kpi-sub">@(Model.ThongKe.SoSPCanhBao == 0 ? "An toàn" : "Cần nhập hàng")</div>
             </div>
         </div>
 
     </div>
 
-    <!-- Main Content: 2 cột -->
+    <!-- Main Layout: 2 columns -->
     <div class="row g-4">
 
-        <!-- Cột trái 8/12 -->
+        <!-- Left Column: Chart and recent transactions -->
         <div class="col-xl-8">
 
-            <!-- Biểu đồ xu hướng nhập xuất -->
+            <!-- Inbound and outbound trend chart -->
             <div class="card-custom mb-4">
                 <div class="card-title-custom">
-                    <span><i class="fa-solid fa-chart-line text-primary me-2"></i>Inbound vs Outbound Trends (Last 30 Days)</span>
-                    <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size:11px; font-weight:600; border-radius:6px; padding:4px 10px;">Live Data</span>
+                    <span><i class="fa-solid fa-chart-line text-primary me-2"></i>Xu hướng Nhập & Xuất kho (30 ngày qua)</span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size:11px; font-weight:600; border-radius:6px; padding:4px 10px;">Thời gian thực</span>
                 </div>
                 <div style="height: 280px; position: relative;">
                     <canvas id="chartNhapXuat"></canvas>
                 </div>
             </div>
 
-            <!-- Bảng giao dịch gần đây -->
+            <!-- Recent transactions table -->
             <div class="card-custom">
                 <div class="card-title-custom">
-                    <span><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i>Recent Transactions</span>
+                    <span><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i>Giao dịch gần đây</span>
                     <div class="d-flex gap-2">
-                        <a href="/PhieuNhap" class="btn btn-sm" style="font-size:12px; font-weight:600; color:#4f46e5; background:rgba(79,70,229,0.08); border:none; border-radius:6px; padding:4px 12px;">Inbound</a>
-                        <a href="/PhieuXuat" class="btn btn-sm" style="font-size:12px; font-weight:600; color:#06b6d4; background:rgba(6,182,212,0.08); border:none; border-radius:6px; padding:4px 12px;">Outbound</a>
+                        <a href="/PhieuNhap" class="btn btn-sm" style="font-size:12px; font-weight:600; color:#4f46e5; background:rgba(79,70,229,0.08); border:none; border-radius:6px; padding:4px 12px;">Phiếu nhập</a>
+                        <a href="/PhieuXuat" class="btn btn-sm" style="font-size:12px; font-weight:600; color:#06b6d4; background:rgba(6,182,212,0.08); border:none; border-radius:6px; padding:4px 12px;">Phiếu xuất</a>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-custom table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Voucher No.</th>
-                                <th>Type</th>
-                                <th>Date</th>
-                                <th class="text-end">Total Amount</th>
-                                <th class="text-center">Status</th>
-                                <th>Created By</th>
+                                <th>Số phiếu</th>
+                                <th>Loại phiếu</th>
+                                <th>Ngày lập</th>
+                                <th class="text-end">Tổng tiền</th>
+                                <th class="text-center">Trạng thái</th>
+                                <th>Người lập</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -115,14 +115,14 @@
                                         <td>
                                             <span class="badge-custom @(phieu.LoaiPhieu == "Nhập" ? "badge-nhap" : "badge-xuat")">
                                                 <i class="fa-solid @(phieu.LoaiPhieu == "Nhập" ? "fa-arrow-down-long" : "fa-arrow-up-long")"></i>
-                                                @(phieu.LoaiPhieu == "Nhập" ? "Inbound" : "Outbound")
+                                                @(phieu.LoaiPhieu == "Nhập" ? "Nhập kho" : "Xuất kho")
                                             </span>
                                         </td>
                                         <td style="color:#64748b; font-size:13px;">@phieu.NgayLap.ToString("dd/MM/yyyy HH:mm")</td>
-                                        <td class="fw-bold text-end">@phieu.TongTien.ToString("N0") đ</td>
+                                        <td class="fw-bold text-end">@phieu.TongTien.ToString("N0") VND</td>
                                         <td class="text-center">
                                             <span class="badge-custom @(phieu.TrangThai == "ĐãDuyệt" ? "badge-status-duyet" : phieu.TrangThai == "Nháp" ? "badge-status-nhap" : "badge-status-huy")">
-                                                @(phieu.TrangThai == "ĐãDuyệt" ? "Approved" : phieu.TrangThai == "Nháp" ? "Draft" : "Cancelled")
+                                                @(phieu.TrangThai == "ĐãDuyệt" ? "Đã duyệt" : phieu.TrangThai == "Nháp" ? "Nháp" : "Đã hủy")
                                             </span>
                                         </td>
                                         <td style="font-size:13px;">@phieu.NguoiLap</td>
@@ -134,7 +134,7 @@
                                 <tr>
                                     <td colspan="6" class="text-center text-muted py-5">
                                         <i class="fa-regular fa-folder-open fs-3 d-block mb-2 text-muted"></i>
-                                        No recent transactions found.
+                                        Không tìm thấy giao dịch gần đây.
                                     </td>
                                 </tr>
                             }
@@ -144,44 +144,44 @@
             </div>
         </div>
 
-        <!-- Cột phải 4/12 -->
+        <!-- Right Column: Quick actions and warning lists -->
         <div class="col-xl-4">
 
-            <!-- Hộp hành động nhanh -->
+            <!-- Quick actions container -->
             <div class="card-custom mb-4 quick-action-card">
                 <div class="card-title-custom" style="color:#fff; margin-bottom:16px;">
-                    <span><i class="fa-solid fa-bolt me-2"></i>Quick Actions</span>
+                    <span><i class="fa-solid fa-bolt me-2"></i>Thao tác nhanh</span>
                 </div>
                 <div class="d-grid gap-2">
                     <a href="/PhieuNhap/Create" class="quick-btn quick-btn--nhap">
-                        <i class="fa-solid fa-plus"></i> Create Inbound Voucher
+                        <i class="fa-solid fa-plus"></i> Tạo phiếu nhập kho
                     </a>
                     <a href="/PhieuXuat/Create" class="quick-btn quick-btn--xuat">
-                        <i class="fa-solid fa-plus"></i> Create Outbound Voucher
+                        <i class="fa-solid fa-plus"></i> Tạo phiếu xuất kho
                     </a>
                     <a href="/TonKho" class="quick-btn quick-btn--tonkho">
-                        <i class="fa-solid fa-chart-pie"></i> View Current Stock
+                        <i class="fa-solid fa-chart-pie"></i> Xem tồn kho thực tế
                     </a>
                 </div>
 
                 <div class="mt-3 pt-3" style="border-top: 1px solid rgba(255,255,255,0.15);">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span style="font-size:13px; color:rgba(255,255,255,0.8);">Pending Inbound</span>
+                        <span style="font-size:13px; color:rgba(255,255,255,0.8);">Phiếu nhập chờ duyệt</span>
                         <span class="pending-badge pending-badge--nhap">@Model.ThongKe.PhieuNhapChuaDuyet</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <span style="font-size:13px; color:rgba(255,255,255,0.8);">Pending Outbound</span>
+                        <span style="font-size:13px; color:rgba(255,255,255,0.8);">Phiếu xuất chờ duyệt</span>
                         <span class="pending-badge pending-badge--xuat">@Model.ThongKe.PhieuXuatChuaDuyet</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Cảnh báo tồn kho thấp -->
+            <!-- Low stock warnings container -->
             <div class="card-custom">
                 <div class="card-title-custom">
                     <span>
                         <i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>
-                        Low Stock Warning
+                        Cảnh báo hết hàng
                     </span>
                     @if (Model.SpDuoiTonToiThieu.Any())
                     {
@@ -203,7 +203,7 @@
                                     </div>
                                     <div class="text-end">
                                         <div class="low-stock-qty">@item.SoLuong</div>
-                                        <div class="low-stock-min">Min: @item.TonToiThieu</div>
+                                        <div class="low-stock-min">Tối thiểu: @item.TonToiThieu</div>
                                     </div>
                                 </div>
                                 <div class="progress" style="height:4px; border-radius:99px; background:#fee2e2;">
@@ -216,7 +216,7 @@
                     {
                         <div class="text-center py-4 text-muted">
                             <i class="fa-solid fa-circle-check text-success fs-3 d-block mb-2"></i>
-                            All items are in healthy stock levels.
+                            Tồn kho các mặt hàng ở mức an toàn.
                         </div>
                     }
                 </div>
@@ -249,7 +249,7 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Inbound',
+                            label: 'Nhập kho',
                             data: dataNhap,
                             backgroundColor: 'rgba(79, 70, 229, 0.1)',
                             borderColor: 'rgba(79, 70, 229, 1)',
@@ -262,7 +262,7 @@
                             fill: true
                         },
                         {
-                            label: 'Outbound',
+                            label: 'Xuất kho',
                             data: dataXuat,
                             backgroundColor: 'rgba(6, 182, 212, 0.08)',
                             borderColor: 'rgba(6, 182, 212, 1)',

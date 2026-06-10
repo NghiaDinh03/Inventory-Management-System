@@ -190,22 +190,20 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding-left: 14px;
+  padding-left: 0;
   margin-top: 4px;
   margin-bottom: 4px;
-  border-left: 1.5px solid rgba(255, 255, 255, 0.1);
-  margin-left: 26px;
 }
 
 .menu-item.sub-item {
-  padding: 8px 12px;
+  padding: 10px 16px 10px 36px;
   font-size: 13px;
   font-weight: 400;
 }
 
 .menu-item.sub-item i {
-  font-size: 14px;
-  width: 18px;
+  font-size: 15px;
+  width: 20px;
 }
 
 .menu-category {
@@ -306,8 +304,8 @@ body {
 
 /* Fix negative margin of rows directly inside main */
 main[role="main"] > .row {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+  margin-left: -12px !important;
+  margin-right: -12px !important;
 }
 
 /* Dashboard Statistic Cards */
@@ -903,6 +901,9 @@ main[role="main"] > .row {
 }
 
 .dataTables_length label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 13px;
   color: var(--text-secondary);
   font-weight: 500;
@@ -911,12 +912,15 @@ main[role="main"] > .row {
 .dataTables_length select {
   border-radius: var(--radius-sm);
   border: 1.5px solid var(--border-color);
-  padding: 6px 12px;
+  padding: 6px 32px 6px 12px;
   font-size: 13px;
   color: var(--text-primary);
   outline: none;
   background-color: var(--bg-card);
   margin: 0 4px;
+  min-width: 65px;
+  display: inline-block;
+  height: auto;
 }
 
 .dataTables_filter {
@@ -925,6 +929,9 @@ main[role="main"] > .row {
 }
 
 .dataTables_filter label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 13px;
   color: var(--text-secondary);
   font-weight: 500;
@@ -937,9 +944,11 @@ main[role="main"] > .row {
   font-size: 13px;
   color: var(--text-primary);
   outline: none;
-  margin-left: 8px;
+  margin-left: 0;
   width: 220px;
   transition: all 0.2s ease;
+  display: inline-block;
+  height: auto;
 }
 
 .dataTables_filter input:focus {
@@ -982,4 +991,42 @@ main[role="main"] > .row {
   background: var(--primary-gradient);
   border-color: transparent;
   color: white;
+}
+
+/* ============================================================
+   TABLE STICKY HEADERS & COLUMN RESIZING
+   ============================================================ */
+.table-responsive {
+  max-height: 620px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.table-custom {
+  position: relative;
+}
+
+.table-custom thead th {
+  position: sticky !important;
+  top: 0;
+  z-index: 10;
+  background-color: #f8fafc !important;
+  box-shadow: inset 0 -2px 0 var(--border-color);
+}
+
+.col-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+  user-select: none;
+  z-index: 12;
+}
+
+.col-resizer:hover,
+.col-resizer.resizing {
+  background-color: var(--primary-light);
+  opacity: 0.7;
 }

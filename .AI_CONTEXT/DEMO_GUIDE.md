@@ -1,129 +1,133 @@
-# HƯỚNG DẪN KỊCH BẢN DEMO HỆ THỐNG IMS LOGISTICS (UI/UX)
+# HƯỚNG DẪN KỊCH BẢN DEMO HỆ THỐNG IMS LOGISTICS
+
 ### Đồ án môn học: Hệ thống quản lý hàng tồn kho (Logistics WMS)
 ### Địa chỉ truy cập: Web App (http://localhost:8080) | DbGate (http://localhost:3000)
 
-Tài liệu này cung cấp kịch bản từng bước (step-by-step) giúp bạn demo trơn tru trước giáo viên hướng dẫn và hội đồng chấm thi, nêu bật các tính năng nâng cao của SQL Server thông qua giao diện Web UI đẹp mắt và trực quan.
+Tài liệu này cung cấp kịch bản từng bước (step-by-step) giúp bạn thực hiện quay video hoặc trực tiếp demo trơn tru trước giảng viên hướng dẫn và hội đồng chấm thi. Kịch bản nêu bật các tính năng nâng cao của SQL Server thông qua giao diện Web UI đẹp mắt, hiện đại và đã được dịch sang tiếng Việt 100%.
 
 ---
 
 ## I. CHUẨN BỊ TRƯỚC KHI DEMO
 
 1. **Khởi động hệ thống sạch bằng Docker**:
-   Mở terminal tại thư mục gốc dự án và chạy lệnh dưới đây để dọn dẹp các container/volume cũ và chạy mới từ đầu (Database sẽ được seed dữ liệu tiếng Việt đầy đủ):
+   Mở terminal tại thư mục gốc dự án và chạy lệnh dưới đây để dọn dẹp các container/volume cũ và chạy mới từ đầu. Hệ thống sẽ tự động khởi tạo cơ sở dữ liệu **Production Go-Live 27 bảng** và nạp dữ liệu mẫu Tiếng Việt đầy đủ:
    ```bash
    docker-compose down -v
    docker-compose up --build -d
    ```
-2. **Chuẩn bị các tài khoản đăng nhập**:
-   - **Tài khoản Thủ kho (Nhân viên kho)**: Đăng nhập bằng `nvkho` / mật khẩu: `nvkho123` (Vai trò tạo phiếu, chỉ được chạy SP nghiệp vụ, không có quyền xóa database).
-   - **Tài khoản Quản trị (Admin)**: Đăng nhập bằng `admin` / mật khẩu: `admin123` (Có toàn quyền hệ thống, duyệt phiếu, sao lưu, phục hồi).
+2. **Các tài khoản đăng nhập thử nghiệm**:
+   - **Tài khoản Quản trị (Admin)**: Đăng nhập bằng `admin` / mật khẩu: `Admin_password_2026` (Quyền tối cao: duyệt phiếu, xem báo cáo, sao lưu, phục hồi).
+   - **Tài khoản Thủ kho**: Đăng nhập bằng `nvkho1` / mật khẩu: `Nvkho_password_2026` (Quyền lập phiếu, xem báo cáo, không có quyền duyệt phiếu hoặc sao lưu).
 
 ---
 
 ## II. KỊCH BẢN 1: QUY TRÌNH LIÊN THÔNG NGHIỆP VỤ NHẬP/XUẤT KHO
 
-Kịch bản này chứng minh luồng nghiệp vụ thực tế trong kho và cách các **Triggers** của SQL Server tự động kiểm soát logic nghiệp vụ.
+Kịch bản này chứng minh luồng nghiệp vụ thực tế trong kho và cách các **Triggers** của SQL Server tự động kiểm soát logic nghiệp vụ tĩnh (UPSERT tồn kho, chặn xuất âm).
 
 ### Bước 1: Tạo Phiếu Nhập Kho (Trạng thái Nháp)
-1. Đăng nhập tài khoản thủ kho `nvkho`.
-2. Vào menu **Goods Receipt (Phiếu nhập)** -> Nhấn **Create New Receipt**.
+1. Đăng nhập tài khoản thủ kho `nvkho1`.
+2. Vào menu **Phiếu nhập kho** -> Nhấn nút **Thêm mới phiếu nhập**.
 3. Chọn các thông số:
-   - Nhà cung cấp: **Logitech Việt Nam**
-   - Kho nhận: **Kho 1**
-   - Thêm dòng sản phẩm: **Chuột Không Dây Logitech M331** -> Nhập số lượng **10**, đơn giá **180,000 đ**.
-4. Nhấn **Save**. Phiếu nhập được lưu ở trạng thái **Draft (Nháp)**.
-5. **Thuyết minh với giáo viên**: 
-   - *"Lúc này, trigger cập nhật tồn kho chưa kích hoạt vì phiếu mới chỉ ở trạng thái Nháp (chưa duyệt thực tế)."*
-   - Bạn mở menu **Inventory (Tồn kho)** -> Chọn Kho 1 để chỉ ra cho giáo viên thấy số lượng tồn của Logitech M331 **chưa hề tăng lên**.
+   - Nhà cung cấp: **Công ty TNHH Unilever Việt Nam**
+   - Kho nhận: **Kho Tổng TP.HCM**
+   - Thêm sản phẩm: **Dầu gội Clear Bạc Hà Thơm Mát 630ml** -> Nhập số lượng **10**, đơn giá **135,000 đ**.
+4. Nhấn **Lưu phiếu**. Phiếu nhập được lưu ở trạng thái **Nháp**.
+5. **Kịch bản nói (Voiceover)**: 
+   - *"Lúc này, phiếu nhập kho mới được tạo ở trạng thái Nháp. Số lượng tồn kho vật lý chưa được cập nhật vì phiếu chưa được duyệt thực tế. Hãy cùng kiểm tra tồn kho."*
+   - Bạn mở menu **Tồn kho** -> Xem tồn kho của sản phẩm tại **Kho Tổng TP.HCM** để chỉ ra số lượng tồn chưa hề tăng lên (giữ nguyên là 80 chai như mặc định).
 
 ### Bước 2: Phê Duyệt Phiếu Nhập & Tự Động Cập Nhật Tồn Kho (Trigger 1)
-1. Đăng nhập tài khoản Quản lý/Admin `admin` (hoặc tiếp tục nếu tài khoản có quyền duyệt).
-2. Vào lại danh sách phiếu nhập, nhấp vào nút **Details (Chi tiết)** của phiếu vừa tạo.
-3. Nhấn nút **Approve (Duyệt)**. Trạng thái phiếu chuyển sang **Approved (Đã Duyệt)**.
-4. **Thuyết minh với giáo viên**:
-   - *"Khi quản lý nhấn Duyệt, stored procedure `sp_DuyetPhieu` cập nhật trạng thái phiếu nhập sang 'Đã Duyệt', từ đó kích hoạt trigger `trg_PhieuNhap_CapNhatTonKho` trên SQL Server."*
-5. Quay lại trang **Inventory (Tồn kho)** hoặc **Products (Sản phẩm)**:
-   - Số lượng tồn của chuột Logitech M331 tại Kho 1 đã tăng thêm **10** cái.
-   - Cột trọng lượng tồn kho tự động cộng thêm tương ứng (`10 * TrongLuongSP`) nhờ trigger tính toán.
-   - Bảng **Price History (Lịch sử giá)** tự động chèn một dòng mới ghi nhận giá nhập tại thời điểm duyệt là 180,000 đ (phục vụ tính giá bình quân gia quyền).
+1. Đăng nhập tài khoản Admin `admin` để thực hiện duyệt.
+2. Vào menu **Phiếu nhập kho**, nhấp vào nút **Chi tiết** (biểu tượng mắt/xem) của phiếu vừa tạo.
+3. Nhấn nút **Duyệt phiếu**. Trạng thái phiếu chuyển sang **Đã duyệt**.
+4. **Kịch bản nói (Voiceover)**:
+   - *"Khi quản trị viên nhấn Duyệt phiếu, hệ thống gọi Stored Procedure `sp_DuyetPhieu` trên SQL Server để cập nhật trạng thái phiếu nhập sang 'Đã duyệt'. Hành động cập nhật này kích hoạt Trigger `trg_PhieuNhap_CapNhatTonKho` thực hiện cộng số lượng tồn, trọng lượng tồn vào bảng TonKho và tự động ghi lịch sử giá nhập vào bảng Gia."*
+5. Quay lại trang **Tồn kho** hoặc **Sản phẩm**:
+   - Số lượng tồn của Dầu gội Clear tại Kho Tổng TP.HCM đã tăng từ 80 lên **90** chai.
+   - Trọng lượng tồn kho tự động cộng dồn thêm tương ứng (`10 * 0.7 kg = 7 kg`) nhờ trigger tính toán.
+   - Bảng lịch sử giá đã tự động chèn một dòng mới ghi nhận giá nhập dầu gội là 135,000 đ.
 
 ### Bước 3: Tạo Phiếu Xuất Kho & Chống Xuất Âm (Trigger 2 - Chặn Giao Dịch)
-Đây là tính năng quan quan trọng chứng minh CSDL tự động bảo vệ tính toàn vẹn, chống thất thoát hàng hóa.
-1. Vào menu **Goods Issue (Phiếu xuất)** -> Nhấn **Create New Issue**.
-2. Chọn Kho xuất hàng: **Kho 1**.
+Đây là tính năng quan trọng chứng minh CSDL tự động bảo vệ tính toàn vẹn, tránh thất thoát hàng hóa.
+1. Vào menu **Phiếu xuất kho** -> Nhấn **Thêm mới phiếu xuất**.
+2. Chọn Kho xuất hàng: **Kho Tổng TP.HCM**.
 3. **Thử nghiệm xuất thành công (Đủ hàng)**:
-   - Thêm sản phẩm **Logitech M331** -> Nhập số lượng **2** cái.
-   - Nhấn **Save** (Trạng thái Nháp).
-   - Nhấn **Approve (Duyệt)** -> Phiếu được duyệt thành công, tồn kho giảm từ 10 xuống còn 8 cái.
+   - Thêm sản phẩm **Dầu gội Clear Bạc Hà Thơm Mát 630ml** -> Nhập số lượng **2** chai.
+   - Nhấn **Lưu phiếu** (Trạng thái Nháp).
+   - Vào chi tiết phiếu xuất, nhấn **Duyệt phiếu** -> Phiếu được duyệt thành công, tồn kho giảm từ 90 xuống còn 88 chai.
 4. **Thử nghiệm xuất thất bại (Chặn xuất âm - RAISERROR)**:
-   - Tạo một phiếu xuất khác từ **Kho 1**.
-   - Thêm sản phẩm **Logitech M331** -> Nhập số lượng **100** cái (vượt quá lượng tồn hiện tại là 8 cái).
-   - Nhấn **Save** (Trạng thái Nháp).
-   - Nhấn **Approve (Duyệt)**.
-   - **Kết quả**: Hệ thống lập tức hiện thông báo lỗi màu đỏ (SweetAlert2): *"Không đủ hàng tồn kho để xuất"* (hoặc lỗi quăng về từ trigger `trg_PhieuXuat_CapNhatTonKho`). Giao dịch tự động bị **ROLLBACK** (hủy bỏ hoàn toàn), giữ cho số lượng tồn kho không bao giờ bị âm.
+   - Tạo một phiếu xuất khác từ **Kho Tổng TP.HCM**.
+   - Thêm sản phẩm **Dầu gội Clear Bạc Hà Thơm Mát 630ml** -> Nhập số lượng **100** chai (vượt quá lượng tồn hiện tại là 88 chai).
+   - Nhấn **Lưu phiếu** (Trạng thái Nháp).
+   - Vào chi tiết phiếu xuất, nhấn **Duyệt phiếu**.
+   - **Kết quả**: Hệ thống lập tức hiện thông báo lỗi màu đỏ từ SweetAlert2: *"Không đủ hàng tồn kho để xuất"*. 
+   - **Kịch bản nói (Voiceover)**: *"SQL Server đã lập tức chặn đứng hành động này thông qua trigger `trg_PhieuXuat_CapNhatTonKho` nhờ kiểm tra lượng tồn khả dụng, tự động ROLLBACK toàn bộ giao dịch để đảm bảo kho hàng không bao giờ bị xuất âm."*
 
 ---
 
-## III. KỊCH BẢN 2: DEMO CÁC TÍNH NĂNG SQL SERVER NÂNG CAO (TRANG /DEMO)
+## III. KỊCH BẢN 2: DEMO CÁC TÍNH NĂNG SQL SERVER NÂNG CAO (MENU DEMO SQL)
 
-Trang **Demo SQL Server (B1-B5)** được thiết kế chuyên biệt để bạn biểu diễn 4 nhóm cấu trúc CSDL nâng cao theo quy chuẩn 5 bước (B1: Đề bài -> B2: SQL -> B3: Dữ liệu trước -> B4: Nút chạy -> B5: Dữ liệu sau).
+Trang **Demo SQL Server (B1-B5)** được thiết kế chuyên biệt để bạn biểu diễn 4 nhóm cấu trúc CSDL nâng cao theo quy chuẩn 5 bước của đồ án.
 
 ### 1. Demo Stored Procedure (`sp_TaoPhieuNhap`)
 1. Click tab **Stored Procedure** trên Web.
-2. Chỉ vào khối mã SQL (B2) hiển thị câu lệnh gọi SP kèm tham số Table-Valued Parameter.
-3. Cho giáo viên xem bảng dữ liệu hiện tại trước khi chạy (B3).
-4. Nhấn **Execute sp_TaoPhieuNhap** (B4).
-5. Kết quả (B5) tự động hiển thị: Phiếu nhập mới được tạo, trigger tự động sinh số phiếu (PN-YYYY-0000X) và tự tính tổng tiền dòng chi tiết.
+2. Thuyết minh: *"Tại bước B1 và B2, hệ thống mô tả kịch bản tạo phiếu nhập và khai báo câu lệnh SQL gọi Stored Procedure `sp_TaoPhieuNhap` kèm tham số dạng bảng (Table-Valued Parameter) để truyền nhiều dòng chi tiết sản phẩm cùng lúc."*
+3. Cho giáo viên xem bảng dữ liệu hiện tại trước khi chạy ở bước **B3**.
+4. Nhấn **Chạy thủ tục sp_TaoPhieuNhap** ở bước **B4**.
+5. Kết quả ở bước **B5** tự động hiển thị: Phiếu nhập mới được tạo thành công, trigger tự động sinh số phiếu (PN-2026-0000X) và tự tính tổng tiền các dòng chi tiết.
 
 ### 2. Demo Trigger (`trg_PhieuXuat_CapNhatTonKho`)
 1. Click tab **Trigger**.
-2. Thuyết minh: *"Trigger này kiểm tra và trừ tồn kho khi phê duyệt phiếu xuất kho"*.
-3. Bấm nút **Approve - SUFFICIENT Stock** (Đủ hàng): Hệ thống chạy thành công, bảng dữ liệu sau (B5) hiển thị số lượng tồn giảm đi 2 cái.
-4. Bấm nút **Approve - INSUFFICIENT Stock** (Thiếu hàng): Hệ thống bị SQL Server chặn đứng giao dịch và trả về lỗi nguyên bản của trigger được quăng lên giao diện web.
+2. Bấm nút **Duyệt phiếu - ĐỦ TỒN KHO**: Hệ thống chạy thành công, bảng dữ liệu sau (B5) hiển thị số lượng tồn giảm đi 2 cái.
+3. Bấm nút **Duyệt phiếu - THIẾU TỒN KHO**: Hệ thống bị SQL Server chặn đứng giao dịch và trả về lỗi nguyên bản của trigger được quăng lên giao diện web.
 
 ### 3. Demo Function (`fn_TinhGiaTriTonKho` & `fn_TinhGiaXuatBinhQuan`)
 1. Click tab **Function**.
-2. Thuyết minh: *"Chúng em sử dụng hàm Scalar để tính giá trị tiền hàng tồn kho thời gian thực và giá vốn xuất bình quân gia quyền để tính giá bán"*.
-3. Nhấn **Execute SQL Functions**.
-4. Kết quả trả về lập tức hiển thị: Tổng giá trị hàng hóa hiện tại trong Kho 1 và Giá vốn xuất bình quân của sản phẩm dựa trên lịch sử các lần nhập hàng trước đó.
+2. Thuyết minh: *"Chúng em sử dụng hàm Scalar để tính giá trị tiền hàng tồn kho thời gian thực và giá vốn xuất bình quan gia quyền của sản phẩm dựa trên lịch sử các lần nhập hàng trước đó"*.
+3. Nhấn **Chạy các hàm Function SQL**.
+4. Kết quả trả về lập tức hiển thị: Tổng giá trị hàng hóa hiện tại trong Kho 1 và Giá xuất bình quan của sản phẩm 1.
 
 ### 4. Demo Cursor (`sp_CursorCanhBaoTon` duyệt con trỏ)
 1. Click tab **Cursor**.
-2. Thuyết minh: *"Chúng em cài đặt con trỏ duyệt tuần tự danh sách tồn kho của các sản phẩm đang dưới ngưỡng tối thiểu để in ra các cảnh báo nghiệp vụ cho bộ phận mua hàng"*.
-3. Nhấn **Execute Cursor Procedure**.
-4. Kết quả: Cursor duyệt từng dòng và in ra danh sách các dòng thông báo cảnh báo chi tiết (ví dụ: *"Cảnh báo: Sản phẩm [Chuột Logitech M331] tại kho [Kho 1] đang tồn 8 cái, dưới mức tối thiểu là 10!"*).
+2. Thuyết minh: *"Chúng em cài đặt con trỏ (Cursor) duyệt tuần tự danh sách tồn kho dưới ngưỡng tối thiểu để in ra các cảnh báo nghiệp vụ mua hàng"*.
+3. Nhấn **Chạy thủ tục chứa Cursor**.
+4. Kết quả: Cursor duyệt từng dòng và in ra danh sách các dòng thông báo cảnh báo chi tiết (ví dụ: *"Cảnh báo: Sản phẩm [Chuột không dây Logitech M331] tại kho [Kho Tổng TP.HCM] có số lượng tồn hiện tại là 8, dưới mức tối thiểu là 15!"*).
 
 ---
 
-## IV. KỊCH BẢN 3: QUẢN TRỊ HỆ THỐNG (TRANSMISSION & SECURITY)
+## IV. KỊCH BẢN 3: QUẢN TRỊ HỆ THỐNG (BACKUP & RESTORE & SECURITY)
 
-Chứng minh khả năng bảo mật, xác thực tài khoản và sao lưu dữ liệu chống thiên tai/sự cố.
+Chứng minh khả năng bảo mật, xác thực tài khoản và sao lưu dữ liệu chống sự cố.
 
 ### 1. Demo Backup & Restore (Sao lưu và Phục hồi)
-1. Đăng nhập tài khoản `admin`. Vào menu **System Admin** -> Chọn **Backup & Restore**.
+1. Đăng nhập tài khoản `admin`. Vào menu **Hệ thống** -> **Sao lưu & Phục hồi**.
 2. **Sao lưu (Backup)**:
-   - Nhấn nút **Backup Now**.
+   - Nhấn nút **Sao lưu ngay**.
    - Hệ thống thực thi SP `sp_BackupDatabase` và hiển thị thông báo thành công kèm tên file sao lưu (ví dụ: `InventoryDB_Backup_20260610_021000.bak`).
 3. **Phục hồi (Restore)**:
    - Copy tên file `.bak` vừa được tạo ra ở bước trên.
    - Dán vào ô input phục hồi ở cột bên phải.
-   - Nhấn **Restore Now** -> Click **Đồng ý khôi phục**.
+   - Nhấn **Phục hồi ngay** -> Click **Đồng ý phục hồi**.
    - Hệ thống thực thi SP `sp_RestoreDatabase` trên database `master`, ngắt mọi kết nối hiện tại và khôi phục database về mốc thời gian đó thành công.
 
 ### 2. Demo Phân Quyền Hạn Chế Thao Tác (Security)
-1. Đăng nhập tài khoản thủ kho `nvkho`.
-2. Mở trình duyệt truy cập công cụ quản lý cơ sở dữ liệu **DbGate** tại **`http://localhost:3000`**.
-3. Thử mở bảng `TonKho` hoặc `PhieuNhap` và dùng chuột để xóa/sửa dữ liệu trực tiếp trên bảng.
-4. Nhấn **Save** -> Kết quả: DbGate báo lỗi **Permission Denied**.
-5. **Thuyết minh**: *"Để bảo mật, nhân viên kho chỉ có quyền đọc dữ liệu (`SELECT`) và gọi Stored Procedure, họ bị cấm sửa/xóa bảng trực tiếp (`DENY INSERT, UPDATE, DELETE`) để tránh gian lận số liệu hàng tồn"*.
+1. Mở công cụ quản lý cơ sở dữ liệu **DbGate** tại **`http://localhost:3000`**.
+2. Tạo kết nối mới với database `InventoryDB` bằng user phân quyền **`db_ims_nvkho`** (nếu có) hoặc thử đăng nhập bằng user này.
+3. Thử thực hiện lệnh `DELETE FROM SanPham` hoặc `UPDATE TonKho SET SoLuongTon = 1000`.
+4. Kết quả: SQL Server trả về lỗi **Permission Denied**.
+5. **Thuyết minh**: *"Để bảo mật dữ liệu, nhân viên kho chỉ có quyền SELECT đọc thông tin và EXECUTE Stored Procedure. Hệ thống DENY trực tiếp quyền thao tác thủ công (INSERT, UPDATE, DELETE) trên các bảng cốt lõi để tránh gian lận số liệu hàng tồn"*.
 
 ---
 
-## V. CÁC ĐIỂM CỘNG LỚN KHI TRÌNH BÀY ĐỒ ÁN (ĐỘC QUYỀN)
+## V. CÁC ĐIỂM CỘNG LỚN KHI TRÌNH BÀY ĐỒ ÁN (WMS GO-LIVE)
 
-Khi giáo viên hỏi về tính ứng dụng thực tế của đồ án, hãy nêu bật **2 điểm sáng giá** sau:
-1. **Thiết kế chống nghẽn và Deadlock (Production Database)**:
-   - *"Hệ thống Demo đang dùng Trigger cập nhật bảng tĩnh `TonKho`. Tuy nhiên, nếu đưa vào vận hành thực tế (Production) với hàng trăm thiết bị quét mã vạch cùng lúc, việc tranh chấp khóa dòng trên bảng `TonKho` sẽ gây nghẽn mạng (Deadlock)"*.
-   - *"Do đó, trong tài liệu thiết kế, chúng em đã đề xuất mô hình **Stock Ledger (Sổ cái giao dịch)**. Mọi thao tác nhập xuất chỉ là thao tác `INSERT` nối đuôi vào bảng `GiaoDichKho` thay vì `UPDATE` ghi đè, giúp hệ thống chịu tải cực cao và không bao giờ bị Deadlock"*.
-2. **Quản lý bãi kho chi tiết (Bin Location)**:
-   - *"Mô hình sản xuất của chúng em hỗ trợ định vị chính xác vị trí hàng hóa tới tận từng ô kệ (Dãy - Rack - Tầng - Ô) và quản lý date lô hàng cận hạn sử dụng (FEFO) chuẩn mô hình WMS của Smartlog, thay vì chỉ quản lý chung chung theo kho vật lý"*.
+Khi giảng viên đặt câu hỏi chuyên sâu về tính thực tế, hãy trình bày các điểm sáng giá sau:
+1. **Thiết kế chống nghẽn và Deadlock (Sổ cái giao dịch kho)**:
+   - *"Hệ thống Web đang chạy cơ chế Trigger cập nhật trực tiếp bảng số dư `TonKho`. Tuy nhiên, khi Go-Live thực tế với hàng trăm thủ kho quét PDA đồng thời, việc tranh chấp khóa dòng trên bảng số dư sẽ gây nghẽn mạng (Deadlock) nghiêm trọng"*.
+   - *"Để giải quyết vấn đề này, cơ sở dữ liệu Go-Live của chúng em đã thiết kế bảng **`GiaoDichKho` (Inventory Transaction Ledger)**. Mọi thao tác biến động kho chỉ thực hiện `INSERT` nối đuôi (Append-only) thay vì `UPDATE` ghi đè dòng. Hệ thống chống deadlock tuyệt đối và lưu vết lịch sử 100%"*.
+2. **Quản lý bãi kho chi tiết tới cấp ô kệ (Bin Location)**:
+   - *"CSDL Go-live của chúng em thiết lập đầy đủ bảng **`BinLocation` (Layout kho chi tiết)** và **`TonKhoTheoBin`**. Giúp quản lý chính xác vị trí hàng hóa nằm ở dãy nào, kệ nào, tầng nào, ô nào trong kho, hỗ trợ định vị Putaway/Picking cực kỳ hiệu quả"*.
+3. **Theo dõi hạn sử dụng theo số Lô (LoHang - FEFO)**:
+   - *"Bảng **`LoHang`** hỗ trợ quản lý số lô sản xuất, ngày sản xuất và hạn sử dụng của từng đợt hàng, giúp hệ thống hỗ trợ chiến lược xuất kho **FEFO** (Hàng hết hạn trước xuất trước), ngăn chặn tối đa việc hàng bị hết hạn sử dụng trong kho"*.
+   - Bạn có thể mở DbGate truy vấn bảng `LoHang` hoặc `TonKhoTheoBin` để chứng minh sự tồn tại của các dữ liệu mở rộng này.

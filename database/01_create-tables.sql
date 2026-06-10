@@ -255,5 +255,184 @@ CREATE TABLE LichSuHoatDong (
 );
 GO
 
+-- 16. Bin Location table (Warehouse layout row/rack/shelf/bin)
+CREATE TABLE BinLocation (
+    MaBin           INT IDENTITY(1,1) PRIMARY KEY,
+    MaKho           INT NOT NULL,
+    KhuVuc          NVARCHAR(50) NULL,
+    Day             VARCHAR(10) NULL,
+    Ke              VARCHAR(10) NULL,
+    Tang            VARCHAR(10) NULL,
+    O               VARCHAR(10) NULL,
+    TheTichToiDa    DECIMAL(10,2) NOT NULL DEFAULT 0,
+    TrongLuongToiDa DECIMAL(10,2) NOT NULL DEFAULT 0,
+    TrangThai       NVARCHAR(20) NOT NULL DEFAULT N'Trống',
+
+    CONSTRAINT FK_BinLocation_Kho FOREIGN KEY (MaKho) REFERENCES Kho(MaKho)
+);
+GO
+
+-- 17. Batch/Lot table for tracking expiry date (FEFO)
+CREATE TABLE LoHang (
+    MaLo            INT IDENTITY(1,1) PRIMARY KEY,
+    SoLo            VARCHAR(50) NOT NULL UNIQUE,
+    MaSP            INT NOT NULL,
+    NgaySanXuat     DATE NULL,
+    NgayHetHan      DATE NOT NULL,
+    TrangThai       NVARCHAR(20) NOT NULL DEFAULT N'KhảDụng',
+
+    CONSTRAINT FK_LoHang_SanPham FOREIGN KEY (MaSP) REFERENCES SanPham(MaSP)
+);
+GO
+
+-- 18. Stock levels tracked at specific Bin Locations and Batches
+CREATE TABLE TonKhoTheoBin (
+    MaTonBin        INT IDENTITY(1,1) PRIMARY KEY,
+    MaSP            INT NOT NULL,
+    MaBin           INT NOT NULL,
+    MaLo            INT NOT NULL,
+    SoLuong         INT NOT NULL DEFAULT 0 CHECK (SoLuong >= 0),
+    NgayNhapBin     DATETIME DEFAULT GETDATE(),
+
+    CONSTRAINT FK_TonBin_SanPham FOREIGN KEY (MaSP) REFERENCES SanPham(MaSP),
+    CONSTRAINT FK_TonBin_Bin     FOREIGN KEY (MaBin) REFERENCES BinLocation(MaBin),
+    CONSTRAINT FK_TonBin_Lo      FOREIGN KEY (MaLo) REFERENCES LoHang(MaLo)
+);
+GO
+
+-- 19. Inventory transaction ledger table (anti-deadlock design)
+CREATE TABLE GiaoDichKho (
+    MaGiaoDich          BIGINT IDENTITY(1,1) PRIMARY KEY,
+    MaSP                INT NOT NULL,
+    MaKho               INT NOT NULL,
+    MaBin               INT NOT NULL,
+    MaLo                INT NOT NULL,
+    LoaiGiaoDich        NVARCHAR(30) NOT NULL,
+    MaPhieuThamChieu    VARCHAR(30) NOT NULL,
+    SoLuongThayDoi      INT NOT NULL,
+    SoLuongSauThayDoi   INT NOT NULL,
+    MaNV                INT NOT NULL,
+    ThoiGian            DATETIME DEFAULT GETDATE(),
+
+    CONSTRAINT FK_GiaoDich_SanPham FOREIGN KEY (MaSP) REFERENCES SanPham(MaSP),
+    CONSTRAINT FK_GiaoDich_Kho     FOREIGN KEY (MaKho) REFERENCES Kho(MaKho),
+    CONSTRAINT FK_GiaoDich_Bin     FOREIGN KEY (MaBin) REFERENCES BinLocation(MaBin),
+    CONSTRAINT FK_GiaoDich_Lo      FOREIGN KEY (MaLo) REFERENCES LoHang(MaLo),
+    CONSTRAINT FK_GiaoDich_NhanVien FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV)
+);
+GO
+
+-- 20. Stocktake/Physical inventory audit table
+CREATE TABLE PhieuKiemKe (
+    MaPKK           INT IDENTITY(1,1) PRIMARY KEY,
+    SoPhieu         VARCHAR(20) NULL UNIQUE,
+    NgayLap         DATETIME NOT NULL DEFAULT GETDATE(),
+    MaKho           INT NOT NULL,
+    MaNV_Kiem       INT NOT NULL,
+    MaNV_Duyet      INT NULL,
+    TrangThai       NVARCHAR(20) NOT NULL DEFAULT N'Nháp',
+
+    CONSTRAINT FK_PhieuKiemKe_Kho FOREIGN KEY (MaKho) REFERENCES Kho(MaKho),
+    CONSTRAINT FK_PhieuKiemKe_NV_Kiem FOREIGN KEY (MaNV_Kiem) REFERENCES NhanVien(MaNV),
+    CONSTRAINT FK_PhieuKiemKe_NV_Duyet FOREIGN KEY (MaNV_Duyet) REFERENCES NhanVien(MaNV)
+);
+GO
+
+-- 21. Stocktake Details table
+CREATE TABLE CT_PhieuKiemKe (
+    MaCTKK          INT IDENTITY(1,1) PRIMARY KEY,
+    MaPKK           INT NOT NULL,
+    MaSP            INT NOT NULL,
+    MaBin           INT NOT NULL,
+    MaLo            INT NOT NULL,
+    SoLuongHeThong  INT NOT NULL,
+    SoLuongThucTe   INT NOT NULL,
+    SoLuongLech     AS (SoLuongThucTe - SoLuongHeThong) PERSISTED,
+    LyDoLech        NVARCHAR(255) NULL,
+
+    CONSTRAINT FK_CTKK_PhieuKiemKe FOREIGN KEY (MaPKK) REFERENCES PhieuKiemKe(MaPKK) ON DELETE CASCADE,
+    CONSTRAINT FK_CTKK_SanPham     FOREIGN KEY (MaSP) REFERENCES SanPham(MaSP),
+    CONSTRAINT FK_CTKK_Bin         FOREIGN KEY (MaBin) REFERENCES BinLocation(MaBin),
+    CONSTRAINT FK_CTKK_Lo          FOREIGN KEY (MaLo) REFERENCES LoHang(MaLo)
+);
+GO
+
+-- 22. Warehouse stock transfer table
+CREATE TABLE PhieuChuyenKho (
+    MaPCK           INT IDENTITY(1,1) PRIMARY KEY,
+    SoPhieu         VARCHAR(20) NULL UNIQUE,
+    NgayLap         DATETIME NOT NULL DEFAULT GETDATE(),
+    MaKhoNguon      INT NOT NULL,
+    MaKhoDich       INT NOT NULL,
+    MaNV            INT NOT NULL,
+    TrangThai       NVARCHAR(20) NOT NULL DEFAULT N'ChờXuất',
+
+    CONSTRAINT FK_PhieuChuyen_KhoNguon FOREIGN KEY (MaKhoNguon) REFERENCES Kho(MaKho),
+    CONSTRAINT FK_PhieuChuyen_KhoDich   FOREIGN KEY (MaKhoDich) REFERENCES Kho(MaKho),
+    CONSTRAINT FK_PhieuChuyen_NhanVien  FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV)
+);
+GO
+
+-- 23. Stock Transfer Details table
+CREATE TABLE CT_PhieuChuyenKho (
+    MaCTCK          INT IDENTITY(1,1) PRIMARY KEY,
+    MaPCK           INT NOT NULL,
+    MaSP            INT NOT NULL,
+    MaLo            INT NOT NULL,
+    MaBinNguon      INT NOT NULL,
+    MaBinDich       INT NOT NULL,
+    SoLuong         INT NOT NULL CHECK (SoLuong > 0),
+
+    CONSTRAINT FK_CTCK_PhieuChuyen FOREIGN KEY (MaPCK) REFERENCES PhieuChuyenKho(MaPCK) ON DELETE CASCADE,
+    CONSTRAINT FK_CTCK_SanPham      FOREIGN KEY (MaSP) REFERENCES SanPham(MaSP),
+    CONSTRAINT FK_CTCK_Lo           FOREIGN KEY (MaLo) REFERENCES LoHang(MaLo),
+    CONSTRAINT FK_CTCK_BinNguon     FOREIGN KEY (MaBinNguon) REFERENCES BinLocation(MaBin),
+    CONSTRAINT FK_CTCK_BinDich      FOREIGN KEY (MaBinDich) REFERENCES BinLocation(MaBin)
+);
+GO
+
+-- 24. Shipping Carrier table
+CREATE TABLE NhaVanChuyen (
+    MaNVC           INT IDENTITY(1,1) PRIMARY KEY,
+    TenNVC          NVARCHAR(100) NOT NULL,
+    SoDienThoai     VARCHAR(20) NULL,
+    TrangThai       BIT DEFAULT 1
+);
+GO
+
+-- 25. Delivery Note / Bill of Lading table
+CREATE TABLE VanDon (
+    MaVD            INT IDENTITY(1,1) PRIMARY KEY,
+    MaPX            INT NOT NULL,
+    MaNVC           INT NOT NULL,
+    SoVanDon        VARCHAR(50) NOT NULL UNIQUE,
+    PhiVanChuyen    DECIMAL(18,2) NOT NULL DEFAULT 0,
+    TrangThaiGiaoHang NVARCHAR(30) NOT NULL DEFAULT N'ChờGiao',
+    NgayGiaoThucTe  DATETIME NULL,
+
+    CONSTRAINT FK_VanDon_PhieuXuat FOREIGN KEY (MaPX) REFERENCES PhieuXuat(MaPX),
+    CONSTRAINT FK_VanDon_NhaVanChuyen FOREIGN KEY (MaNVC) REFERENCES NhaVanChuyen(MaNVC)
+);
+GO
+
+-- 26. Detailed RBAC Permission table
+CREATE TABLE Quyen (
+    MaQuyen         INT IDENTITY(1,1) PRIMARY KEY,
+    TenQuyen        VARCHAR(50) NOT NULL UNIQUE,
+    MoTa            NVARCHAR(200) NULL
+);
+GO
+
+-- 27. Role-Permission mapping table
+CREATE TABLE VaiTro_Quyen (
+    MaVT            INT NOT NULL,
+    MaQuyen         INT NOT NULL,
+
+    CONSTRAINT PK_VaiTro_Quyen PRIMARY KEY (MaVT, MaQuyen),
+    CONSTRAINT FK_VTQ_VaiTro FOREIGN KEY (MaVT) REFERENCES VaiTro(MaVT),
+    CONSTRAINT FK_VTQ_Quyen FOREIGN KEY (MaQuyen) REFERENCES Quyen(MaQuyen)
+);
+GO
+
 PRINT N'01_create-tables.sql completed.';
 GO

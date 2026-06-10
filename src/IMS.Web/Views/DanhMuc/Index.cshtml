@@ -5,9 +5,9 @@
 
 <div class="card-custom">
     <div class="card-title-custom">
-        <span><i class="fa-solid fa-tags text-primary me-2"></i>Danh sách danh mục sản phẩm</span>
+        <span><i class="fa-solid fa-tags text-primary me-2"></i>Danh sách danh mục</span>
         <a href="/DanhMuc/Create" class="btn-custom btn-primary-custom py-2">
-            Add New <i class="fa-solid fa-plus"></i>
+            Thêm mới <i class="fa-solid fa-plus"></i>
         </a>
     </div>
 
@@ -46,10 +46,10 @@
                         <td>@item.MoTa</td>
                         <td style="text-align: center;">
                             <div class="d-flex justify-content-center gap-2">
-                                <a href="/DanhMuc/Edit/@item.MaDanhMuc" class="btn btn-sm btn-outline-primary" title="Edit">
+                                <a href="/DanhMuc/Edit/@item.MaDanhMuc" class="btn btn-sm btn-outline-primary" title="Sửa">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="confirmDelete(@item.MaDanhMuc, '@item.TenDanhMuc')">
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa" onclick="confirmDelete(@item.MaDanhMuc, '@Html.Raw(item.TenDanhMuc)')">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
@@ -61,7 +61,7 @@
     </div>
 </div>
 
-<!-- Form ẩn để gửi request POST xóa -->
+<!-- Hidden delete form -->
 <form id="deleteForm" method="post" style="display:none;">
     @Html.AntiForgeryToken()
 </form>
@@ -77,7 +77,7 @@
                 confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#64748b',
                 confirmButtonText: 'Đồng ý xóa',
-                cancelButtonText: 'Hủy bỏ'
+                cancelButtonText: 'Hủy'
             }).then((result) => {
                 if (result.isConfirmed) {
                     var form = document.getElementById('deleteForm');

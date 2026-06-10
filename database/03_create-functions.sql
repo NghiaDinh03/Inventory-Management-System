@@ -132,3 +132,54 @@ RETURN (
     LEFT JOIN Xuat x ON d.Ngay = x.Ngay
 );
 GO
+
+-- 6. Calculate remaining volume in a bin
+CREATE OR ALTER FUNCTION fn_TinhTheTichConLai (
+    @MaBin INT
+)
+RETURNS DECIMAL(10,2)
+AS
+BEGIN
+    DECLARE @TheTichToiDa DECIMAL(10,2) = 0;
+    DECLARE @TheTichHienTai DECIMAL(10,2) = 0;
+    
+    SELECT @TheTichToiDa = TheTichToiDa 
+    FROM BinLocation 
+    WHERE MaBin = @MaBin;
+    
+    -- Assume product volume = weight * 0.0015 (m3)
+    SELECT @TheTichHienTai = COALESCE(SUM(tb.SoLuong * sp.TrongLuong * 0.0015), 0)
+    FROM TonKhoTheoBin tb
+    JOIN SanPham sp ON tb.MaSP = sp.MaSP
+    WHERE tb.MaBin = @MaBin;
+    
+    RETURN CASE WHEN (@TheTichToiDa - @TheTichHienTai) < 0 THEN 0 ELSE (@TheTichToiDa - @TheTichHienTai) END;
+END;
+GO
+
+-- 7. Calculate remaining weight in a bin
+CREATE OR ALTER FUNCTION fn_TinhTrongLuongConLai (
+    @MaBin INT
+)
+RETURNS DECIMAL(10,2)
+AS
+BEGIN
+    DECLARE @TrongLuongToiDa DECIMAL(10,2) = 0;
+    DECLARE @TrongLuongHienTai DECIMAL(10,2) = 0;
+    
+    SELECT @TrongLuongToiDa = TrongLuongToiDa 
+    FROM BinLocation 
+    WHERE MaBin = @MaBin;
+    
+    SELECT @TrongLuongHienTai = COALESCE(SUM(tb.SoLuong * sp.TrongLuong), 0)
+    FROM TonKhoTheoBin tb
+    JOIN SanPham sp ON tb.MaSP = sp.MaSP
+    WHERE tb.MaBin = @MaBin;
+    
+    RETURN CASE WHEN (@TrongLuongToiDa - @TrongLuongHienTai) < 0 THEN 0 ELSE (@TrongLuongToiDa - @TrongLuongHienTai) END;
+END;
+GO
+
+PRINT N'03_create-functions.sql completed.';
+GO
+

@@ -1,16 +1,16 @@
 @model IEnumerable<IMS.Web.Models.PhieuNhap>
 @{
-    ViewData["Title"] = "Phiếu nhập kho";
+    ViewData["Title"] = "Danh sách phiếu nhập kho";
 }
-
+ 
 <div class="card-custom">
     <div class="card-title-custom">
         <span><i class="fa-solid fa-file-import text-primary me-2"></i>Quản lý phiếu nhập kho</span>
         <a href="/PhieuNhap/Create" class="btn-custom btn-primary-custom py-2">
-            Create Voucher <i class="fa-solid fa-plus"></i>
+            Tạo phiếu nhập <i class="fa-solid fa-plus"></i>
         </a>
     </div>
-
+ 
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -18,7 +18,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
-
+ 
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -26,7 +26,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
-
+ 
     <div class="table-responsive">
         <table class="table table-custom table-hover datatable-custom">
             <thead>
@@ -38,27 +38,27 @@
                     <th>Tổng tiền</th>
                     <th>Trạng thái</th>
                     <th>Người lập</th>
-                    <th style="width: 100px; text-align: center;">Chi tiết</th>
+                    <th style="width: 100px; text-align: center;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td class="fw-bold text-primary">@(item.SoPhieu ?? "CHƯA CÓ")</td>
-                        <td>@(item.NhaCungCap?.TenNCC ?? "Không xác định")</td>
-                        <td class="fw-bold text-secondary">@(item.Kho?.TenKho ?? "Không xác định")</td>
+                        <td class="fw-bold text-primary">@(item.SoPhieu ?? "N/A")</td>
+                        <td>@(item.NhaCungCap?.TenNCC ?? "Chưa xác định")</td>
+                        <td class="fw-bold text-secondary">@(item.Kho?.TenKho ?? "Chưa xác định")</td>
                         <td>@item.NgayLap.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td class="fw-bold text-success">@item.TongTien.ToString("N0") đ</td>
+                        <td class="fw-bold text-success">@item.TongTien.ToString("N0") VND</td>
                         <td>
                             <span class="badge-custom @(item.TrangThai == "ĐãDuyệt" ? "badge-status-duyet" : item.TrangThai == "Nháp" ? "badge-status-nhap" : "badge-status-huy")">
-                                @item.TrangThai
+                                @(item.TrangThai == "ĐãDuyệt" ? "Đã duyệt" : item.TrangThai == "Nháp" ? "Nháp" : "Đã hủy")
                             </span>
                         </td>
                         <td>@(item.NhanVien?.HoTen ?? "Hệ thống")</td>
                         <td style="text-align: center;">
-                            <a href="/PhieuNhap/Details/@item.MaPN" class="btn btn-sm btn-outline-primary" title="View Details">
-                                <i class="fa-solid fa-eye"></i> View
+                            <a href="/PhieuNhap/Details/@item.MaPN" class="btn btn-sm btn-outline-primary" title="Xem Chi Tiết">
+                                <i class="fa-solid fa-eye"></i> Xem
                             </a>
                         </td>
                     </tr>

@@ -15,51 +15,51 @@
     </div>
     
     <div class="sidebar-menu">
-        <!-- Dashboard Item -->
+        <!-- Dashboard Navigation -->
         <a href="/" class="menu-item @(controller == "Home" && action == "Index" ? "active" : "")">
             <i class="fa-solid fa-chart-line"></i>
             <span>Tổng quan</span>
         </a>
-
-        <!-- Collapsible Group: Nghiệp vụ kho -->
+ 
+        <!-- Warehouse Operations Menu -->
         <div class="menu-group">
             <div class="menu-group-header @(isNghiepVuActive ? "active-header" : "")" 
                  data-bs-toggle="collapse" 
                  data-bs-target="#collapseNghiepVu" 
                  aria-expanded="@(isNghiepVuActive ? "true" : "false")" 
                  aria-controls="collapseNghiepVu">
-                <i class="fa-solid fa-warehouse"></i>
-                <span>Nghiệp vụ kho</span>
-                <i class="fa-solid fa-chevron-down group-arrow"></i>
+                 <i class="fa-solid fa-warehouse"></i>
+                 <span>Quản lý kho</span>
+                 <i class="fa-solid fa-chevron-down group-arrow"></i>
             </div>
             <div id="collapseNghiepVu" class="collapse @(isNghiepVuActive ? "show" : "")">
                 <div class="menu-group-items">
                     <a href="/PhieuNhap" class="menu-item sub-item @(controller == "PhieuNhap" ? "active" : "")">
                         <i class="fa-solid fa-file-import"></i>
-                        Phiếu Nhập Kho
+                        Phiếu nhập
                     </a>
                     <a href="/PhieuXuat" class="menu-item sub-item @(controller == "PhieuXuat" ? "active" : "")">
                         <i class="fa-solid fa-file-export"></i>
-                        Phiếu Xuất Kho
+                        Phiếu xuất
                     </a>
                     <a href="/TonKho" class="menu-item sub-item @(controller == "TonKho" ? "active" : "")">
                         <i class="fa-solid fa-chart-pie"></i>
-                        Báo cáo Tồn Kho
+                        Báo cáo tồn kho
                     </a>
                 </div>
             </div>
         </div>
-
-        <!-- Collapsible Group: Danh mục hệ thống -->
+ 
+        <!-- System Catalogs Menu -->
         <div class="menu-group">
             <div class="menu-group-header @(isDanhMucActive ? "active-header" : "")" 
                  data-bs-toggle="collapse" 
                  data-bs-target="#collapseDanhMuc" 
                  aria-expanded="@(isDanhMucActive ? "true" : "false")" 
                  aria-controls="collapseDanhMuc">
-                <i class="fa-solid fa-folder-open"></i>
-                <span>Danh mục hệ thống</span>
-                <i class="fa-solid fa-chevron-down group-arrow"></i>
+                 <i class="fa-solid fa-folder-open"></i>
+                 <span>Danh mục hệ thống</span>
+                 <i class="fa-solid fa-chevron-down group-arrow"></i>
             </div>
             <div id="collapseDanhMuc" class="collapse @(isDanhMucActive ? "show" : "")">
                 <div class="menu-group-items">
@@ -69,7 +69,7 @@
                     </a>
                     <a href="/DanhMuc" class="menu-item sub-item @(controller == "DanhMuc" ? "active" : "")">
                         <i class="fa-solid fa-tags"></i>
-                        Danh mục
+                        Phân loại
                     </a>
                     <a href="/NhaCungCap" class="menu-item sub-item @(controller == "NhaCungCap" ? "active" : "")">
                         <i class="fa-solid fa-truck-field"></i>
@@ -82,23 +82,23 @@
                 </div>
             </div>
         </div>
-
-        <!-- Collapsible Group: Nâng cao & Hệ thống -->
+ 
+        <!-- Advanced Settings Menu -->
         <div class="menu-group">
             <div class="menu-group-header @(isNangCaoActive ? "active-header" : "")" 
                  data-bs-toggle="collapse" 
                  data-bs-target="#collapseNangCao" 
                  aria-expanded="@(isNangCaoActive ? "true" : "false")" 
                  aria-controls="collapseNangCao">
-                <i class="fa-solid fa-screwdriver-wrench"></i>
-                <span>Nâng cao & Hệ thống</span>
-                <i class="fa-solid fa-chevron-down group-arrow"></i>
+                 <i class="fa-solid fa-screwdriver-wrench"></i>
+                 <span>Nâng cao & Hệ thống</span>
+                 <i class="fa-solid fa-chevron-down group-arrow"></i>
             </div>
             <div id="collapseNangCao" class="collapse @(isNangCaoActive ? "show" : "")">
                 <div class="menu-group-items">
                     <a href="/Demo" class="menu-item sub-item @(controller == "Demo" ? "active" : "")">
                         <i class="fa-solid fa-flask"></i>
-                        Demo B1-B5 SP/Trigger
+                        Demo SQL Server (B1-B5)
                     </a>
                     @if (User.IsInRole("Admin"))
                     {
@@ -111,7 +111,7 @@
             </div>
         </div>
     </div>
-
+ 
     <div class="sidebar-footer dropdown">
         <div class="d-flex align-items-center gap-2 px-2 text-white dropdown-toggle" 
              id="userProfileDropdown" 

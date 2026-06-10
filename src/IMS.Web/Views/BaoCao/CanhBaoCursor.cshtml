@@ -1,17 +1,17 @@
 @using System.Data
 @model DataTable
 @{
-    ViewData["Title"] = "Cảnh báo tồn kho thấp (Cursor)";
+    ViewData["Title"] = "Cảnh báo tồn kho bằng Cursor";
 }
 
 <div class="alert alert-warning border-warning-subtle bg-warning-subtle text-warning-emphasis p-3 rounded mb-4">
     <div class="d-flex align-items-center gap-3">
         <i class="fa-solid fa-triangle-exclamation fs-3"></i>
         <div>
-            <h5 class="fw-bold mb-1">Màn hình Báo cáo Cursor của Hệ thống</h5>
+            <h5 class="fw-bold mb-1">Báo cáo tồn kho bằng con trỏ Cursor</h5>
             <p class="mb-0 text-sm" style="font-size: 13px;">
-                Dữ liệu dưới đây được sinh ra bằng cách chạy **Cursor trong SQL Server** (thủ tục <code>sp_CursorCanhBaoTon</code>). 
-                Cursor duyệt qua từng dòng trong bảng Tồn Kho, so sánh với hạn mức tối thiểu của sản phẩm, in thông báo ra tab Messages và đẩy dữ liệu về giao diện Web.
+                Dữ liệu dưới đây được tạo ra bằng cách chạy con trỏ **Cursor trong SQL Server** (thủ tục <code>sp_CursorCanhBaoTon</code>). 
+                Con trỏ duyệt qua từng sản phẩm trong bảng tồn kho, so sánh với định mức tối thiểu, in thông báo ra tab Messages và trả dữ liệu về ứng dụng web.
             </p>
         </div>
     </div>
@@ -19,7 +19,7 @@
 
 <div class="card-custom">
     <div class="card-title-custom">
-        <span><i class="fa-solid fa-laptop-code text-primary me-2"></i>Thông tin cảnh báo sinh từ Cursor</span>
+        <span><i class="fa-solid fa-laptop-code text-primary me-2"></i>Cảnh báo sinh ra từ Cursor</span>
         <span class="badge bg-danger">Số lượng cảnh báo: @Model.Rows.Count</span>
     </div>
 
@@ -30,9 +30,9 @@
                     <th style="width: 80px;">Mã SP</th>
                     <th>Tên sản phẩm</th>
                     <th>Kho hàng</th>
-                    <th style="text-align: center;">Tồn hiện tại</th>
-                    <th style="text-align: center;">Hạn mức tối thiểu</th>
-                    <th>Thông tin chi tiết cảnh báo</th>
+                    <th style="text-align: center;">Số lượng tồn</th>
+                    <th style="text-align: center;">Tồn tối thiểu</th>
+                    <th>Chi tiết cảnh báo</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,7 +57,7 @@
                     <tr>
                         <td colspan="6" class="text-center text-muted py-4">
                             <i class="fa-solid fa-circle-check text-success fs-3 mb-2"></i>
-                            <div>Tuyệt vời! Không có sản phẩm nào dưới mức tồn tối thiểu.</div>
+                            <div>Tuyệt vời! Không có sản phẩm nào ở dưới mức tồn tối thiểu.</div>
                         </td>
                     </tr>
                 }

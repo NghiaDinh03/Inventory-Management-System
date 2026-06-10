@@ -400,3 +400,166 @@ BEGIN
     WHERE MaTK = @MaTK;
 END;
 GO
+
+-- 9. SP: Write stock transaction ledger (anti-deadlock append-only design)
+CREATE OR ALTER PROCEDURE sp_GhiGiaoDichKho
+    @MaSP INT,
+    @MaKho INT,
+    @MaBin INT,
+    @MaLo INT,
+    @LoaiGiaoDich NVARCHAR(30),
+    @MaPhieuThamChieu VARCHAR(30),
+    @SoLuongThayDoi INT,
+    @MaNV INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        DECLARE @SoLuongSauThayDoi INT = 0;
+        
+        -- Get current stock in the specific bin-lot
+        SELECT @SoLuongSauThayDoi = COALESCE(SoLuong, 0)
+        FROM TonKhoTheoBin
+        WHERE MaSP = @MaSP AND MaBin = @MaBin AND MaLo = @MaLo;
+        
+        SET @SoLuongSauThayDoi = @SoLuongSauThayDoi + @SoLuongThayDoi;
+        
+        IF @SoLuongSauThayDoi < 0
+        BEGIN
+            THROW 50012, N'Lỗi: Số lượng tồn kho theo vị trí không được âm.', 1;
+        END
+        
+        -- Update the static stock-by-bin table
+        IF EXISTS (SELECT 1 FROM TonKhoTheoBin WHERE MaSP = @MaSP AND MaBin = @MaBin AND MaLo = @MaLo)
+        BEGIN
+            UPDATE TonKhoTheoBin
+            SET SoLuong = @SoLuongSauThayDoi
+            WHERE MaSP = @MaSP AND MaBin = @MaBin AND MaLo = @MaLo;
+        END
+        ELSE
+        BEGIN
+            INSERT INTO TonKhoTheoBin (MaSP, MaBin, MaLo, SoLuong, NgayNhapBin)
+            VALUES (@MaSP, @MaBin, @MaLo, @SoLuongSauThayDoi, GETDATE());
+        END
+        
+        -- Insert ledger transaction record
+        INSERT INTO GiaoDichKho (MaSP, MaKho, MaBin, MaLo, LoaiGiaoDich, MaPhieuThamChieu, SoLuongThayDoi, SoLuongSauThayDoi, MaNV, ThoiGian)
+        VALUES (@MaSP, @MaKho, @MaBin, @MaLo, @LoaiGiaoDich, @MaPhieuThamChieu, @SoLuongThayDoi, @SoLuongSauThayDoi, @MaNV, GETDATE());
+        
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- 10. SP: Putaway stock to physical location (checking weight & volume)
+CREATE OR ALTER PROCEDURE sp_PutawayStock
+    @MaSP INT,
+    @MaLo INT,
+    @MaBin INT,
+    @SoLuong INT,
+    @MaNV INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        DECLARE @MaKho INT;
+        DECLARE @TrongLuongSP DECIMAL(10,3);
+        
+        SELECT @MaKho = MaKho FROM BinLocation WHERE MaBin = @MaBin;
+        SELECT @TrongLuongSP = TrongLuong FROM SanPham WHERE MaSP = @MaSP;
+        
+        IF @MaKho IS NULL
+        BEGIN
+            THROW 50013, N'Lỗi: Vị trí kệ không tồn tại.', 1;
+        END
+        
+        -- Check remaining weight capability
+        DECLARE @TrongLuongConLai DECIMAL(10,2);
+        SELECT @TrongLuongConLai = dbo.fn_TinhTrongLuongConLai(@MaBin);
+        
+        IF @TrongLuongConLai < (@SoLuong * @TrongLuongSP)
+        BEGIN
+            THROW 50014, N'Lỗi: Vị trí ô kệ này đã quá tải, không thể xếp thêm hàng.', 1;
+        END
+        
+        -- Write to ledger using sp_GhiGiaoDichKho
+        EXEC sp_GhiGiaoDichKho 
+            @MaSP = @MaSP,
+            @MaKho = @MaKho,
+            @MaBin = @MaBin,
+            @MaLo = @MaLo,
+            @LoaiGiaoDich = N'NhậpKho',
+            @MaPhieuThamChieu = 'PUTAWAY-AUTO',
+            @SoLuongThayDoi = @SoLuong,
+            @MaNV = @MaNV;
+            
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+
+-- 11. SP: Cycle count/physical stock audit
+CREATE OR ALTER PROCEDURE sp_KiemKeCuonChieu
+    @MaPKK INT,
+    @MaBin INT,
+    @MaSP INT,
+    @MaLo INT,
+    @SoLuongThucTe INT,
+    @MaNV INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        DECLARE @SoLuongHeThong INT = 0;
+        DECLARE @MaKho INT;
+        
+        SELECT @MaKho = MaKho FROM BinLocation WHERE MaBin = @MaBin;
+        
+        SELECT @SoLuongHeThong = COALESCE(SoLuong, 0)
+        FROM TonKhoTheoBin
+        WHERE MaSP = @MaSP AND MaBin = @MaBin AND MaLo = @MaLo;
+        
+        DECLARE @SoLuongLech INT = @SoLuongThucTe - @SoLuongHeThong;
+        
+        -- Insert details
+        INSERT INTO CT_PhieuKiemKe (MaPKK, MaSP, MaBin, MaLo, SoLuongHeThong, SoLuongThucTe, LyDoLech)
+        VALUES (@MaPKK, @MaSP, @MaBin, @MaLo, @SoLuongHeThong, @SoLuongThucTe, 
+                CASE WHEN @SoLuongLech = 0 THEN N'Khớp số liệu' ELSE N'Lệch thừa/thiếu khi kiểm kê' END);
+                
+        -- Adjust stock in ledger if there is deviation
+        IF @SoLuongLech <> 0
+        BEGIN
+            EXEC sp_GhiGiaoDichKho
+                @MaSP = @MaSP,
+                @MaKho = @MaKho,
+                @MaBin = @MaBin,
+                @MaLo = @MaLo,
+                @LoaiGiaoDich = N'KiểmKê',
+                @MaPhieuThamChieu = 'ADJUST-STOCK',
+                @SoLuongThayDoi = @SoLuongLech,
+                @MaNV = @MaNV;
+        END
+        
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
+GO
+
+PRINT N'04_create-stored-procedures.sql completed.';
+GO
+

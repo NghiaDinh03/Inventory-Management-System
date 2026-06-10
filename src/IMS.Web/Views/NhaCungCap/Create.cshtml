@@ -7,7 +7,7 @@
     <div class="col-xl-8 col-lg-10">
         <div class="card-custom">
             <div class="card-title-custom">
-                <span><i class="fa-solid fa-plus text-primary me-2"></i>Thêm nhà cung cấp mới</span>
+                <span><i class="fa-solid fa-plus text-primary me-2"></i>Thêm mới nhà cung cấp</span>
             </div>
 
             @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
@@ -33,7 +33,7 @@
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label-custom" asp-for="NguoiLienHe">Người liên hệ</label>
-                        <input type="text" asp-for="NguoiLienHe" class="form-control-custom w-100" placeholder="Nhập tên người đại diện liên hệ..." />
+                        <input type="text" asp-for="NguoiLienHe" class="form-control-custom w-100" placeholder="Nhập tên người liên hệ..." />
                         <span asp-validation-for="NguoiLienHe" class="text-danger text-sm"></span>
                     </div>
                 </div>
@@ -41,37 +41,37 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label-custom" asp-for="SoDienThoai">Số điện thoại</label>
-                        <input type="text" asp-for="SoDienThoai" class="form-control-custom w-100" placeholder="Nhập số điện thoại liên hệ..." />
+                        <input type="text" asp-for="SoDienThoai" class="form-control-custom w-100" placeholder="Nhập số điện thoại..." />
                         <span asp-validation-for="SoDienThoai" class="text-danger text-sm"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label-custom" asp-for="Email">Email</label>
-                        <input type="email" asp-for="Email" class="form-control-custom w-100" placeholder="Nhập hòm thư điện tử..." />
+                        <input type="email" asp-for="Email" class="form-control-custom w-100" placeholder="Nhập địa chỉ email..." />
                         <span asp-validation-for="Email" class="text-danger text-sm"></span>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label-custom" asp-for="DiaChi">Địa chỉ</label>
-                    <input type="text" asp-for="DiaChi" class="form-control-custom w-100" placeholder="Nhập địa chỉ văn phòng/kho nhà cung cấp..." />
+                    <input type="text" asp-for="DiaChi" class="form-control-custom w-100" placeholder="Nhập địa chỉ..." />
                     <span asp-validation-for="DiaChi" class="text-danger text-sm"></span>
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label-custom">Trạng thái hoạt động</label>
+                    <label class="form-label-custom">Trạng thái</label>
                     <div class="form-check form-switch mt-2">
                         <input class="form-check-input" type="checkbox" role="switch" id="trangThaiSwitch" asp-for="TrangThai" checked>
-                        <label class="form-check-label text-secondary" for="trangThaiSwitch" style="font-size: 14px;">Nhà cung cấp đang hợp tác</label>
+                        <label class="form-check-label text-secondary" for="trangThaiSwitch" style="font-size: 14px;">Hoạt động (Cooperating with this supplier)</label>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
                     <a href="/NhaCungCap" class="btn-custom btn-secondary-custom">
-                        <i class="fa-solid fa-chevron-left"></i> Back
+                        <i class="fa-solid fa-chevron-left"></i> Quay lại
                     </a>
                     <button type="submit" class="btn-custom btn-primary-custom">
-                        Save <i class="fa-solid fa-floppy-disk"></i>
+                        Lưu <i class="fa-solid fa-floppy-disk"></i>
                     </button>
                 </div>
             </form>

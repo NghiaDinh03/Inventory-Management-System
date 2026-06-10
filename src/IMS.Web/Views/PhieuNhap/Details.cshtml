@@ -1,18 +1,18 @@
 @model IMS.Web.Models.PhieuNhap
 @{
-    ViewData["Title"] = "Chi tiết phiếu nhập " + (Model.SoPhieu ?? "");
+    ViewData["Title"] = "Chi tiết phiếu nhập - " + (Model.SoPhieu ?? "Nháp");
 }
 
 <div class="card-custom">
-    <!-- Header phiếu -->
+    <!-- Voucher Header -->
     <div class="card-title-custom border-bottom pb-3 mb-4">
         <div>
             <i class="fa-solid fa-file-invoice-dollar text-primary me-2"></i>
-            <span>Chi tiết chứng từ: <strong class="text-primary">@(Model.SoPhieu ?? "Phiếu Nháp")</strong></span>
+            <span>Chi tiết phiếu: <strong class="text-primary">@(Model.SoPhieu ?? "Nháp")</strong></span>
         </div>
         <div>
             <span class="badge-custom @(Model.TrangThai == "ĐãDuyệt" ? "badge-status-duyet" : Model.TrangThai == "Nháp" ? "badge-status-nhap" : "badge-status-huy") fs-6 px-3 py-2">
-                @Model.TrangThai
+                @(Model.TrangThai == "ĐãDuyệt" ? "Đã duyệt" : Model.TrangThai == "Nháp" ? "Nháp" : "Đã hủy")
             </span>
         </div>
     </div>
@@ -33,12 +33,12 @@
         </div>
     }
 
-    <!-- Thông tin chung Master -->
+    <!-- Master Information Grid -->
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="fw-bold text-secondary text-xs" style="font-size: 11px;">NHÀ CUNG CẤP</div>
             <div class="text-primary fw-bold mt-1">@(Model.NhaCungCap?.TenNCC ?? "N/A")</div>
-            <div class="text-muted text-xs mt-1" style="font-size: 12px;">Liên hệ: @Model.NhaCungCap?.NguoiLienHe | ĐT: @Model.NhaCungCap?.SoDienThoai</div>
+            <div class="text-muted text-xs mt-1" style="font-size: 12px;">Liên hệ: @Model.NhaCungCap?.NguoiLienHe | SĐT: @Model.NhaCungCap?.SoDienThoai</div>
         </div>
 
         <div class="col-md-3">
@@ -49,16 +49,16 @@
 
         <div class="col-md-3">
             <div class="fw-bold text-secondary text-xs" style="font-size: 11px;">NGÀY LẬP & DUYỆT</div>
-            <div class="text-dark mt-1" style="font-size: 14px;"><strong>Lập:</strong> @Model.NgayLap.ToString("dd/MM/yyyy HH:mm")</div>
+            <div class="text-dark mt-1" style="font-size: 14px;"><strong>Ngày lập:</strong> @Model.NgayLap.ToString("dd/MM/yyyy HH:mm")</div>
             @if (Model.NgayDuyet.HasValue)
             {
-                <div class="text-success mt-1" style="font-size: 14px;"><strong>Duyệt:</strong> @Model.NgayDuyet.Value.ToString("dd/MM/yyyy HH:mm")</div>
+                <div class="text-success mt-1" style="font-size: 14px;"><strong>Ngày duyệt:</strong> @Model.NgayDuyet.Value.ToString("dd/MM/yyyy HH:mm")</div>
                 <div class="text-success text-xs mt-1" style="font-size: 12px;"><strong>Người duyệt:</strong> @(Model.NhanVienDuyet?.HoTen ?? "Hệ thống")</div>
             }
         </div>
 
         <div class="col-md-3">
-            <div class="fw-bold text-secondary text-xs" style="font-size: 11px;">NHÂN VIÊN LẬP</div>
+            <div class="fw-bold text-secondary text-xs" style="font-size: 11px;">NGƯỜI LẬP PHIẾU</div>
             <div class="text-dark fw-bold mt-1">@(Model.NhanVien?.HoTen ?? "N/A")</div>
             <div class="text-muted text-xs mt-1" style="font-size: 12px;">Chức vụ: @Model.NhanVien?.ChucVu</div>
         </div>
@@ -73,8 +73,8 @@
 
     <hr />
 
-    <!-- Danh sách chi tiết Detail -->
-    <h5 class="font-title fw-bold text-secondary mb-3"><i class="fa-solid fa-list-ol me-2"></i>Danh sách sản phẩm nhập kho</h5>
+    <!-- Product list details -->
+    <h5 class="font-title fw-bold text-secondary mb-3"><i class="fa-solid fa-list-ol me-2"></i>Danh sách sản phẩm</h5>
     <div class="table-responsive mb-4">
         <table class="table table-custom">
             <thead>
@@ -99,62 +99,62 @@
                             <td>@(ct.SanPham?.DonVi ?? "")</td>
                             <td style="text-align: center;">@(ct.TrongLuong.HasValue ? ct.TrongLuong.Value.ToString("N3") + " kg" : "0.000 kg")</td>
                             <td style="text-align: center;" class="fw-bold">@ct.SoLuong</td>
-                            <td class="text-end">@ct.DonGia.ToString("N0") đ</td>
-                            <td class="text-end fw-bold text-success">@ct.ThanhTien.ToString("N0") đ</td>
+                            <td class="text-end">@ct.DonGia.ToString("N0") VND</td>
+                            <td class="text-end fw-bold text-success">@ct.ThanhTien.ToString("N0") VND</td>
                         </tr>
                     }
                 }
                 else
                 {
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">Phiếu nhập này không có chi tiết.</td>
+                        <td colspan="7" class="text-center text-muted py-4">Phiếu nhập này chưa có chi tiết sản phẩm.</td>
                     </tr>
                 }
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="6" class="text-end py-3">TỔNG TIỀN THANH TOÁN:</th>
-                    <th class="text-end text-success fs-5 py-3 fw-bold">@Model.TongTien.ToString("N0") đ</th>
+                    <th colspan="6" class="text-end py-3">TỔNG CỘNG:</th>
+                    <th class="text-end text-success fs-5 py-3 fw-bold">@Model.TongTien.ToString("N0") VND</th>
                 </tr>
             </tfoot>
         </table>
     </div>
 
-    <!-- Nút thao tác xử lý phiếu -->
+    <!-- Action buttons container -->
     <div class="d-flex justify-content-between">
         <a href="/PhieuNhap" class="btn-custom btn-secondary-custom">
-            <i class="fa-solid fa-chevron-left"></i> Back
+            <i class="fa-solid fa-chevron-left"></i> Quay lại
         </a>
 
         <div class="d-flex gap-2">
             @if (Model.TrangThai == "Nháp")
             {
-                <!-- Nút Hủy phiếu (chỉ cần lý do đơn giản) -->
+                <!-- Delete/Cancel voucher button -->
                 <button type="button" class="btn-custom btn-secondary-custom text-danger" onclick="confirmHuy()">
-                    Cancel Voucher <i class="fa-solid fa-trash-can"></i>
+                    Hủy phiếu <i class="fa-solid fa-trash-can"></i>
                 </button>
 
-                <!-- Nút Duyệt phiếu -->
+                <!-- Approve voucher button -->
                 <form asp-action="Duyet" method="post">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="id" value="@Model.MaPN" />
                     <button type="submit" class="btn-custom btn-primary-custom" style="background: var(--success-gradient); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);">
-                        Approve <i class="fa-solid fa-square-check"></i>
+                        Duyệt phiếu <i class="fa-solid fa-square-check"></i>
                     </button>
                 </form>
             }
             else if (Model.TrangThai == "ĐãDuyệt")
             {
-                <!-- Phiếu đã duyệt vẫn cho phép HỦY nhưng sẽ trừ bớt tồn kho đã cộng trước đó -->
+                <!-- Approved voucher cancel button -->
                 <button type="button" class="btn-custom btn-secondary-custom text-danger" onclick="confirmHuy()">
-                    Cancel Voucher (Revert Stock) <i class="fa-solid fa-ban"></i>
+                    Hủy phiếu (Hoàn kho) <i class="fa-solid fa-ban"></i>
                 </button>
             }
         </div>
     </div>
 </div>
 
-<!-- Form ẩn gửi yêu cầu hủy -->
+<!-- Hidden form for cancel request -->
 <form id="huyForm" asp-action="Huy" method="post" style="display:none;">
     @Html.AntiForgeryToken()
     <input type="hidden" name="id" value="@Model.MaPN" />
@@ -166,18 +166,18 @@
         function confirmHuy() {
             Swal.fire({
                 title: 'Hủy phiếu nhập kho?',
-                text: 'Nhập lý do hủy phiếu nhập này. Nếu phiếu đã duyệt, việc hủy phiếu sẽ tự động giảm trừ số lượng tồn kho tương ứng!',
+                text: 'Nhập lý do hủy phiếu này. Nếu phiếu đã được duyệt, thao tác này sẽ hoàn trả lại số lượng tồn kho!',
                 input: 'text',
-                inputPlaceholder: 'Nhập lý do hủy phiếu...',
+                inputPlaceholder: 'Nhập lý do hủy...',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#64748b',
                 confirmButtonText: 'Đồng ý hủy',
-                cancelButtonText: 'Hủy bỏ',
+                cancelButtonText: 'Đóng',
                 inputValidator: (value) => {
                     if (!value) {
-                        return 'Bạn phải điền lý do hủy phiếu!'
+                        return 'Bạn phải nhập lý do hủy!'
                     }
                 }
             }).then((result) => {

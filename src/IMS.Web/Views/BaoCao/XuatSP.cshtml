@@ -1,13 +1,13 @@
 @using System.Data
 @model DataTable
 @{
-    ViewData["Title"] = "Báo cáo xuất hàng theo sản phẩm";
+    ViewData["Title"] = "Báo cáo xuất kho theo sản phẩm";
 }
 
-<!-- Bộ lọc -->
+<!-- Filters section -->
 <div class="card-custom mb-4">
     <div class="card-title-custom">
-        <span><i class="fa-solid fa-filter text-primary me-2"></i>Lọc dữ liệu xuất hàng</span>
+        <span><i class="fa-solid fa-filter text-primary me-2"></i>Lọc dữ liệu xuất kho</span>
     </div>
     <form method="get" action="/BaoCao/XuatSP" class="row align-items-end g-3">
         <div class="col-md-4">
@@ -26,18 +26,18 @@
         </div>
         <div class="col-md-2">
             <button type="submit" class="btn-custom btn-primary-custom w-100 py-2 justify-content-center">
-                Filter <i class="fa-solid fa-magnifying-glass"></i>
+                Lọc báo cáo <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </div>
     </form>
 </div>
 
-<!-- Bảng hiển thị -->
+<!-- Report table list -->
 <div class="card-custom">
     <div class="card-title-custom">
         <span>
             <i class="fa-solid fa-list-ol text-primary me-2"></i>
-            Chi tiết xuất kho từ <strong>@DateTime.Parse(ViewBag.TuNgay).ToString("dd/MM/yyyy")</strong> đến <strong>@DateTime.Parse(ViewBag.DenNgay).ToString("dd/MM/yyyy")</strong>
+            Chi tiết xuất kho từ ngày <strong>@DateTime.Parse(ViewBag.TuNgay).ToString("dd/MM/yyyy")</strong> đến ngày <strong>@DateTime.Parse(ViewBag.DenNgay).ToString("dd/MM/yyyy")</strong>
         </span>
     </div>
 
@@ -47,7 +47,7 @@
                 <tr>
                     <th>Số phiếu</th>
                     <th>Ngày duyệt</th>
-                    <th>Kho xuất</th>
+                    <th>Kho hàng</th>
                     <th>Tên sản phẩm</th>
                     <th style="text-align: center;">Số lượng</th>
                     <th style="text-align: right;">Đơn giá</th>
@@ -68,8 +68,8 @@
                             <td class="fw-bold text-secondary">@row["TenKho"]</td>
                             <td class="fw-bold text-primary">@row["TenSP"]</td>
                             <td style="text-align: center;" class="fw-bold">@Convert.ToInt32(row["SoLuong"]).ToString("N0")</td>
-                            <td class="text-end">@Convert.ToDecimal(row["DonGia"]).ToString("N0") đ</td>
-                            <td class="text-end fw-bold text-success">@thanhTien.ToString("N0") đ</td>
+                            <td class="text-end">@Convert.ToDecimal(row["DonGia"]).ToString("N0") VND</td>
+                            <td class="text-end fw-bold text-success">@thanhTien.ToString("N0") VND</td>
                             <td>@row["NguoiNhan"]</td>
                             <td>@row["NguoiLap"]</td>
                         </tr>

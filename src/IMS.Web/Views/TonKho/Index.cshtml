@@ -3,7 +3,7 @@
     ViewData["Title"] = "Báo cáo tồn kho hiện tại";
 }
 
-<!-- Bộ lọc theo Kho -->
+<!-- Warehouse filter -->
 <div class="card-custom mb-4">
     <div class="card-title-custom">
         <span><i class="fa-solid fa-filter text-primary me-2"></i>Lọc dữ liệu tồn kho</span>
@@ -12,22 +12,22 @@
         <div class="col-md-6">
             <label class="form-label-custom">Lọc theo kho hàng</label>
             <select name="maKho" class="form-control-custom w-100" asp-items="ViewBag.Khos" onchange="this.form.submit()">
-                <option value="">-- Tất cả các kho hàng --</option>
+                <option value="">-- Tất cả các kho --</option>
             </select>
         </div>
         <div class="col-md-3">
             <a href="/TonKho" class="btn-custom btn-secondary-custom w-100 py-2 justify-content-center">
-                <i class="fa-solid fa-sync"></i> Reset
+                <i class="fa-solid fa-sync"></i> Đặt lại
             </a>
         </div>
     </form>
 </div>
 
-<!-- Bảng hiển thị tồn kho hiện tại -->
+<!-- Stock table list -->
 <div class="card-custom">
     <div class="card-title-custom">
-        <span><i class="fa-solid fa-warehouse text-primary me-2"></i>Tồn kho thực tế</span>
-        <span class="badge bg-primary px-3 py-2">Tổng số dòng: @Model.Count()</span>
+        <span><i class="fa-solid fa-warehouse text-primary me-2"></i>Hàng hóa thực tế trong kho</span>
+        <span class="badge bg-primary px-3 py-2">Tổng số mặt hàng: @Model.Count()</span>
     </div>
 
     <div class="table-responsive">
@@ -36,13 +36,13 @@
                 <tr>
                     <th style="width: 80px;">Mã SP</th>
                     <th>Tên sản phẩm</th>
-                    <th>Danh mục</th>
-                    <th>Đơn vị</th>
-                    <th>Kho hàng</th>
+                    <th>Phân loại</th>
+                    <th>ĐVT</th>
+                    <th>Kho</th>
                     <th style="text-align: center;">Số lượng tồn</th>
                     <th style="text-align: center;">Trọng lượng tồn</th>
                     <th style="text-align: right;">Giá trị tồn</th>
-                    <th>Mức tối thiểu</th>
+                    <th>Tồn tối thiểu</th>
                     <th style="text-align: center;">Cảnh báo</th>
                 </tr>
             </thead>
@@ -68,13 +68,13 @@
                         <td style="text-align: center;" class="fw-bold text-secondary">
                             @item.TrongLuongTon.ToString("N3") kg
                         </td>
-                        <td class="text-end fw-bold text-success">@item.GiaTri.ToString("N0") đ</td>
+                        <td class="text-end fw-bold text-success">@item.GiaTri.ToString("N0") VND</td>
                         <td style="text-align: center;"><span class="badge bg-secondary">@item.TonToiThieu</span></td>
                         <td style="text-align: center;">
                             @if (canNhap)
                             {
                                 <span class="badge bg-danger">
-                                    <i class="fa-solid fa-circle-exclamation me-1"></i> Tồn thấp
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i> Cần nhập thêm
                                 </span>
                             }
                             else

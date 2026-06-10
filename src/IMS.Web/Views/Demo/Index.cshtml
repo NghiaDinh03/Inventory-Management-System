@@ -6,9 +6,9 @@
     <div class="d-flex align-items-center gap-3">
         <i class="fa-solid fa-graduation-cap fs-3"></i>
         <div>
-            <h5 class="fw-bold mb-1">Môi trường thử nghiệm liên thông nghiệp vụ (B1 - B5)</h5>
+            <h5 class="fw-bold mb-1">Môi trường tương tác thực thi Logic nghiệp vụ CSDL (B1 - B5)</h5>
             <p class="mb-0 text-sm" style="font-size: 13px;">
-                Màn hình này trực quan hóa quá trình thực thi các cấu trúc CSDL nâng cao bao gồm **Stored Procedure, Trigger, Function và Cursor** trực tiếp trên giao diện web theo 5 bước tiêu chuẩn (B1: Bài toán -> B2: Câu SQL -> B3: Dữ liệu Trước -> B4: Nút thực thi -> B5: Dữ liệu Sau).
+                Màn hình này mô phỏng việc thực thi các cấu trúc cơ sở dữ liệu nâng cao gồm **Stored Procedure, Trigger, Function và Cursor** trực tiếp trên giao diện web qua 5 bước tiêu chuẩn (B1: Kịch bản -> B2: Câu lệnh SQL -> B3: Trạng thái trước chạy -> B4: Hành động -> B5: Trạng thái sau chạy).
             </p>
         </div>
     </div>
@@ -46,35 +46,35 @@
         <div class="card-custom">
             <!-- B1 -->
             <div class="demo-step">
-                <div class="demo-step-title">B1: Mô tả bài toán nghiệp vụ</div>
+                <div class="demo-step-title">B1: Kịch bản nghiệp vụ</div>
                 <p class="text-secondary" style="font-size: 14px;">
-                    Lập phiếu nhập kho nháp (TrangThai = 'Nháp'). Thủ tục <code>sp_TaoPhieuNhap</code> nhận thông tin nhà cung cấp, kho hàng, ghi chú và một danh sách sản phẩm (dưới dạng Table-Valued Parameter). Khi chạy, SP tự động chèn dữ liệu vào bảng PhieuNhap và CT_PhieuNhap. Đồng thời, trigger <code>trg_TaoSoPhieu_PN</code> sẽ tự tạo SoPhieu theo định dạng (PN-YYYY-0000X) và trigger <code>trg_CapNhatTongTien_PN</code> tự động tính tổng tiền của phiếu nhập.
+                    Tạo mới phiếu nhập kho ở trạng thái Nháp (TrangThai = N'Nháp'). Thủ tục lưu trữ <code>sp_TaoPhieuNhap</code> nhận các thông tin nhà cung cấp, kho, ghi chú và một danh sách các mặt hàng (truyền vào dưới dạng Table-Valued Parameter). Khi thực thi, thủ tục sẽ tự động chèn vào bảng PhieuNhap và CT_PhieuNhap. Đồng thời, Trigger <code>trg_TaoSoPhieu_PN</code> tự động sinh số phiếu dạng (PN-YYYY-0000X) và Trigger <code>trg_CapNhatTongTien_PN</code> tự động tính tổng tiền phiếu nhập.
                 </p>
             </div>
 
             <!-- B2 -->
             <div class="demo-step">
-                <div class="demo-step-title">B2: Câu lệnh SQL định nghĩa & thực thi</div>
+                <div class="demo-step-title">B2: Định nghĩa truy vấn SQL & Thực thi</div>
                 <div class="code-block">
 DECLARE @@Details ChiTietPhieuType;
-INSERT INTO @@Details (MaSP, SoLuong, DonGia) VALUES (1, 10, 180000); -- Logitech M331
-INSERT INTO @@Details (MaSP, SoLuong, DonGia) VALUES (2, 5, 850000);  -- Logitech G213
+INSERT INTO @@Details (MaSP, SoLuong, DonGia) VALUES (1, 10, 180000); -- Chuột Logitech M331
+INSERT INTO @@Details (MaSP, SoLuong, DonGia) VALUES (2, 5, 850000);  -- Bàn phím cơ G213
 
 EXEC sp_TaoPhieuNhap 
     @@MaNCC = 1, 
     @@MaKho = 1, 
     @@MaNV = 1, 
-    @@GhiChu = N'Phiếu nhập Demo chạy qua Web UI', 
+    @@GhiChu = N'Phiếu nhập tạo thử nghiệm qua Web UI', 
     @@ChiTiet = @@Details;
                 </div>
             </div>
 
             <!-- B3 -->
             <div class="demo-step">
-                <div class="demo-step-title">B3: Dữ liệu hiện tại trong cơ sở dữ liệu (Trước khi thực thi)</div>
+                <div class="demo-step-title">B3: Trạng thái cơ sở dữ liệu hiện tại (Trước khi thực thi)</div>
                 <div class="table-responsive">
                     <table class="table table-custom table-hover" id="tbl-sp-before">
-                        <thead><tr><th>Đang nạp dữ liệu...</th></tr></thead>
+                        <thead><tr><th>Đang tải dữ liệu...</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -82,18 +82,18 @@ EXEC sp_TaoPhieuNhap
 
             <!-- B4 -->
             <div class="demo-step">
-                <div class="demo-step-title">B4: Nút thực thi nghiệp vụ</div>
+                <div class="demo-step-title">B4: Hành động thực thi</div>
                 <button class="btn-custom btn-primary-custom py-2" onclick="runDemo('RUN_SP', 'GET_AFTER_SP', 'tbl-sp-after')">
-                    Execute sp_TaoPhieuNhap <i class="fa-solid fa-play"></i>
+                    Chạy thủ tục sp_TaoPhieuNhap <i class="fa-solid fa-play"></i>
                 </button>
             </div>
 
             <!-- B5 -->
             <div class="demo-step d-none" id="step-sp-after">
-                <div class="demo-step-title">B5: Dữ liệu trong cơ sở dữ liệu sau khi chạy (Đã tự động tính tổng tiền & số phiếu)</div>
+                <div class="demo-step-title">B5: Trạng thái cơ sở dữ liệu (Sau khi thực thi - Tự động sinh số phiếu và tính tổng tiền)</div>
                 <div class="table-responsive">
                     <table class="table table-custom table-hover" id="tbl-sp-after">
-                        <thead><tr><th>Chờ thực thi...</th></tr></thead>
+                        <thead><tr><th>Đang chờ thực thi...</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -106,30 +106,27 @@ EXEC sp_TaoPhieuNhap
         <div class="card-custom">
             <!-- B1 -->
             <div class="demo-step">
-                <div class="demo-step-title">B1: Mô tả bài toán nghiệp vụ</div>
+                <div class="demo-step-title">B1: Kịch bản nghiệp vụ</div>
                 <p class="text-secondary" style="font-size: 14px;">
-                    Kiểm tra và trừ tồn kho khi phê duyệt phiếu xuất kho. 
-                    Khi quản trị viên duyệt phiếu xuất (TrangThai = 'ĐãDuyệt'), trigger <code>trg_PhieuXuat_CapNhatTonKho</code> sẽ kiểm tra số lượng tồn của từng sản phẩm trong kho. 
-                    Nếu đủ hàng, trigger thực hiện trừ số lượng trong bảng <code>TonKho</code>. 
-                    Nếu thiếu hàng, trigger quăng lỗi (<code>RAISERROR</code>) và <code>ROLLBACK TRANSACTION</code> để bảo vệ tính toàn vẹn dữ liệu.
+                    Kiểm tra và trừ số lượng tồn kho khi duyệt phiếu xuất. Khi người quản lý thực hiện duyệt phiếu xuất (TrangThai = N'ĐãDuyệt'), trigger <code>trg_PhieuXuat_CapNhatTonKho</code> sẽ tự động quét qua các sản phẩm trong phiếu xuất để kiểm tra lượng tồn kho. Nếu đủ hàng, trigger tiến hành trừ số lượng và trọng lượng tồn kho trong bảng <code>TonKho</code>. Nếu thiếu hàng, trigger sẽ báo lỗi (<code>RAISERROR</code>) và <code>ROLLBACK TRANSACTION</code> chặn không cho duyệt phiếu để tránh xuất âm kho.
                 </p>
             </div>
 
             <!-- B2 -->
             <div class="demo-step">
-                <div class="demo-step-title">B2: Câu lệnh SQL định nghĩa & thực thi</div>
+                <div class="demo-step-title">B2: Định nghĩa truy vấn SQL & Thực thi</div>
                 <div class="code-block">
--- Chạy duyệt phiếu xuất (kích hoạt trigger):
+-- Duyệt phiếu xuất (kích hoạt kiểm tra tồn kho):
 EXEC sp_DuyetPhieu @@LoaiPhieu = 'PX', @@MaPhieu = @@MaPX, @@MaNV = 1;
                 </div>
             </div>
 
             <!-- B3 -->
             <div class="demo-step">
-                <div class="demo-step-title">B3: Dữ liệu tồn kho hiện tại ở Kho 3 (Trước khi xuất)</div>
+                <div class="demo-step-title">B3: Trạng thái tồn sản phẩm 1 tại Kho 3 (Trước khi xuất)</div>
                 <div class="table-responsive">
                     <table class="table table-custom table-hover" id="tbl-trigger-before">
-                        <thead><tr><th>Đang nạp dữ liệu...</th></tr></thead>
+                        <thead><tr><th>Đang tải dữ liệu...</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -137,23 +134,23 @@ EXEC sp_DuyetPhieu @@LoaiPhieu = 'PX', @@MaPhieu = @@MaPX, @@MaNV = 1;
 
             <!-- B4 -->
             <div class="demo-step">
-                <div class="demo-step-title">B4: Nút thực thi nghiệp vụ</div>
+                <div class="demo-step-title">B4: Hành động thực thi</div>
                 <div class="d-flex gap-2">
                     <button class="btn-custom btn-primary-custom py-2" onclick="runDemo('RUN_TRIGGER_PASS', 'GET_AFTER_TRIGGER_PASS', 'tbl-trigger-after')">
-                        Approve - SUFFICIENT Stock (Export 2 items) <i class="fa-solid fa-check-double"></i>
+                        Duyệt phiếu - ĐỦ TỒN KHO (Xuất 2 cái) <i class="fa-solid fa-check-double"></i>
                     </button>
                     <button class="btn-custom btn-primary-custom py-2" style="background: var(--danger);" onclick="runDemoFail('RUN_TRIGGER_FAIL')">
-                        Approve - INSUFFICIENT Stock (Export 100 items) <i class="fa-solid fa-triangle-exclamation"></i>
+                        Duyệt phiếu - THIẾU TỒN KHO (Xuất 100 cái) <i class="fa-solid fa-triangle-exclamation"></i>
                     </button>
                 </div>
             </div>
 
             <!-- B5 -->
             <div class="demo-step d-none" id="step-trigger-after">
-                <div class="demo-step-title">B5: Dữ liệu tồn kho sau khi thực thi (Tồn kho đã được cập nhật giảm đi 2 sản phẩm)</div>
+                <div class="demo-step-title">B5: Trạng thái tồn kho (Sau khi thực thi - Tồn kho giảm đi 2 cái)</div>
                 <div class="table-responsive">
                     <table class="table table-custom table-hover" id="tbl-trigger-after">
-                        <thead><tr><th>Chờ thực thi...</th></tr></thead>
+                        <thead><tr><th>Đang chờ thực thi...</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -166,30 +163,28 @@ EXEC sp_DuyetPhieu @@LoaiPhieu = 'PX', @@MaPhieu = @@MaPX, @@MaNV = 1;
         <div class="card-custom">
             <!-- B1 -->
             <div class="demo-step">
-                <div class="demo-step-title">B1: Mô tả bài toán nghiệp vụ</div>
+                <div class="demo-step-title">B1: Kịch bản nghiệp vụ</div>
                 <p class="text-secondary" style="font-size: 14px;">
-                    Tính toán tự động giá trị tồn kho hiện tại của một kho hàng và giá vốn xuất bình quân gia quyền của một sản phẩm. 
-                    Hàm scalar <code>fn_TinhGiaTriTonKho(@@MaKho)</code> tính tổng giá trị tiền hàng tồn trong kho. 
-                    Hàm scalar <code>fn_TinhGiaXuatBinhQuan(@@MaSP)</code> tự động quét toàn bộ các phiếu nhập đã duyệt để tính toán giá nhập trung bình của sản phẩm đó.
+                    Tự động tính toán tổng giá trị tồn kho hiện tại của một kho hàng và giá xuất bình quan của sản phẩm. Hàm vô hướng <code>fn_TinhGiaTriTonKho(@@MaKho)</code> trả về tổng giá trị tiền hàng hiện đang lưu kho. Hàm vô hướng <code>fn_TinhGiaXuatBinhQuan(@@MaSP)</code> tự động quét qua toàn bộ lịch sử các phiếu nhập hàng đã duyệt để tính đơn giá nhập bình quan gia quyền của sản phẩm làm cơ sở tính giá xuất kho.
                 </p>
             </div>
 
             <!-- B2 -->
             <div class="demo-step">
-                <div class="demo-step-title">B2: Câu lệnh SQL định nghĩa & thực thi</div>
+                <div class="demo-step-title">B2: Định nghĩa truy vấn SQL & Thực thi</div>
                 <div class="code-block">
 SELECT 
     dbo.fn_TinhGiaTriTonKho(1) AS [Tổng giá trị tồn Kho 1 (VND)], 
-    dbo.fn_TinhGiaXuatBinhQuan(1) AS [Giá xuất bình quân SP 1 (VND)]
+    dbo.fn_TinhGiaXuatBinhQuan(1) AS [Giá xuất bình quan SP 1 (VND)]
                 </div>
             </div>
 
             <!-- B3 -->
             <div class="demo-step">
-                <div class="demo-step-title">B3: Đơn giá nhập/bán tham khảo mặc định của sản phẩm 1 & 2</div>
+                <div class="demo-step-title">B3: Đơn giá nhập và giá bán tham chiếu mặc định của sản phẩm 1 & 2</div>
                 <div class="table-responsive">
                     <table class="table table-custom table-hover" id="tbl-func-before">
-                        <thead><tr><th>Đang nạp dữ liệu...</th></tr></thead>
+                        <thead><tr><th>Đang tải dữ liệu...</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -197,18 +192,18 @@ SELECT
 
             <!-- B4 -->
             <div class="demo-step">
-                <div class="demo-step-title">B4: Nút thực thi nghiệp vụ</div>
+                <div class="demo-step-title">B4: Hành động thực thi</div>
                 <button class="btn-custom btn-primary-custom py-2" onclick="runDemo('RUN_FUNCTION', 'RUN_FUNCTION', 'tbl-func-after')">
-                    Execute SQL Functions <i class="fa-solid fa-calculator"></i>
+                    Chạy các hàm Function SQL <i class="fa-solid fa-calculator"></i>
                 </button>
             </div>
 
             <!-- B5 -->
             <div class="demo-step d-none" id="step-func-after">
-                <div class="demo-step-title">B5: Kết quả tính toán tự động trả về từ các Hàm SQL</div>
+                <div class="demo-step-title">B5: Kết quả tính toán trả về tự động từ các hàm SQL</div>
                 <div class="table-responsive">
                     <table class="table table-custom table-hover" id="tbl-func-after">
-                        <thead><tr><th>Chờ thực thi...</th></tr></thead>
+                        <thead><tr><th>Đang chờ thực thi...</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -221,17 +216,15 @@ SELECT
         <div class="card-custom">
             <!-- B1 -->
             <div class="demo-step">
-                <div class="demo-step-title">B1: Mô tả bài toán nghiệp vụ</div>
+                <div class="demo-step-title">B1: Kịch bản nghiệp vụ</div>
                 <p class="text-secondary" style="font-size: 14px;">
-                    Duyệt qua danh sách tồn kho của các sản phẩm bằng Cursor để tìm kiếm các mặt hàng có số lượng dưới mức tối thiểu và in thông tin cảnh báo chi tiết. 
-                    Mặc dù Cursor tốn hiệu năng, nhưng nó giải quyết nghiệp vụ duyệt tuần tự từng dòng để sinh thông báo hoặc xử lý phức tạp. 
-                    Thủ tục <code>sp_CursorCanhBaoTon</code> khai báo cursor, mở cursor, fetch dữ liệu từng dòng sản phẩm bị thiếu hụt, in thông báo ra màn hình và trả tập dữ liệu về web.
+                    Duyệt qua danh sách sản phẩm cảnh báo tồn thấp bằng Cursor để in thông báo và trả dữ liệu ra ngoài. Mặc dù con trỏ (Cursor) tiêu tốn tài nguyên hệ thống, nhưng nó là giải pháp hữu hiệu phục vụ yêu cầu học thuật và các logic duyệt tuần tự từng dòng để xử lý cảnh báo. Thủ tục <code>sp_CursorCanhBaoTon</code> khai báo cursor, mở cursor, nạp (fetch) từng dòng sản phẩm có lượng tồn dưới ngưỡng tối thiểu, in thông điệp cảnh báo ra cửa sổ Message của SQL Server và trả về bảng dữ liệu cho Web.
                 </p>
             </div>
 
             <!-- B2 -->
             <div class="demo-step">
-                <div class="demo-step-title">B2: Câu lệnh SQL định nghĩa & thực thi</div>
+                <div class="demo-step-title">B2: Định nghĩa truy vấn SQL & Thực thi</div>
                 <div class="code-block">
 EXEC sp_CursorCanhBaoTon;
                 </div>
@@ -239,10 +232,10 @@ EXEC sp_CursorCanhBaoTon;
 
             <!-- B3 -->
             <div class="demo-step">
-                <div class="demo-step-title">B3: Danh sách sản phẩm có tồn kho thấp hiện tại trong bảng TonKho</div>
+                <div class="demo-step-title">B3: Danh sách sản phẩm đang dưới ngưỡng tồn tối thiểu cảnh báo</div>
                 <div class="table-responsive">
                     <table class="table table-custom table-hover" id="tbl-cursor-before">
-                        <thead><tr><th>Đang nạp dữ liệu...</th></tr></thead>
+                        <thead><tr><th>Đang tải dữ liệu...</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -250,18 +243,18 @@ EXEC sp_CursorCanhBaoTon;
 
             <!-- B4 -->
             <div class="demo-step">
-                <div class="demo-step-title">B4: Nút thực thi nghiệp vụ</div>
+                <div class="demo-step-title">B4: Hành động thực thi</div>
                 <button class="btn-custom btn-primary-custom py-2" onclick="runDemo('RUN_CURSOR', 'RUN_CURSOR', 'tbl-cursor-after')">
-                    Execute Cursor Procedure <i class="fa-solid fa-arrows-spin"></i>
+                    Chạy thủ tục chứa Cursor <i class="fa-solid fa-arrows-spin"></i>
                 </button>
             </div>
 
             <!-- B5 -->
             <div class="demo-step d-none" id="step-cursor-after">
-                <div class="demo-step-title">B5: Kết quả chi tiết cảnh báo được Cursor duyệt từng dòng và trả về</div>
+                <div class="demo-step-title">B5: Chi tiết cảnh báo được duyệt và trả về từng dòng bởi Cursor</div>
                 <div class="table-responsive">
                     <table class="table table-custom table-hover" id="tbl-cursor-after">
-                        <thead><tr><th>Chờ thực thi...</th></tr></thead>
+                        <thead><tr><th>Đang chờ thực thi...</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -274,20 +267,19 @@ EXEC sp_CursorCanhBaoTon;
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Nạp dữ liệu B3 cho tab đầu tiên ngay khi mở trang
+            // Load B3 data for SP tab on initial load
             loadBeforeData('GET_BEFORE_SP', 'tbl-sp-before');
         });
 
-        // AJAX nạp dữ liệu trước khi chạy (B3)
+        // Load before-state data (B3) via AJAX
         function loadBeforeData(actionType, tableId) {
             var tbody = document.getElementById(tableId).getElementsByTagName('tbody')[0];
             var thead = document.getElementById(tableId).getElementsByTagName('thead')[0];
-            tbody.innerHTML = '<tr><td class="text-center py-3"><div class="spinner-border spinner-border-sm text-primary"></div> Đang tải...</td></tr>';
+            tbody.innerHTML = '<tr><td class="text-center py-3"><div class="spinner-border spinner-border-sm text-primary"></div> Đang tải dữ liệu...</td></tr>';
 
             fetch('/Demo/ExecuteDemo', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/body', // Wait, we set JSON content type
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ actionType: actionType })
@@ -302,7 +294,7 @@ EXEC sp_CursorCanhBaoTon;
             });
         }
 
-        // AJAX chạy thực thi (B4) và lấy dữ liệu sau (B5)
+        // Execute DB action (B4) and retrieve after-state (B5) via AJAX
         function runDemo(runAction, afterAction, tableIdAfter) {
             Swal.fire({
                 title: 'Đang thực thi SQL...',
@@ -320,19 +312,17 @@ EXEC sp_CursorCanhBaoTon;
                 if (res.success) {
                     Swal.fire('Thành công', res.message || 'Thực thi SQL thành công!', 'success');
 
-                    // Hiện bước B5
+                    // Show step B5
                     var stepAfterId = tableIdAfter.replace('tbl', 'step');
                     var stepDiv = document.getElementById(stepAfterId);
                     if (stepDiv) stepDiv.classList.remove('d-none');
 
-                    // Tải dữ liệu B5
+                    // Fetch after-state data
                     if (runAction === 'RUN_FUNCTION' || runAction === 'RUN_CURSOR') {
-                        // Với Function và Cursor, kết quả trả về trực tiếp trong câu chạy nên CSDL đã gửi data ở res.data
                         var thead = document.getElementById(tableIdAfter).getElementsByTagName('thead')[0];
                         var tbody = document.getElementById(tableIdAfter).getElementsByTagName('tbody')[0];
                         renderTable(thead, tbody, res.data);
                     } else {
-                        // Với SP và Trigger, ta cần gọi câu lệnh query sau để nạp data
                         loadAfterData(afterAction, tableIdAfter);
                     }
                 } else {
@@ -341,7 +331,7 @@ EXEC sp_CursorCanhBaoTon;
             });
         }
 
-        // AJAX thực thi giả định ném lỗi CSDL (Trigger chặn xuất hàng)
+        // Execute action that triggers database constraints (Trigger rollback) via AJAX
         function runDemoFail(runAction) {
             Swal.fire({
                 title: 'Đang thực thi SQL...',
@@ -357,12 +347,12 @@ EXEC sp_CursorCanhBaoTon;
             .then(res => res.json())
             .then(res => {
                 if (res.success) {
-                    Swal.fire('Thành công?', 'Tại sao lại thành công? CSDL đáng nhẽ phải chặn lại!', 'warning');
+                    Swal.fire('Thành công?', 'Tại sao hành động này thành công? Đáng lẽ trigger phải rollback!', 'warning');
                 } else {
-                    // Hiển thị lỗi quăng từ trigger
+                    // Display trigger-thrown constraint error
                     Swal.fire({
-                        title: 'CSDL CHẶN GIAO DỊCH!',
-                        html: `<div class="text-danger fw-bold mb-2">Trigger trg_XuatKho_KiemTraVaCapNhat đã ngăn chặn:</div><code class="text-dark bg-light p-2 border rounded d-block">${res.message}</code>`,
+                        title: 'HỆ THỐNG ĐÃ CHẶN GIAO DỊCH!',
+                        html: `<div class="text-danger fw-bold mb-2">Trigger trg_PhieuXuat_CapNhatTonKho đã chặn hành động này:</div><code class="text-dark bg-light p-2 border rounded d-block text-start">${res.message}</code>`,
                         icon: 'error',
                         confirmButtonText: 'Đã hiểu'
                     });
@@ -370,10 +360,11 @@ EXEC sp_CursorCanhBaoTon;
             });
         }
 
+        // Retrieve subsequent modified database state via AJAX
         function loadAfterData(actionType, tableId) {
             var tbody = document.getElementById(tableId).getElementsByTagName('tbody')[0];
             var thead = document.getElementById(tableId).getElementsByTagName('thead')[0];
-            tbody.innerHTML = '<tr><td class="text-center py-3">Đang nạp dữ liệu sau...</td></tr>';
+            tbody.innerHTML = '<tr><td class="text-center py-3">Đang tải dữ liệu kết quả...</td></tr>';
 
             fetch('/Demo/ExecuteDemo', {
                 method: 'POST',
@@ -390,7 +381,7 @@ EXEC sp_CursorCanhBaoTon;
             });
         }
 
-        // Helper render bảng động từ JSON array
+        // Dynamically render tables from JSON array
         function renderTable(thead, tbody, list) {
             if (!list || list.length === 0) return;
             
@@ -409,10 +400,10 @@ EXEC sp_CursorCanhBaoTon;
                 bodyHtml += '<tr>';
                 keys.forEach(k => {
                     var val = row[k];
-                    // Format tiền tệ nếu là số tiền
+                    // Format currency if matching key name
                     if (k.toLowerCase().includes('tien') || k.toLowerCase().includes('gia') || k.toLowerCase().includes('doanhthu')) {
                         if (typeof val === 'number') {
-                            val = val.toLocaleString('vi-VN') + ' đ';
+                            val = val.toLocaleString('vi-VN') + ' VND';
                         }
                     }
                     bodyHtml += `<td>${val}</td>`;

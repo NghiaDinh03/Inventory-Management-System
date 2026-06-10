@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Lập phiếu xuất kho";
+    ViewData["Title"] = "Tạo phiếu xuất kho";
     var sanPhams = ViewBag.SanPhams as List<IMS.Web.Models.SanPham> ?? new List<IMS.Web.Models.SanPham>();
 }
 
@@ -19,28 +19,28 @@
     <form id="phieuXuatForm" asp-action="Create" method="post">
         @Html.AntiForgeryToken()
         
-        <!-- Thông tin chung -->
+        <!-- General info section -->
         <div class="row mb-4">
             <div class="col-md-4 mb-3">
                 <label class="form-label-custom">Kho xuất hàng <span class="text-danger">*</span></label>
                 <select name="maKho" id="selectKho" class="form-control-custom w-100" asp-items="ViewBag.Khos" onchange="onKhoOrProductChange()" required>
-                    <option value="">-- Chọn kho hàng xuất --</option>
+                    <option value="">-- Chọn kho xuất --</option>
                 </select>
             </div>
             <div class="col-md-4 mb-3">
-                <label class="form-label-custom">Người nhận hàng</label>
-                <input type="text" name="nguoiNhan" class="form-control-custom w-100" placeholder="Họ tên người nhận..." required />
+                <label class="form-label-custom">Người nhận <span class="text-danger">*</span></label>
+                <input type="text" name="nguoiNhan" class="form-control-custom w-100" placeholder="Tên người nhận..." required />
             </div>
             <div class="col-md-4 mb-3">
                 <label class="form-label-custom">Ghi chú</label>
-                <input type="text" name="ghiChu" class="form-control-custom w-100" placeholder="Ghi chú thêm về phiếu xuất..." />
+                <input type="text" name="ghiChu" class="form-control-custom w-100" placeholder="Ghi chú thêm..." />
             </div>
         </div>
 
         <hr />
 
-        <!-- Form chọn sản phẩm -->
-        <h5 class="font-title fw-bold text-secondary mb-3"><i class="fa-solid fa-cart-plus me-2"></i>Thêm sản phẩm xuất kho</h5>
+        <!-- Product selection form -->
+        <h5 class="font-title fw-bold text-secondary mb-3"><i class="fa-solid fa-cart-plus me-2"></i>Thêm sản phẩm</h5>
         <div class="row g-3 align-items-end mb-4 p-4 rounded-3" style="background-color: #f8fafc; border: 1px dashed var(--primary-light);">
             <div class="col-md-4">
                 <label class="form-label-custom">Sản phẩm</label>
@@ -53,11 +53,11 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label-custom">Số lượng xuất</label>
+                <label class="form-label-custom">Số lượng</label>
                 <input type="number" id="inputSL" class="form-control-custom w-100" min="1" value="1" />
             </div>
             <div class="col-md-2">
-                <label class="form-label-custom">Đơn giá bán/xuất</label>
+                <label class="form-label-custom">Đơn giá</label>
                 <input type="number" id="inputDG" class="form-control-custom w-100" min="0" value="0" step="500" />
             </div>
             <div class="col-md-2">
@@ -66,20 +66,20 @@
             </div>
             <div class="col-md-2">
                 <button type="button" class="btn-custom btn-primary-custom w-100 py-2 justify-content-center" onclick="addProductToGrid()">
-                    Add <i class="fa-solid fa-plus"></i>
+                    Thêm <i class="fa-solid fa-plus"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Danh sách sản phẩm xuất -->
-        <h5 class="font-title fw-bold text-secondary mb-3"><i class="fa-solid fa-list-ol me-2"></i>Danh sách mặt hàng xuất</h5>
+        <!-- Selected products table -->
+        <h5 class="font-title fw-bold text-secondary mb-3"><i class="fa-solid fa-list-ol me-2"></i>Danh sách sản phẩm</h5>
         <div class="table-responsive mb-4">
             <table class="table table-custom" id="tblChiTiet">
                 <thead>
                     <tr>
                         <th style="width: 80px;">Mã SP</th>
                         <th>Tên sản phẩm</th>
-                        <th>ĐVT</th>
+                        <th>Đơn vị tính</th>
                         <th style="width: 120px; text-align: center;">Số lượng</th>
                         <th style="width: 180px; text-align: right;">Đơn giá</th>
                         <th style="width: 180px; text-align: right;">Thành tiền</th>
@@ -93,8 +93,8 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="5" class="text-end py-3">TỔNG CỘNG TIỀN PHIẾU:</th>
-                        <th class="text-end text-success fs-5 py-3 fw-bold" id="lblTongTien">0 đ</th>
+                        <th colspan="5" class="text-end py-3">TỔNG CỘNG:</th>
+                        <th class="text-end text-success fs-5 py-3 fw-bold" id="lblTongTien">0 VND</th>
                         <th></th>
                     </tr>
                 </tfoot>
@@ -103,10 +103,10 @@
 
         <div class="d-flex justify-content-end gap-2">
             <a href="/PhieuXuat" class="btn-custom btn-secondary-custom">
-                <i class="fa-solid fa-chevron-left"></i> Back
+                <i class="fa-solid fa-chevron-left"></i> Quay lại
             </a>
             <button type="submit" class="btn-custom btn-primary-custom">
-                Save Draft <i class="fa-solid fa-floppy-disk"></i>
+                Lưu bản nháp <i class="fa-solid fa-floppy-disk"></i>
             </button>
         </div>
     </form>
@@ -115,7 +115,7 @@
 @section Scripts {
     <script>
         var addedProducts = [];
-        var currentStock = 0; // Lưu tồn kho sản phẩm được chọn để cảnh báo nhanh
+        var currentStock = 0;
 
         function onKhoOrProductChange() {
             var selectKho = document.getElementById('selectKho');
@@ -132,7 +132,7 @@
             }
 
             if (maKho && maSP) {
-                // Gọi AJAX kiểm tra tồn kho tại CSDL
+                // Fetch real-time stock levels from server
                 fetch(`/PhieuXuat/GetStockLevel?maSP=${maSP}&maKho=${maKho}`)
                     .then(response => response.json())
                     .then(data => {
@@ -166,7 +166,7 @@
             
             var maSP = selectedOption.value;
             if (!maSP) {
-                Swal.fire('Cảnh báo', 'Vui lòng chọn một sản phẩm.', 'warning');
+                Swal.fire('Cảnh báo', 'Vui lòng chọn sản phẩm.', 'warning');
                 return;
             }
 
@@ -184,11 +184,11 @@
                 return;
             }
 
-            // Cảnh báo giao diện (vẫn cho lập phiếu nháp nhưng báo trước)
+            // Exceeds stock warning message
             if (soLuong > currentStock) {
                 Swal.fire({
-                    title: 'Chú ý: Vượt quá tồn kho!',
-                    text: `Số lượng xuất (${soLuong}) lớn hơn tồn kho hiện tại (${currentStock}) ở kho này. Bạn vẫn có thể lập phiếu Nháp, nhưng sẽ không thể Duyệt phiếu nếu không bổ sung hàng!`,
+                    title: 'Cảnh báo: Vượt quá tồn kho!',
+                    text: `Số lượng xuất (${soLuong}) lớn hơn số tồn kho hiện tại (${currentStock}) trong kho này. Bạn vẫn có thể lưu bản Nháp, nhưng sẽ không thể Duyệt phiếu nếu không nhập thêm hàng!`,
                     icon: 'info',
                     confirmButtonText: 'Đã hiểu'
                 });
@@ -199,7 +199,7 @@
                 return;
             }
 
-            // Khóa không cho đổi kho khi đã thêm sản phẩm (để tránh rác dữ liệu tồn của kho khác)
+            // Lock warehouse selection to prevent inconsistent states
             selectKho.disabled = true;
 
             var trEmpty = document.getElementById('trEmpty');
@@ -227,11 +227,11 @@
                     <input type="hidden" name="soLuong" value="${soLuong}" />
                 </td>
                 <td class="text-end fw-bold text-dark">
-                    ${donGia.toLocaleString('vi-VN')} đ
+                    ${donGia.toLocaleString('vi-VN')} VND
                     <input type="hidden" name="donGia" value="${donGia}" />
                 </td>
                 <td class="text-end fw-bold text-success thanh-tien-val" data-val="${thanhTien}">
-                    ${thanhTien.toLocaleString('vi-VN')} đ
+                    ${thanhTien.toLocaleString('vi-VN')} VND
                 </td>
                 <td style="text-align: center;">
                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeProductFromGrid('${maSP}')">
@@ -263,7 +263,7 @@
                 tr.innerHTML = `<td colspan="7" class="text-center text-muted py-4">Chưa có sản phẩm nào được chọn.</td>`;
                 tbody.appendChild(tr);
                 
-                // Mở khóa cho phép đổi kho nếu giỏ hàng rỗng
+                // Unlock warehouse select if list is empty
                 document.getElementById('selectKho').disabled = false;
             }
 
@@ -276,16 +276,15 @@
             for (var i = 0; i < elements.length; i++) {
                 tongTien += parseFloat(elements[i].getAttribute('data-val'));
             }
-            document.getElementById('lblTongTien').innerText = tongTien.toLocaleString('vi-VN') + ' đ';
+            document.getElementById('lblTongTien').innerText = tongTien.toLocaleString('vi-VN') + ' VND';
         }
 
-        // Validate form khi submit
+        // Form submit handler validation
         document.getElementById('phieuXuatForm').addEventListener('submit', function (e) {
             if (addedProducts.length === 0) {
                 e.preventDefault();
-                Swal.fire('Cảnh báo', 'Vui lòng thêm ít nhất một sản phẩm vào phiếu xuất.', 'warning');
+                Swal.fire('Cảnh báo', 'Vui lòng thêm ít nhất một sản phẩm vào phiếu.', 'warning');
             } else {
-                // Mở khóa để Model Binding hoạt động bình thường
                 document.getElementById('selectKho').disabled = false;
             }
         });

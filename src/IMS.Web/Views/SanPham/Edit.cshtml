@@ -1,13 +1,13 @@
 @model IMS.Web.Models.SanPham
 @{
-    ViewData["Title"] = "Sửa sản phẩm";
+    ViewData["Title"] = "Cập nhật sản phẩm";
 }
 
 <div class="row justify-content-center">
     <div class="col-xl-8 col-lg-10">
         <div class="card-custom">
             <div class="card-title-custom">
-                <span><i class="fa-solid fa-pen-to-square text-primary me-2"></i>Chỉnh sửa thông tin sản phẩm</span>
+                <span><i class="fa-solid fa-pen-to-square text-primary me-2"></i>Sửa thông tin sản phẩm</span>
             </div>
 
             @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
@@ -55,13 +55,13 @@
                     </div>
 
                     <div class="col-md-3 mb-3">
-                        <label class="form-label-custom" asp-for="MaVach">Mã vạch sản phẩm</label>
+                        <label class="form-label-custom" asp-for="MaVach">Mã vạch</label>
                         <input type="text" asp-for="MaVach" class="form-control-custom w-100" />
                         <span asp-validation-for="MaVach" class="text-danger text-sm"></span>
                     </div>
 
                     <div class="col-md-3 mb-3">
-                        <label class="form-label-custom" asp-for="TonToiThieu">Hạn mức tồn tối thiểu</label>
+                        <label class="form-label-custom" asp-for="TonToiThieu">Định mức tồn tối thiểu</label>
                         <input type="number" asp-for="TonToiThieu" class="form-control-custom w-100" min="0" />
                         <span asp-validation-for="TonToiThieu" class="text-danger text-sm"></span>
                     </div>
@@ -69,13 +69,13 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label-custom" asp-for="GiaNhap">Giá nhập tham khảo <span class="text-danger">*</span></label>
+                        <label class="form-label-custom" asp-for="GiaNhap">Giá nhập ước tính <span class="text-danger">*</span></label>
                         <input type="number" asp-for="GiaNhap" class="form-control-custom w-100" min="0" step="1000" required />
                         <span asp-validation-for="GiaNhap" class="text-danger text-sm"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label-custom" asp-for="GiaBan">Giá bán tham khảo <span class="text-danger">*</span></label>
+                        <label class="form-label-custom" asp-for="GiaBan">Giá bán ước tính <span class="text-danger">*</span></label>
                         <input type="number" asp-for="GiaBan" class="form-control-custom w-100" min="0" step="1000" required />
                         <span asp-validation-for="GiaBan" class="text-danger text-sm"></span>
                     </div>
@@ -94,19 +94,19 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label-custom">Trạng thái kinh doanh</label>
+                    <label class="form-label-custom">Trạng thái</label>
                     <div class="form-check form-switch mt-2">
                         <input class="form-check-input" type="checkbox" role="switch" id="trangThaiSwitch" asp-for="TrangThai">
-                        <label class="form-check-label text-secondary" for="trangThaiSwitch" style="font-size: 14px;">Đang kinh doanh mặt hàng này</label>
+                        <label class="form-check-label text-secondary" for="trangThaiSwitch" style="font-size: 14px;">Đang kinh doanh (Kích hoạt sản phẩm)</label>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
                     <a href="/SanPham" class="btn-custom btn-secondary-custom">
-                        <i class="fa-solid fa-chevron-left"></i> Back
+                        <i class="fa-solid fa-chevron-left"></i> Quay lại
                     </a>
                     <button type="submit" class="btn-custom btn-primary-custom">
-                        Update <i class="fa-solid fa-floppy-disk"></i>
+                        Cập nhật <i class="fa-solid fa-floppy-disk"></i>
                     </button>
                 </div>
             </form>

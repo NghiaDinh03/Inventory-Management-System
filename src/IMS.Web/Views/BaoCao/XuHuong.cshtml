@@ -5,11 +5,11 @@
 }
 
 <div class="row g-4 mb-4">
-    <!-- Cột trái: Biểu đồ Doanh thu theo tháng -->
+    <!-- Left Column: Sales trend line chart -->
     <div class="col-lg-6">
         <div class="card-custom">
             <div class="card-title-custom">
-                <span><i class="fa-solid fa-chart-line text-primary me-2"></i>Biểu đồ doanh số bán hàng theo tháng</span>
+                <span><i class="fa-solid fa-chart-line text-primary me-2"></i>Biểu đồ doanh thu theo tháng</span>
             </div>
             <div style="height: 300px; position: relative;">
                 <canvas id="chartDoanhThuThang"></canvas>
@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <!-- Cột phải: Biểu đồ Top 10 sản phẩm xuất nhiều nhất -->
+    <!-- Right Column: Top products bar chart -->
     <div class="col-lg-6">
         <div class="card-custom">
             <div class="card-title-custom">
@@ -31,20 +31,20 @@
 </div>
 
 <div class="row g-4">
-    <!-- Bảng doanh thu chi tiết -->
+    <!-- Detailed monthly sales table -->
     <div class="col-lg-6">
         <div class="card-custom">
             <div class="card-title-custom mb-3">
-                <span><i class="fa-solid fa-table text-primary me-2"></i>Bảng doanh số chi tiết theo tháng</span>
+                <span><i class="fa-solid fa-table text-primary me-2"></i>Chi tiết doanh số theo tháng</span>
             </div>
             <div class="table-responsive">
                 <table class="table table-custom table-hover">
                     <thead>
                         <tr>
                             <th>Tháng / Năm</th>
-                            <th style="text-align: center;">Số lượng phiếu xuất</th>
+                            <th style="text-align: center;">Số lượng phiếu</th>
                             <th style="text-align: center;">Tổng số lượng xuất</th>
-                            <th style="text-align: right;">Tổng doanh số xuất</th>
+                            <th style="text-align: right;">Tổng giá trị xuất</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,14 +56,14 @@
                                     <td class="fw-bold text-primary">Tháng @item.Thang / @item.Nam</td>
                                     <td style="text-align: center;">@item.SoPhieu.ToString("N0")</td>
                                     <td style="text-align: center;" class="fw-bold">@item.TongSoLuong.ToString("N0")</td>
-                                    <td class="text-end fw-bold text-success">@item.TongDoanhThu.ToString("N0") đ</td>
+                                    <td class="text-end fw-bold text-success">@item.TongDoanhThu.ToString("N0") VND</td>
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="4" class="text-center text-muted py-4">Chưa phát sinh doanh số xuất kho nào.</td>
+                                <td colspan="4" class="text-center text-muted py-4">Chưa có giao dịch xuất kho nào được ghi nhận.</td>
                             </tr>
                         }
                     </tbody>
@@ -72,11 +72,11 @@
         </div>
     </div>
 
-    <!-- Bảng sản phẩm bán chạy chi tiết -->
+    <!-- Top selling products table -->
     <div class="col-lg-6">
         <div class="card-custom">
             <div class="card-title-custom mb-3">
-                <span><i class="fa-solid fa-table text-primary me-2"></i>Bảng xếp hạng sản phẩm bán chạy (Top 10)</span>
+                <span><i class="fa-solid fa-table text-primary me-2"></i>Top 10 sản phẩm xuất nhiều nhất</span>
             </div>
             <div class="table-responsive">
                 <table class="table table-custom table-hover">
@@ -84,9 +84,9 @@
                         <tr>
                             <th style="width: 60px; text-align: center;">Hạng</th>
                             <th>Tên sản phẩm</th>
-                            <th>Danh mục</th>
+                            <th>Phân loại</th>
                             <th style="text-align: center;">Số lượng xuất</th>
-                            <th style="text-align: right;">Giá trị xuất</th>
+                            <th style="text-align: right;">Tổng giá trị</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -104,7 +104,7 @@
                                     <td class="fw-bold text-primary">@item.TenSP</td>
                                     <td>@item.TenDanhMuc</td>
                                     <td style="text-align: center;" class="fw-bold">@item.TongSoLuongXuat.ToString("N0") @item.DonVi</td>
-                                    <td class="text-end fw-bold text-success">@item.TongGiaTriXuat.ToString("N0") đ</td>
+                                    <td class="text-end fw-bold text-success">@item.TongGiaTriXuat.ToString("N0") VND</td>
                                 </tr>
                                 idx++;
                             }
@@ -112,7 +112,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-4">Chưa có sản phẩm nào xuất kho.</td>
+                                <td colspan="5" class="text-center text-muted py-4">Chưa có sản phẩm nào được xuất kho.</td>
                             </tr>
                         }
                     </tbody>
@@ -125,14 +125,14 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // 1. Biểu đồ doanh thu theo tháng
+            // Chart 1: Monthly sales revenue
             var labelsDt = [];
             var dataDt = [];
 
             @foreach (var item in doanhThuTheoThang.OrderBy(d => d.Nam).ThenBy(d => d.Thang))
             {
                 <text>
-                    labelsDt.push("T" + @item.Thang + "/" + @item.Nam);
+                    labelsDt.push("Tháng " + @item.Thang + "/" + @item.Nam);
                     dataDt.push(@item.TongDoanhThu);
                 </text>
             }
@@ -143,7 +143,7 @@
                 data: {
                     labels: labelsDt,
                     datasets: [{
-                        label: 'Doanh số bán ra (VND)',
+                        label: 'Doanh thu xuất (VND)',
                         data: dataDt,
                         borderColor: '#4f46e5',
                         backgroundColor: 'rgba(79, 70, 229, 0.1)',
@@ -179,14 +179,14 @@
                 }
             });
 
-            // 2. Biểu đồ Top 10 sản phẩm xuất nhiều nhất
+            // Chart 2: Top 10 selling products
             var labelsSp = [];
             var dataSp = [];
 
             @foreach (var item in topSanPham)
             {
                 <text>
-                    labelsSp.push("@item.TenSP");
+                    labelsSp.push("@Html.Raw(item.TenSP)");
                     dataSp.push(@item.TongSoLuongXuat);
                 </text>
             }
@@ -197,7 +197,7 @@
                 data: {
                     labels: labelsSp,
                     datasets: [{
-                        label: 'Số lượng xuất kho',
+                        label: 'Số lượng xuất',
                         data: dataSp,
                         backgroundColor: 'rgba(6, 182, 212, 0.85)',
                         borderColor: 'rgba(6, 182, 212, 1)',
@@ -208,7 +208,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: 'y', // Vẽ thanh ngang
+                    indexAxis: 'y', // Render horizontal bar chart
                     plugins: {
                         legend: { display: false }
                     },

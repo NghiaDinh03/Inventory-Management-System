@@ -3,40 +3,40 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Quản Lý Kho</title>
-    <!-- Bootstrap 5 -->
+    <title>@ViewData["Title"] - IMS Logistics</title>
+    <!-- Bootstrap 5 CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <!-- FontAwesome (icons) -->
+    <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <!-- DataTables -->
+    <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
-    <!-- Custom site.css -->
+    <!-- Custom styles -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <!-- SweetAlert2 -->
+    <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
 </head>
 <body>
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         <div class="app-container">
-            <!-- Sidebar -->
+            <!-- Sidebar navigation -->
             @await Html.PartialAsync("_Sidebar")
 
-            <!-- Content Area -->
+            <!-- Content container -->
             <div class="app-content">
                 <div class="content-container d-flex flex-column flex-grow-1">
-                    <!-- Top Navbar -->
+                    <!-- Top navigation bar -->
                     @await Html.PartialAsync("_Navbar")
 
-                    <!-- Main Content -->
+                    <!-- Main content layout -->
                     <main role="main" class="pb-3 flex-grow-1">
                         @RenderBody()
                     </main>
                 </div>
 
-                <!-- Footer -->
+                <!-- Footer panel -->
                 <footer class="app-footer">
-                    <div>&copy; 2026 - Quản Lý Hàng Tồn Kho - Đồ Án Môn IE103</div>
+                    <div>&copy; 2026 - Hệ thống Quản lý Hàng tồn kho - Đồ án IE103</div>
                 </footer>
             </div>
         </div>
@@ -50,19 +50,18 @@
         </div>
     }
 
-    <!-- Scripts -->
+    <!-- jQuery and Bootstrap scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- DataTables -->
+    <!-- DataTables scripts -->
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    <!-- SweetAlert2 -->
+    <!-- SweetAlert2 scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Chart.js -->
+    <!-- Chart.js scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-

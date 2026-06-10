@@ -307,3 +307,46 @@ BEGIN
     END;
 END;
 GO
+
+-- 10. Trigger: Prevent UPDATE/DELETE on GiaoDichKho (Append-Only Transaction Ledger)
+CREATE OR ALTER TRIGGER trg_GiaoDichKho_AppendOnly
+ON GiaoDichKho
+INSTEAD OF UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    RAISERROR (N'Lỗi: Bảng sổ cái giao dịch GiaoDichKho chỉ được phép INSERT dữ liệu, không được phép sửa đổi hoặc xóa bỏ lịch sử.', 16, 1);
+    ROLLBACK TRANSACTION;
+END;
+GO
+
+-- 11. Trigger: Auto-update BinLocation status based on stock level changes
+CREATE OR ALTER TRIGGER trg_BinLocation_AutoStatus
+ON TonKhoTheoBin
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Update bin status to 'ĐangSửDụng' if count > 0
+    UPDATE bl
+    SET bl.TrangThai = N'ĐangSửDụng'
+    FROM BinLocation bl
+    INNER JOIN inserted i ON bl.MaBin = i.MaBin
+    WHERE i.SoLuong > 0;
+    
+    -- Update bin status to 'Trống' if total stock in bin is 0
+    UPDATE bl
+    SET bl.TrangThai = N'Trống'
+    FROM BinLocation bl
+    INNER JOIN inserted i ON bl.MaBin = i.MaBin
+    WHERE NOT EXISTS (
+        SELECT 1 FROM TonKhoTheoBin
+        WHERE MaBin = bl.MaBin AND SoLuong > 0
+    );
+END;
+GO
+
+PRINT N'05_create-triggers.sql completed.';
+GO
+

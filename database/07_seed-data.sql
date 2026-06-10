@@ -206,5 +206,101 @@ INSERT INTO LichSuHoatDong (BangLienQuan, MaBanGhi, HanhDong, MaPhieu, NoiDungCu
 ('PhieuXuat', 1, 'UPDATE', 'PX-2026-00001', N'{"TrangThai":"Nháp"}', N'{"TrangThai":"ĐãDuyệt"}', 2, DATEADD(minute, 60, DATEADD(day, -4, GETDATE())));
 GO
 
+-- 14. Seed data: BinLocation
+INSERT INTO BinLocation (MaKho, KhuVuc, Day, Ke, Tang, O, TheTichToiDa, TrongLuongToiDa, TrangThai) VALUES
+-- Kho Tong TP.HCM (MaKho = 1)
+(1, N'Khu thường A', 'A1', '01', '01', '01', 100.00, 1000.00, N'Trống'),
+(1, N'Khu thường A', 'A1', '01', '02', '01', 100.00, 1000.00, N'Trống'),
+(1, N'Khu mát B', 'B1', '02', '01', '02', 50.00, 500.00, N'Trống'),
+(1, N'Khu mát B', 'B1', '02', '02', '02', 50.00, 500.00, N'Trống'),
+
+-- Kho Binh Duong (MaKho = 2)
+(2, N'Khu thường A', 'A2', '01', '01', '01', 120.00, 1200.00, N'Trống'),
+(2, N'Khu hóa chất C', 'C1', '01', '01', '01', 80.00, 800.00, N'Trống'),
+
+-- Kho Ha Noi (MaKho = 3)
+(3, N'Khu thường A', 'A3', '01', '01', '01', 100.00, 1000.00, N'Trống');
+GO
+
+-- 15. Seed data: LoHang
+INSERT INTO LoHang (SoLo, MaSP, NgaySanXuat, NgayHetHan, TrangThai) VALUES
+('LOT-VNM-001', 9, '2026-01-01', '2026-12-31', N'KhảDụng'),
+('LOT-VNM-002', 10, '2026-02-01', '2027-02-01', N'KhảDụng'),
+('LOT-ULV-001', 6, '2026-03-01', '2028-03-01', N'KhảDụng'),
+('LOT-ULV-002', 7, '2026-03-10', '2028-03-10', N'KhảDụng'),
+('LOT-LGT-001', 1, '2025-12-01', '2027-12-01', N'KhảDụng');
+GO
+
+-- 16. Seed data: TonKhoTheoBin
+INSERT INTO TonKhoTheoBin (MaSP, MaBin, MaLo, SoLuong, NgayNhapBin) VALUES
+-- Chuột Logitech ở Kho 1, Bin 1, Lo LOT-LGT-001: 50 cái (Khớp với TonKho)
+(1, 1, 5, 50, DATEADD(day, -5, GETDATE())),
+-- Sữa Vinamilk ở Kho 1, Bin 3, Lo LOT-VNM-001: 300 thùng
+(9, 3, 1, 300, DATEADD(day, -3, GETDATE())),
+-- Sunlight lau sàn ở Kho 1, Bin 4, Lo LOT-ULV-001: 120 chai
+(6, 4, 3, 120, DATEADD(day, -5, GETDATE())),
+-- Sữa tươi ở Kho 2, Bin 5, Lo LOT-VNM-001: 150 thùng
+(9, 5, 1, 150, DATEADD(day, -3, GETDATE()));
+GO
+
+-- 17. Seed data: GiaoDichKho
+INSERT INTO GiaoDichKho (MaSP, MaKho, MaBin, MaLo, LoaiGiaoDich, MaPhieuThamChieu, SoLuongThayDoi, SoLuongSauThayDoi, MaNV, ThoiGian) VALUES
+(1, 1, 1, 5, N'NhapKho', 'PN-2026-00001', 50, 50, 2, DATEADD(day, -5, GETDATE())),
+(6, 1, 4, 3, N'NhapKho', 'PN-2026-00001', 120, 120, 2, DATEADD(day, -5, GETDATE())),
+(9, 1, 3, 1, N'NhapKho', 'PN-2026-00002', 300, 300, 3, DATEADD(day, -3, GETDATE()));
+GO
+
+-- 18. Seed data: PhieuKiemKe & CT_PhieuKiemKe
+INSERT INTO PhieuKiemKe (SoPhieu, NgayLap, MaKho, MaNV_Kiem, MaNV_Duyet, TrangThai) VALUES
+('KK-2026-00001', DATEADD(day, -2, GETDATE()), 1, 4, 1, N'ĐãDuyệt');
+
+INSERT INTO CT_PhieuKiemKe (MaPKK, MaSP, MaBin, MaLo, SoLuongHeThong, SoLuongThucTe, LyDoLech) VALUES
+(1, 1, 1, 5, 50, 50, N'Khớp số liệu'),
+(1, 6, 4, 3, 120, 118, N'Hao hụt tự nhiên, vỡ vỏ chai Sunlight');
+GO
+
+-- 19. Seed data: PhieuChuyenKho & CT_PhieuChuyenKho
+INSERT INTO PhieuChuyenKho (SoPhieu, NgayLap, MaKhoNguon, MaKhoDich, MaNV, TrangThai) VALUES
+('CK-2026-00001', DATEADD(day, -1, GETDATE()), 1, 2, 2, N'ĐãXuất');
+
+INSERT INTO CT_PhieuChuyenKho (MaPCK, MaSP, MaLo, MaBinNguon, MaBinDich, SoLuong) VALUES
+(1, 1, 5, 1, 5, 10);
+GO
+
+-- 20. Seed data: NhaVanChuyen & VanDon
+INSERT INTO NhaVanChuyen (TenNVC, SoDienThoai, TrangThai) VALUES
+(N'Giao Hàng Nhanh (GHN)', '1900636677', 1),
+(N'Viettel Post', '19008095', 1);
+
+INSERT INTO VanDon (MaPX, MaNVC, SoVanDon, PhiVanChuyen, TrangThaiGiaoHang, NgayGiaoThucTe) VALUES
+(1, 1, 'VD-GHN-998877', 35000.00, N'ThànhCông', DATEADD(day, -3, GETDATE())),
+(2, 2, 'VD-VTP-665544', 120000.00, N'ĐangGiao', NULL);
+GO
+
+-- 21. Seed data: Quyen & VaiTro_Quyen
+INSERT INTO Quyen (TenQuyen, MoTa) VALUES
+('VIEW_DASHBOARD', N'Xem tổng quan hệ thống'),
+('MANAGE_PRODUCTS', N'Quản lý sản phẩm & danh mục'),
+('MANAGE_SUPPLIERS', N'Quản lý nhà cung cấp'),
+('CREATE_ORDER', N'Tạo phiếu nhập / phiếu xuất'),
+('APPROVE_ORDER', N'Duyệt phiếu nhập / phiếu xuất'),
+('SYSTEM_ADMIN', N'Quản trị hệ thống, backup & restore');
+
+-- Gán quyền cho Admin (MaVT = 1)
+INSERT INTO VaiTro_Quyen (MaVT, MaQuyen) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(1, 5),
+(1, 6);
+
+-- Gán quyền cho NVKho (MaVT = 2)
+INSERT INTO VaiTro_Quyen (MaVT, MaQuyen) VALUES
+(2, 1),
+(2, 4);
+GO
+
 PRINT N'07_seed-data.sql completed.';
 GO
+

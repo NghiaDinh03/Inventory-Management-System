@@ -7,7 +7,7 @@
     <div class="col-xl-8 col-lg-10">
         <div class="card-custom">
             <div class="card-title-custom">
-                <span><i class="fa-solid fa-pen-to-square text-primary me-2"></i>Chỉnh sửa danh mục sản phẩm</span>
+                <span><i class="fa-solid fa-pen-to-square text-primary me-2"></i>Cập nhật danh mục sản phẩm</span>
             </div>
 
             @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
@@ -32,17 +32,17 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label-custom" asp-for="MoTa">Mô tả danh mục</label>
+                    <label class="form-label-custom" asp-for="MoTa">Mô tả</label>
                     <textarea asp-for="MoTa" rows="4" class="form-control-custom w-100" placeholder="Nhập mô tả ngắn..."></textarea>
                     <span asp-validation-for="MoTa" class="text-danger text-sm"></span>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
                     <a href="/DanhMuc" class="btn-custom btn-secondary-custom">
-                        <i class="fa-solid fa-chevron-left"></i> Back
+                        <i class="fa-solid fa-chevron-left"></i> Quay lại
                     </a>
                     <button type="submit" class="btn-custom btn-primary-custom">
-                        Update <i class="fa-solid fa-floppy-disk"></i>
+                        Cập nhật <i class="fa-solid fa-floppy-disk"></i>
                     </button>
                 </div>
             </form>
