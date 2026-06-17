@@ -87,14 +87,20 @@ BEGIN
     DECLARE @Year CHAR(4) = CAST(YEAR(GETDATE()) AS CHAR(4));
     DECLARE @Prefix VARCHAR(10) = 'PN-' + @Year + '-';
     
+    DECLARE @MaxNum INT;
+    SELECT @MaxNum = COALESCE(MAX(CAST(RIGHT(SoPhieu, 5) AS INT)), 0)
+    FROM PhieuNhap
+    WHERE SoPhieu LIKE @Prefix + '%';
+    
+    WITH NewPhieus AS (
+        SELECT MaPN, ROW_NUMBER() OVER (ORDER BY MaPN) as RowNum
+        FROM inserted
+        WHERE SoPhieu IS NULL OR SoPhieu = ''
+    )
     UPDATE pn
-    SET pn.SoPhieu = CONCAT(@Prefix, RIGHT('00000' + CAST(
-        (SELECT COUNT(*) 
-         FROM PhieuNhap p 
-         WHERE p.SoPhieu LIKE @Prefix + '%' AND p.MaPN <= pn.MaPN) AS VARCHAR(5)), 5))
+    SET pn.SoPhieu = CONCAT(@Prefix, RIGHT('00000' + CAST(@MaxNum + np.RowNum AS VARCHAR(5)), 5))
     FROM PhieuNhap pn
-    JOIN inserted i ON pn.MaPN = i.MaPN
-    WHERE pn.SoPhieu IS NULL OR pn.SoPhieu = '';
+    JOIN NewPhieus np ON pn.MaPN = np.MaPN;
 END;
 GO
 
@@ -109,14 +115,20 @@ BEGIN
     DECLARE @Year CHAR(4) = CAST(YEAR(GETDATE()) AS CHAR(4));
     DECLARE @Prefix VARCHAR(10) = 'PX-' + @Year + '-';
     
+    DECLARE @MaxNum INT;
+    SELECT @MaxNum = COALESCE(MAX(CAST(RIGHT(SoPhieu, 5) AS INT)), 0)
+    FROM PhieuXuat
+    WHERE SoPhieu LIKE @Prefix + '%';
+    
+    WITH NewPhieus AS (
+        SELECT MaPX, ROW_NUMBER() OVER (ORDER BY MaPX) as RowNum
+        FROM inserted
+        WHERE SoPhieu IS NULL OR SoPhieu = ''
+    )
     UPDATE px
-    SET px.SoPhieu = CONCAT(@Prefix, RIGHT('00000' + CAST(
-        (SELECT COUNT(*) 
-         FROM PhieuXuat p 
-         WHERE p.SoPhieu LIKE @Prefix + '%' AND p.MaPX <= px.MaPX) AS VARCHAR(5)), 5))
+    SET px.SoPhieu = CONCAT(@Prefix, RIGHT('00000' + CAST(@MaxNum + np.RowNum AS VARCHAR(5)), 5))
     FROM PhieuXuat px
-    JOIN inserted i ON px.MaPX = i.MaPX
-    WHERE px.SoPhieu IS NULL OR px.SoPhieu = '';
+    JOIN NewPhieus np ON px.MaPX = np.MaPX;
 END;
 GO
 

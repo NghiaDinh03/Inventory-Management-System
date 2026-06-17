@@ -7,6 +7,18 @@
 ```text
 Inventory-Management-System/
 │
+├── .AI_CONTEXT/                         # Ngữ cảnh và tài liệu hướng dẫn AI
+│   ├── CODING_GUIDELINES.md             # Quy tắc coding
+│   ├── DATABASE_DESIGN.md               # Thiết kế database chi tiết
+│   ├── DEMO_GUIDE.md                    # Kịch bản demo hệ thống
+│   ├── PROJECT_CONTEXT.md               # Bối cảnh & Nghiệp vụ cốt lõi
+│   ├── PROJECT_STRUCTURE.md             # Cấu trúc thư mục này
+│   ├── security_assessment.md           # Đánh giá bảo mật
+│   ├── user_guide_and_operations.md     # Hướng dẫn vận hành
+│   ├── TEST_REPORT.md                   # Báo cáo kiểm thử DOM & WMS
+│   └── AI_SELECT/                       # Nhật ký tự trị AI
+│       └── 17062026-AI.md
+│
 ├── src/
 │   └── IMS.Web/                         # ASP.NET Core 8 MVC
 │       ├── Program.cs                   # Entry point, DI, middleware
