@@ -90,22 +90,17 @@ Thư mục lưu log debug (được mount ra máy host):
 
 ---
 
-## CSDL (12 bảng)
+## CSDL (27 bảng)
 
-| Bảng | Mô tả |
-|------|-------|
-| SanPham | Sản phẩm (tên, mã vạch, giá, đơn vị, tồn tối thiểu) |
-| DanhMuc | Danh mục hàng hóa |
-| NhaCungCap | Nhà cung cấp |
-| Kho | Kho hàng |
-| NhanVien | Nhân viên |
-| TaiKhoan | Đăng nhập + phân quyền |
-| PhieuNhap | Phiếu nhập (có trạng thái: Nháp / ĐãDuyệt / ĐãHủy) |
-| CT_PhieuNhap | Chi tiết phiếu nhập |
-| PhieuXuat | Phiếu xuất (có trạng thái) |
-| CT_PhieuXuat | Chi tiết phiếu xuất |
-| TonKho | Tồn kho hiện tại (1 dòng / SP / kho) |
-| LichSuHoatDong | Audit log |
+Hệ thống được thiết kế với 27 bảng hoàn chỉnh đáp ứng đầy đủ nghiệp vụ quản lý kho chuyên sâu:
+
+| Nhóm | Các Bảng Chi Tiết |
+|------|-------------------|
+| **Người Dùng & Phân Quyền** | `VaiTro`, `TaiKhoan`, `NhanVien` |
+| **Đối Tác & Danh Mục** | `NhaCungCap`, `KhachHang`, `DoiTacVanChuyen`, `DanhMuc`, `SanPham`, `NCC_SanPham` (Liên kết SP - NCC), `Gia` (Lịch sử giá nhập) |
+| **Nghiệp Vụ Nhập/Xuất Kho** | `PhieuNhap`, `CT_PhieuNhap`, `PhieuXuat`, `CT_PhieuXuat`, `Voucher` |
+| **Vận Hành & Điều Chuyển** | `TonKho`, `ChuyenKho`, `CT_ChuyenKho`, `TraHang`, `CT_TraHang`, `KiemKe`, `CT_KiemKe`, `NhanVien_Kho` |
+| **Đơn Hàng & Nhật Ký** | `DonDatHang`, `CT_DonDatHang`, `LichSuHoatDong` |
 
 ---
 
