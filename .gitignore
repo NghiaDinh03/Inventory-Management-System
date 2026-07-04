@@ -43,3 +43,9 @@ docker-compose.override.yml
 
 # User secrets
 appsettings.Development.json
+
+# AI Agent Context
+.AI_CONTEXT/
+.agents/
+.gemini/
+

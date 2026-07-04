@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IMS.Web.Models
@@ -15,18 +15,18 @@ namespace IMS.Web.Models
         [ForeignKey("MaPX")]
         public PhieuXuat? PhieuXuat { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng chọn sản phẩm")]
+        [Required(ErrorMessage = "Vui lÃ²ng chá»n sáº£n pháº©m")]
         public int MaSP { get; set; }
 
         [ForeignKey("MaSP")]
         public SanPham? SanPham { get; set; }
 
-        [Required(ErrorMessage = "Số lượng không được để trống")]
-        [Range(1, int.MaxValue, ErrorMessage = "Số lượng phải lớn hơn 0")]
+        [Required(ErrorMessage = "Sá»‘ lÆ°á»£ng khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")]
+        [Range(1, int.MaxValue, ErrorMessage = "Sá»‘ lÆ°á»£ng pháº£i lá»›n hÆ¡n 0")]
         public int SoLuong { get; set; }
 
-        [Required(ErrorMessage = "Đơn giá không được để trống")]
-        [Range(0, double.MaxValue, ErrorMessage = "Đơn giá phải lớn hơn hoặc bằng 0")]
+        [Required(ErrorMessage = "ÄÆ¡n giÃ¡ khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")]
+        [Range(0, double.MaxValue, ErrorMessage = "ÄÆ¡n giÃ¡ pháº£i lá»›n hÆ¡n hoáº·c báº±ng 0")]
         public decimal DonGia { get; set; }
 
         public decimal? TrongLuong { get; set; }

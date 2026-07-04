@@ -24,8 +24,8 @@ SELECT
     tk.SoLuongTon AS SoLuong,
     tk.TrongLuongTon,
     sp.TonToiThieu,
-    sp.GiaNhap,
-    CAST(tk.SoLuongTon * sp.GiaNhap AS DECIMAL(18,2)) AS GiaTri
+    COALESCE((SELECT TOP 1 DonGiaNhap FROM Gia g WHERE g.MaSP = sp.MaSP ORDER BY g.NgayLap DESC), 0) AS GiaNhap,
+    CAST(tk.SoLuongTon * COALESCE((SELECT TOP 1 DonGiaNhap FROM Gia g WHERE g.MaSP = sp.MaSP ORDER BY g.NgayLap DESC), 0) AS DECIMAL(18,2)) AS GiaTri
 FROM TonKho tk
     INNER JOIN SanPham sp ON tk.MaSP = sp.MaSP
     INNER JOIN DanhMucSanPham dm ON sp.MaDanhMucSP = dm.MaDanhMucSP
@@ -211,7 +211,7 @@ SELECT
     (SELECT COUNT(*) FROM SanPham WHERE TrangThai = 1) AS TongSanPham,
     (SELECT COUNT(*) FROM NhaCungCap WHERE TrangThai = 1) AS TongNCC,
     (SELECT COUNT(*) FROM Kho WHERE TrangThai = 1) AS TongKho,
-    (SELECT ISNULL(SUM(CAST(SoLuongTon * sp.GiaNhap AS DECIMAL(18,2))), 0)
+    (SELECT ISNULL(SUM(CAST(SoLuongTon * COALESCE((SELECT TOP 1 DonGiaNhap FROM Gia g WHERE g.MaSP = sp.MaSP ORDER BY g.NgayLap DESC), 0) AS DECIMAL(18,2))), 0)
      FROM TonKho tk INNER JOIN SanPham sp ON tk.MaSP = sp.MaSP) AS TongGiaTriTon,
     (SELECT COUNT(*) FROM v_SanPhamDuoiTonToiThieu) AS SoSPCanhBao,
     (SELECT COUNT(*) FROM PhieuNhap WHERE TrangThai = N'Nháp') AS PhieuNhapChuaDuyet,

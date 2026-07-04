@@ -37,7 +37,7 @@ AS
 BEGIN
     DECLARE @TongGiaTri DECIMAL(18,2) = 0;
     
-    SELECT @TongGiaTri = COALESCE(SUM(tk.SoLuongTon * sp.GiaNhap), 0)
+    SELECT @TongGiaTri = COALESCE(SUM(tk.SoLuongTon * COALESCE((SELECT TOP 1 DonGiaNhap FROM Gia g WHERE g.MaSP = sp.MaSP ORDER BY g.NgayLap DESC), 0)), 0)
     FROM TonKho tk
     JOIN SanPham sp ON tk.MaSP = sp.MaSP
     WHERE tk.MaKho = @MaKho;
@@ -60,12 +60,20 @@ BEGIN
     JOIN PhieuNhap pn ON ct.MaPN = pn.MaPN
     WHERE ct.MaSP = @MaSP AND pn.TrangThai = N'ĐãDuyệt';
     
-    -- If no purchase history, use default GiaNhap from SanPham
+    -- If no purchase history, use default GiaNhap from Gia or NCC_SanPham
     IF @GiaBinhQuan = 0
     BEGIN
-        SELECT @GiaBinhQuan = COALESCE(GiaNhap, 0)
-        FROM SanPham
-        WHERE MaSP = @MaSP;
+        SELECT TOP 1 @GiaBinhQuan = COALESCE(DonGiaNhap, 0)
+        FROM Gia
+        WHERE MaSP = @MaSP
+        ORDER BY NgayLap DESC;
+
+        IF @GiaBinhQuan = 0
+        BEGIN
+            SELECT TOP 1 @GiaBinhQuan = COALESCE(GiaNhap, 0)
+            FROM NCC_SanPham
+            WHERE MaSP = @MaSP;
+        END
     END
     
     RETURN @GiaBinhQuan;
@@ -84,7 +92,7 @@ RETURN (
         sp.TenSP,
         sp.DonVi,
         COALESCE(tk.SoLuongTon, 0) AS SoLuong,
-        sp.GiaNhap
+        COALESCE((SELECT TOP 1 DonGiaNhap FROM Gia g WHERE g.MaSP = sp.MaSP ORDER BY g.NgayLap DESC), 0) AS GiaNhap
     FROM SanPham sp
     LEFT JOIN TonKho tk ON sp.MaSP = tk.MaSP AND tk.MaKho = @MaKho
     WHERE sp.TrangThai = 1

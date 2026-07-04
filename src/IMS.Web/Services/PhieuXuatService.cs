@@ -1,4 +1,4 @@
-using IMS.Web.Data;
+﻿using IMS.Web.Data;
 using IMS.Web.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +38,7 @@ namespace IMS.Web.Services
 
         public async Task<int> CreatePhieuXuatAsync(int maKho, int maNV, string? nguoiNhan, string? ghiChu, List<(int MaSP, int SoLuong, decimal DonGia)> chiTiet)
         {
-            // 1. Create DataTable compatible with Table-Valued Parameter (TVP) ChiTietPhieuType
+            
             var table = new DataTable();
             table.Columns.Add("MaSP", typeof(int));
             table.Columns.Add("SoLuong", typeof(int));
@@ -49,7 +49,7 @@ namespace IMS.Web.Services
                 table.Rows.Add(item.MaSP, item.SoLuong, item.DonGia);
             }
 
-            // 2. Define SQL parameters
+            
             var maKhoParam = new SqlParameter("@MaKho", maKho);
             var maNVParam = new SqlParameter("@MaNV", maNV);
             var nguoiNhanParam = new SqlParameter("@NguoiNhan", (object?)nguoiNhan ?? DBNull.Value);
@@ -60,7 +60,7 @@ namespace IMS.Web.Services
                 TypeName = "dbo.ChiTietPhieuType"
             };
 
-            // 3. Execute Stored Procedure and return the newly generated goods issue ID
+            
             var ids = await _context.Database
                 .SqlQueryRaw<int>("EXEC sp_TaoPhieuXuat @MaKho, @MaNV, @NguoiNhan, @GhiChu, @ChiTiet",
                     maKhoParam, maNVParam, nguoiNhanParam, ghiChuParam, chiTietParam)

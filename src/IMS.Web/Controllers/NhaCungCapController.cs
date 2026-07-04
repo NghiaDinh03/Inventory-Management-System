@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using IMS.Web.Models;
 using IMS.Web.Services;
@@ -17,7 +17,7 @@ namespace IMS.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Nhà cung cấp";
+            ViewData["Title"] = "NhÃ  cung cáº¥p";
             var list = await _nhaCungCapService.GetAllAsync();
             return View(list);
         }
@@ -25,7 +25,7 @@ namespace IMS.Web.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            ViewData["Title"] = "Thêm nhà cung cấp";
+            ViewData["Title"] = "ThÃªm nhÃ  cung cáº¥p";
             return View();
         }
 
@@ -38,19 +38,19 @@ namespace IMS.Web.Controllers
                 bool success = await _nhaCungCapService.CreateAsync(ncc);
                 if (success)
                 {
-                    TempData["Success"] = "Thêm nhà cung cấp mới thành công!";
+                    TempData["Success"] = "ThÃªm nhÃ  cung cáº¥p má»›i thÃ nh cÃ´ng!";
                     return RedirectToAction(nameof(Index));
                 }
-                ModelState.AddModelError("", "Đã xảy ra lỗi khi lưu nhà cung cấp.");
+                ModelState.AddModelError("", "ÄÃ£ xáº£y ra lá»—i khi lÆ°u nhÃ  cung cáº¥p.");
             }
-            ViewData["Title"] = "Thêm nhà cung cấp";
+            ViewData["Title"] = "ThÃªm nhÃ  cung cáº¥p";
             return View(ncc);
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            ViewData["Title"] = "Sửa nhà cung cấp";
+            ViewData["Title"] = "Sá»­a nhÃ  cung cáº¥p";
             var ncc = await _nhaCungCapService.GetByIdAsync(id);
             if (ncc == null)
             {
@@ -68,12 +68,12 @@ namespace IMS.Web.Controllers
                 bool success = await _nhaCungCapService.UpdateAsync(ncc);
                 if (success)
                 {
-                    TempData["Success"] = "Cập nhật thông tin nhà cung cấp thành công!";
+                    TempData["Success"] = "Cáº­p nháº­t thÃ´ng tin nhÃ  cung cáº¥p thÃ nh cÃ´ng!";
                     return RedirectToAction(nameof(Index));
                 }
-                ModelState.AddModelError("", "Đã xảy ra lỗi khi cập nhật thông tin nhà cung cấp.");
+                ModelState.AddModelError("", "ÄÃ£ xáº£y ra lá»—i khi cáº­p nháº­t thÃ´ng tin nhÃ  cung cáº¥p.");
             }
-            ViewData["Title"] = "Sửa nhà cung cấp";
+            ViewData["Title"] = "Sá»­a nhÃ  cung cáº¥p";
             return View(ncc);
         }
 
@@ -84,11 +84,11 @@ namespace IMS.Web.Controllers
             bool success = await _nhaCungCapService.DeleteAsync(id);
             if (success)
             {
-                TempData["Success"] = "Xóa nhà cung cấp thành công!";
+                TempData["Success"] = "XÃ³a nhÃ  cung cáº¥p thÃ nh cÃ´ng!";
             }
             else
             {
-                TempData["Error"] = "Không thể xóa nhà cung cấp này do đang có phiếu nhập kho liên quan.";
+                TempData["Error"] = "KhÃ´ng thá»ƒ xÃ³a nhÃ  cung cáº¥p nÃ y do Ä‘ang cÃ³ phiáº¿u nháº­p kho liÃªn quan.";
             }
             return RedirectToAction(nameof(Index));
         }

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using IMS.Web.Models;
@@ -20,7 +20,7 @@ namespace IMS.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Sản phẩm";
+            ViewData["Title"] = "Sáº£n pháº©m";
             var list = await _sanPhamService.GetAllAsync();
             return View(list);
         }
@@ -28,7 +28,7 @@ namespace IMS.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            ViewData["Title"] = "Thêm sản phẩm";
+            ViewData["Title"] = "ThÃªm sáº£n pháº©m";
             var categories = await _danhMucService.GetAllAsync();
             ViewBag.DanhMucs = new SelectList(categories, "MaDanhMuc", "TenDanhMuc");
             return View();
@@ -43,22 +43,22 @@ namespace IMS.Web.Controllers
                 bool success = await _sanPhamService.CreateAsync(sanPham);
                 if (success)
                 {
-                    TempData["Success"] = "Thêm sản phẩm mới thành công!";
+                    TempData["Success"] = "ThÃªm sáº£n pháº©m má»›i thÃ nh cÃ´ng!";
                     return RedirectToAction(nameof(Index));
                 }
-                ModelState.AddModelError("", "Đã xảy ra lỗi khi tạo sản phẩm mới.");
+                ModelState.AddModelError("", "ÄÃ£ xáº£y ra lá»—i khi táº¡o sáº£n pháº©m má»›i.");
             }
             
             var categories = await _danhMucService.GetAllAsync();
             ViewBag.DanhMucs = new SelectList(categories, "MaDanhMuc", "TenDanhMuc", sanPham.MaDanhMuc);
-            ViewData["Title"] = "Thêm sản phẩm";
+            ViewData["Title"] = "ThÃªm sáº£n pháº©m";
             return View(sanPham);
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            ViewData["Title"] = "Sửa sản phẩm";
+            ViewData["Title"] = "Sá»­a sáº£n pháº©m";
             var sp = await _sanPhamService.GetByIdAsync(id);
             if (sp == null)
             {
@@ -79,15 +79,15 @@ namespace IMS.Web.Controllers
                 bool success = await _sanPhamService.UpdateAsync(sanPham);
                 if (success)
                 {
-                    TempData["Success"] = "Cập nhật thông tin sản phẩm thành công!";
+                    TempData["Success"] = "Cáº­p nháº­t thÃ´ng tin sáº£n pháº©m thÃ nh cÃ´ng!";
                     return RedirectToAction(nameof(Index));
                 }
-                ModelState.AddModelError("", "Đã xảy ra lỗi khi cập nhật sản phẩm.");
+                ModelState.AddModelError("", "ÄÃ£ xáº£y ra lá»—i khi cáº­p nháº­t sáº£n pháº©m.");
             }
 
             var categories = await _danhMucService.GetAllAsync();
             ViewBag.DanhMucs = new SelectList(categories, "MaDanhMuc", "TenDanhMuc", sanPham.MaDanhMuc);
-            ViewData["Title"] = "Sửa sản phẩm";
+            ViewData["Title"] = "Sá»­a sáº£n pháº©m";
             return View(sanPham);
         }
 
@@ -100,16 +100,16 @@ namespace IMS.Web.Controllers
                 bool success = await _sanPhamService.DeleteAsync(id);
                 if (success)
                 {
-                    TempData["Success"] = "Xóa sản phẩm thành công!";
+                    TempData["Success"] = "XÃ³a sáº£n pháº©m thÃ nh cÃ´ng!";
                 }
                 else
                 {
-                    TempData["Error"] = "Xóa sản phẩm thất bại.";
+                    TempData["Error"] = "XÃ³a sáº£n pháº©m tháº¥t báº¡i.";
                 }
             }
             catch (Exception)
             {
-                TempData["Error"] = "Không thể xóa sản phẩm này do đã phát sinh trong các giao dịch nhập/xuất kho.";
+                TempData["Error"] = "KhÃ´ng thá»ƒ xÃ³a sáº£n pháº©m nÃ y do Ä‘Ã£ phÃ¡t sinh trong cÃ¡c giao dá»‹ch nháº­p/xuáº¥t kho.";
             }
             return RedirectToAction(nameof(Index));
         }

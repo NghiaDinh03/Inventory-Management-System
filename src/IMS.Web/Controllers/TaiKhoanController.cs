@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,18 +34,18 @@ namespace IMS.Web.Controllers
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                ModelState.AddModelError("", "Tên đăng nhập và mật khẩu không được trống.");
+                ModelState.AddModelError("", "TÃªn Ä‘Äƒng nháº­p vÃ  máº­t kháº©u khÃ´ng Ä‘Æ°á»£c trá»‘ng.");
                 return View();
             }
 
             var taiKhoan = await _taiKhoanService.LoginAsync(username, password);
             if (taiKhoan == null)
             {
-                ModelState.AddModelError("", "Tài khoản hoặc mật khẩu không đúng.");
+                ModelState.AddModelError("", "TÃ i khoáº£n hoáº·c máº­t kháº©u khÃ´ng Ä‘Ãºng.");
                 return View();
             }
 
-            // Set up authentication claims
+            
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, taiKhoan.TenDangNhap),
@@ -68,7 +68,7 @@ namespace IMS.Web.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            // Store user info in Session
+            
             HttpContext.Session.SetString("TenNV", taiKhoan.NhanVien?.HoTen ?? taiKhoan.TenDangNhap);
             HttpContext.Session.SetString("VaiTro", taiKhoan.VaiTro?.TenVaiTro ?? "NVKho");
             HttpContext.Session.SetInt32("MaNV", taiKhoan.MaNV);
@@ -88,7 +88,7 @@ namespace IMS.Web.Controllers
         [Authorize]
         public IActionResult DoiMatKhau()
         {
-            ViewData["Title"] = "Đổi mật khẩu";
+            ViewData["Title"] = "Äá»•i máº­t kháº©u";
             return View();
         }
 
@@ -97,21 +97,21 @@ namespace IMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DoiMatKhau(string matKhauCu, string matKhauMoi, string xacNhanMatKhau)
         {
-            ViewData["Title"] = "Đổi mật khẩu";
+            ViewData["Title"] = "Äá»•i máº­t kháº©u";
 
             if (string.IsNullOrEmpty(matKhauCu) || string.IsNullOrEmpty(matKhauMoi))
             {
-                TempData["Error"] = "Vui lòng điền đầy đủ thông tin.";
+                TempData["Error"] = "Vui lÃ²ng Ä‘iá»n Ä‘áº§y Ä‘á»§ thÃ´ng tin.";
                 return View();
             }
 
             if (matKhauMoi != xacNhanMatKhau)
             {
-                TempData["Error"] = "Mật khẩu mới và mật khẩu xác nhận không khớp.";
+                TempData["Error"] = "Máº­t kháº©u má»›i vÃ  máº­t kháº©u xÃ¡c nháº­n khÃ´ng khá»›p.";
                 return View();
             }
 
-            // Get account ID of the logged in user
+            
             var maTKClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(maTKClaim) || !int.TryParse(maTKClaim, out int maTK))
             {
@@ -121,12 +121,12 @@ namespace IMS.Web.Controllers
             bool result = await _taiKhoanService.DoiMatKhauAsync(maTK, matKhauCu, matKhauMoi);
             if (result)
             {
-                TempData["Success"] = "Đổi mật khẩu thành công!";
+                TempData["Success"] = "Äá»•i máº­t kháº©u thÃ nh cÃ´ng!";
                 return View();
             }
             else
             {
-                TempData["Error"] = "Đổi mật khẩu thất bại. Vui lòng kiểm tra lại mật khẩu cũ.";
+                TempData["Error"] = "Äá»•i máº­t kháº©u tháº¥t báº¡i. Vui lÃ²ng kiá»ƒm tra láº¡i máº­t kháº©u cÅ©.";
                 return View();
             }
         }
@@ -135,7 +135,7 @@ namespace IMS.Web.Controllers
         [AllowAnonymous]
         public IActionResult AccessDenied()
         {
-            ViewData["Title"] = "Từ chối truy cập";
+            ViewData["Title"] = "Tá»« chá»‘i truy cáº­p";
             return View();
         }
     }

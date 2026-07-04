@@ -1,5 +1,6 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace IMS.Web.Models
 {
@@ -9,42 +10,54 @@ namespace IMS.Web.Models
         [Key]
         public int MaSP { get; set; }
 
-        [Required(ErrorMessage = "Tên sản phẩm không được để trống")]
-        [StringLength(200, ErrorMessage = "Tên sản phẩm không quá 200 ký tự")]
+        [Required(ErrorMessage = "TÃªn sáº£n pháº©m khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")]
+        [StringLength(200, ErrorMessage = "TÃªn sáº£n pháº©m khÃ´ng quÃ¡ 200 kÃ½ tá»±")]
         public string TenSP { get; set; } = null!;
 
-        [Required(ErrorMessage = "Vui lòng chọn danh mục")]
+        [Required(ErrorMessage = "Vui lÃ²ng chá»n danh má»¥c")]
         [Column("MaDanhMucSP")]
         public int MaDanhMuc { get; set; }
         
         [ForeignKey("MaDanhMuc")]
         public DanhMuc? DanhMuc { get; set; }
 
-        [Required(ErrorMessage = "Đơn vị tính không được để trống")]
-        [StringLength(50, ErrorMessage = "Đơn vị tính không quá 50 ký tự")]
+        [Required(ErrorMessage = "ÄÆ¡n vá»‹ tÃ­nh khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")]
+        [StringLength(50, ErrorMessage = "ÄÆ¡n vá»‹ tÃ­nh khÃ´ng quÃ¡ 50 kÃ½ tá»±")]
         public string DonVi { get; set; } = null!;
 
-        [StringLength(50, ErrorMessage = "Mã vạch không quá 50 ký tự")]
+        [StringLength(50, ErrorMessage = "MÃ£ váº¡ch khÃ´ng quÃ¡ 50 kÃ½ tá»±")]
         public string? MaVach { get; set; }
 
-        [Required(ErrorMessage = "Trọng lượng không được để trống")]
-        [Range(0, double.MaxValue, ErrorMessage = "Trọng lượng phải lớn hơn hoặc bằng 0")]
+        [Required(ErrorMessage = "Trá»ng lÆ°á»£ng khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")]
+        [Range(0, double.MaxValue, ErrorMessage = "Trá»ng lÆ°á»£ng pháº£i lá»›n hÆ¡n hoáº·c báº±ng 0")]
         public decimal TrongLuong { get; set; } = 0;
 
-        [Required(ErrorMessage = "Giá nhập không được để trống")]
-        [Range(0, double.MaxValue, ErrorMessage = "Giá nhập phải lớn hơn hoặc bằng 0")]
-        public decimal GiaNhap { get; set; } = 0;
+        [NotMapped]
+        public decimal GiaNhap
+        {
+            get
+            {
+                if (GiaNhaps != null && GiaNhaps.Any())
+                {
+                    return GiaNhaps.OrderByDescending(g => g.NgayLap).FirstOrDefault()?.DonGiaNhap ?? 0;
+                }
+                return 0;
+            }
+            set
+            {
+            }
+        }
 
-        [Required(ErrorMessage = "Giá bán không được để trống")]
-        [Range(0, double.MaxValue, ErrorMessage = "Giá bán phải lớn hơn hoặc bằng 0")]
+        [Required(ErrorMessage = "GiÃ¡ bÃ¡n khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")]
+        [Range(0, double.MaxValue, ErrorMessage = "GiÃ¡ bÃ¡n pháº£i lá»›n hÆ¡n hoáº·c báº±ng 0")]
         public decimal GiaBan { get; set; } = 0;
 
         public int TonToiThieu { get; set; } = 10;
 
-        [StringLength(500, ErrorMessage = "Đường dẫn hình ảnh không quá 500 ký tự")]
+        [StringLength(500, ErrorMessage = "ÄÆ°á»ng dáº«n hÃ¬nh áº£nh khÃ´ng quÃ¡ 500 kÃ½ tá»±")]
         public string? HinhAnh { get; set; }
 
-        [StringLength(500, ErrorMessage = "Mô tả không quá 500 ký tự")]
+        [StringLength(500, ErrorMessage = "MÃ´ táº£ khÃ´ng quÃ¡ 500 kÃ½ tá»±")]
         public string? MoTa { get; set; }
 
         public bool TrangThai { get; set; } = true;

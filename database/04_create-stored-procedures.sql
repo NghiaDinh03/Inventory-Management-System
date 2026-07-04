@@ -235,7 +235,7 @@ BEGIN
             sp.TenSP,
             sp.DonVi,
             tk.SoLuongTon AS TonHienTai,
-            sp.GiaNhap
+            COALESCE((SELECT TOP 1 DonGiaNhap FROM Gia g WHERE g.MaSP = sp.MaSP ORDER BY g.NgayLap DESC), 0) AS GiaNhap
         FROM TonKho tk
         JOIN SanPham sp ON tk.MaSP = sp.MaSP
         JOIN Kho k ON tk.MaKho = k.MaKho

@@ -1,4 +1,4 @@
-using IMS.Web.Data;
+﻿using IMS.Web.Data;
 using IMS.Web.Models.Views;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -71,7 +71,7 @@ namespace IMS.Web.Services
             });
         }
 
-        // Helper to execute stored procedure and return DataTable using ADO.NET
+        
         private async Task<DataTable> ExecuteStoredProcedureAsync(string spName, SqlParameter[] parameters)
         {
             var connection = _context.Database.GetDbConnection();
@@ -88,7 +88,7 @@ namespace IMS.Web.Services
                 {
                     command.CommandText = spName;
                     command.CommandType = CommandType.StoredProcedure;
-                    command.CommandTimeout = 120; // 2 minutes timeout for heavy cursors
+                    command.CommandTimeout = 120; 
 
                     if (parameters != null)
                     {

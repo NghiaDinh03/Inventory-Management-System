@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IMS.Web.Models
@@ -17,8 +17,8 @@ namespace IMS.Web.Models
 
         public DateTime NgayLap { get; set; } = DateTime.Now;
 
-        [Required(ErrorMessage = "Đơn giá nhập không được để trống")]
-        [Range(0, double.MaxValue, ErrorMessage = "Đơn giá nhập phải lớn hơn hoặc bằng 0")]
+        [Required(ErrorMessage = "ÄÆ¡n giÃ¡ nháº­p khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")]
+        [Range(0, double.MaxValue, ErrorMessage = "ÄÆ¡n giÃ¡ nháº­p pháº£i lá»›n hÆ¡n hoáº·c báº±ng 0")]
         public decimal DonGiaNhap { get; set; } = 0;
     }
 }

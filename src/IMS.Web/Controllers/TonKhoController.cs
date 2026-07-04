@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using IMS.Web.Services;
@@ -19,7 +19,7 @@ namespace IMS.Web.Controllers
 
         public async Task<IActionResult> Index(int? maKho)
         {
-            ViewData["Title"] = "Báo cáo tồn kho hiện tại";
+            ViewData["Title"] = "BÃ¡o cÃ¡o tá»“n kho hiá»‡n táº¡i";
 
             var khos = await _khoService.GetAllAsync();
             ViewBag.Khos = new SelectList(khos.Where(k => k.TrangThai), "MaKho", "TenKho", maKho);

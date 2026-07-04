@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using IMS.Web.Services;
 
@@ -17,7 +17,7 @@ namespace IMS.Web.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            ViewData["Title"] = "Sao lưu & Phục hồi hệ thống";
+            ViewData["Title"] = "Sao lÆ°u & Phá»¥c há»“i há»‡ thá»‘ng";
             return View();
         }
 
@@ -25,10 +25,10 @@ namespace IMS.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Backup()
         {
-            // Default directory in SQL Server container
+            
             string backupFolder = "/var/opt/mssql/data/";
             
-            // For local setup, this path can be customized. Under Docker-compose, "/var/opt/mssql/data/" is standard.
+            
             bool success = await _heThongService.BackupDatabaseAsync(backupFolder);
             
             if (success)
@@ -37,12 +37,12 @@ namespace IMS.Web.Controllers
                 string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 string generatedFilename = $"InventoryDB_Backup_{timestamp}.bak";
                 
-                TempData["Success"] = $"Sao lưu dữ liệu thành công! File đã được lưu vào container SQL Server.";
+                TempData["Success"] = $"Sao lÆ°u dá»¯ liá»‡u thÃ nh cÃ´ng! File Ä‘Ã£ Ä‘Æ°á»£c lÆ°u vÃ o container SQL Server.";
                 TempData["BackupFilename"] = generatedFilename;
             }
             else
             {
-                TempData["Error"] = "Sao lưu dữ liệu thất bại. Vui lòng kiểm tra quyền ghi của SQL Server trên thư mục.";
+                TempData["Error"] = "Sao lÆ°u dá»¯ liá»‡u tháº¥t báº¡i. Vui lÃ²ng kiá»ƒm tra quyá»n ghi cá»§a SQL Server trÃªn thÆ° má»¥c.";
             }
 
             return RedirectToAction(nameof(Index));
@@ -54,7 +54,7 @@ namespace IMS.Web.Controllers
         {
             if (string.IsNullOrEmpty(backupFilename))
             {
-                TempData["Error"] = "Vui lòng nhập tên file backup (.bak) cần phục hồi.";
+                TempData["Error"] = "Vui lÃ²ng nháº­p tÃªn file backup (.bak) cáº§n phá»¥c há»“i.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -63,11 +63,11 @@ namespace IMS.Web.Controllers
             bool success = await _heThongService.RestoreDatabaseAsync(fullBackupPath);
             if (success)
             {
-                TempData["Success"] = $"Phục hồi cơ sở dữ liệu thành công từ file: {backupFilename}!";
+                TempData["Success"] = $"Phá»¥c há»“i cÆ¡ sá»Ÿ dá»¯ liá»‡u thÃ nh cÃ´ng tá»« file: {backupFilename}!";
             }
             else
             {
-                TempData["Error"] = $"Phục hồi thất bại. Vui lòng đảm bảo file '{backupFilename}' tồn tại trong thư mục dữ liệu SQL Server (/var/opt/mssql/data/).";
+                TempData["Error"] = $"Phá»¥c há»“i tháº¥t báº¡i. Vui lÃ²ng Ä‘áº£m báº£o file '{backupFilename}' tá»“n táº¡i trong thÆ° má»¥c dá»¯ liá»‡u SQL Server (/var/opt/mssql/data/).";
             }
 
             return RedirectToAction(nameof(Index));

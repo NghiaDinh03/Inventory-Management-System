@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using IMS.Web.Services;
@@ -27,7 +27,7 @@ namespace IMS.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Phiếu nhập kho";
+            ViewData["Title"] = "Phiáº¿u nháº­p kho";
             var list = await _phieuNhapService.GetAllAsync();
             return View(list);
         }
@@ -35,7 +35,7 @@ namespace IMS.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            ViewData["Title"] = "Chi tiết phiếu nhập";
+            ViewData["Title"] = "Chi tiáº¿t phiáº¿u nháº­p";
             var phieu = await _phieuNhapService.GetByIdAsync(id);
             if (phieu == null)
             {
@@ -47,7 +47,7 @@ namespace IMS.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            ViewData["Title"] = "Tạo phiếu nhập kho";
+            ViewData["Title"] = "Táº¡o phiáº¿u nháº­p kho";
             
             var nccs = await _nhaCungCapService.GetAllAsync();
             var khos = await _khoService.GetAllAsync();
@@ -66,7 +66,7 @@ namespace IMS.Web.Controllers
         {
             if (maSP == null || !maSP.Any())
             {
-                TempData["Error"] = "Vui lòng thêm ít nhất một sản phẩm vào phiếu nhập.";
+                TempData["Error"] = "Vui lÃ²ng thÃªm Ã­t nháº¥t má»™t sáº£n pháº©m vÃ o phiáº¿u nháº­p.";
                 return RedirectToAction(nameof(Create));
             }
 
@@ -75,13 +75,13 @@ namespace IMS.Web.Controllers
             {
                 if (soLuong[i] <= 0 || donGia[i] < 0)
                 {
-                    TempData["Error"] = "Số lượng phải lớn hơn 0 và đơn giá không được âm.";
+                    TempData["Error"] = "Sá»‘ lÆ°á»£ng pháº£i lá»›n hÆ¡n 0 vÃ  Ä‘Æ¡n giÃ¡ khÃ´ng Ä‘Æ°á»£c Ã¢m.";
                     return RedirectToAction(nameof(Create));
                 }
                 chiTiet.Add((maSP[i], soLuong[i], donGia[i]));
             }
 
-            // Get MaNV from Claims
+            
             string? maNVClaim = User.FindFirst("MaNV")?.Value;
             if (string.IsNullOrEmpty(maNVClaim) || !int.TryParse(maNVClaim, out int maNV))
             {
@@ -91,12 +91,12 @@ namespace IMS.Web.Controllers
             try
             {
                 int maPN = await _phieuNhapService.CreatePhieuNhapAsync(maNCC, maKho, maNV, ghiChu, chiTiet);
-                TempData["Success"] = "Tạo phiếu nhập mới thành công!";
+                TempData["Success"] = "Táº¡o phiáº¿u nháº­p má»›i thÃ nh cÃ´ng!";
                 return RedirectToAction(nameof(Details), new { id = maPN });
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Đã xảy ra lỗi khi lập phiếu nhập: " + ex.Message;
+                TempData["Error"] = "ÄÃ£ xáº£y ra lá»—i khi láº­p phiáº¿u nháº­p: " + ex.Message;
                 return RedirectToAction(nameof(Create));
             }
         }
@@ -114,11 +114,11 @@ namespace IMS.Web.Controllers
             bool success = await _phieuNhapService.DuyetPhieuAsync(id, maNV);
             if (success)
             {
-                TempData["Success"] = "Duyệt phiếu nhập kho thành công! Số lượng tồn kho đã được cập nhật.";
+                TempData["Success"] = "Duyá»‡t phiáº¿u nháº­p kho thÃ nh cÃ´ng! Sá»‘ lÆ°á»£ng tá»“n kho Ä‘Ã£ Ä‘Æ°á»£c cáº­p nháº­t.";
             }
             else
             {
-                TempData["Error"] = "Duyệt phiếu thất bại. Vui lòng thử lại.";
+                TempData["Error"] = "Duyá»‡t phiáº¿u tháº¥t báº¡i. Vui lÃ²ng thá»­ láº¡i.";
             }
             return RedirectToAction(nameof(Details), new { id });
         }
@@ -129,7 +129,7 @@ namespace IMS.Web.Controllers
         {
             if (string.IsNullOrEmpty(lyDo))
             {
-                TempData["Error"] = "Vui lòng nhập lý do hủy phiếu.";
+                TempData["Error"] = "Vui lÃ²ng nháº­p lÃ½ do há»§y phiáº¿u.";
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -142,11 +142,11 @@ namespace IMS.Web.Controllers
             bool success = await _phieuNhapService.HuyPhieuAsync(id, maNV, lyDo);
             if (success)
             {
-                TempData["Success"] = "Hủy phiếu nhập kho thành công! Đã hoàn trả lại số lượng tồn kho.";
+                TempData["Success"] = "Há»§y phiáº¿u nháº­p kho thÃ nh cÃ´ng! ÄÃ£ hoÃ n tráº£ láº¡i sá»‘ lÆ°á»£ng tá»“n kho.";
             }
             else
             {
-                TempData["Error"] = "Hủy phiếu thất bại. Có thể do số lượng tồn kho sẽ bị âm khi hoàn trả.";
+                TempData["Error"] = "Há»§y phiáº¿u tháº¥t báº¡i. CÃ³ thá»ƒ do sá»‘ lÆ°á»£ng tá»“n kho sáº½ bá»‹ Ã¢m khi hoÃ n tráº£.";
             }
             return RedirectToAction(nameof(Details), new { id });
         }

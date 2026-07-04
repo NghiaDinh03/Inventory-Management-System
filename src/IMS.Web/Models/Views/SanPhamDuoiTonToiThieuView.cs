@@ -1,4 +1,4 @@
-namespace IMS.Web.Models.Views
+﻿namespace IMS.Web.Models.Views
 {
     public class SanPhamDuoiTonToiThieuView
     {

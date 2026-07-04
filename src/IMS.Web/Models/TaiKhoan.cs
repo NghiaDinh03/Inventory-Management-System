@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IMS.Web.Models
@@ -9,21 +9,21 @@ namespace IMS.Web.Models
         [Key]
         public int MaTK { get; set; }
 
-        [Required(ErrorMessage = "Tên đăng nhập không được để trống")]
-        [StringLength(50, ErrorMessage = "Tên đăng nhập không quá 50 ký tự")]
+        [Required(ErrorMessage = "TÃªn Ä‘Äƒng nháº­p khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")]
+        [StringLength(50, ErrorMessage = "TÃªn Ä‘Äƒng nháº­p khÃ´ng quÃ¡ 50 kÃ½ tá»±")]
         public string TenDangNhap { get; set; } = null!;
 
-        [Required(ErrorMessage = "Mật khẩu không được để trống")]
-        [StringLength(256, ErrorMessage = "Mật khẩu không quá 256 ký tự")]
+        [Required(ErrorMessage = "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")]
+        [StringLength(256, ErrorMessage = "Máº­t kháº©u khÃ´ng quÃ¡ 256 kÃ½ tá»±")]
         public string MatKhau { get; set; } = null!;
 
-        [Required(ErrorMessage = "Vui lòng chọn nhân viên sở hữu tài khoản")]
+        [Required(ErrorMessage = "Vui lÃ²ng chá»n nhÃ¢n viÃªn sá»Ÿ há»¯u tÃ i khoáº£n")]
         public int MaNV { get; set; }
 
         [ForeignKey("MaNV")]
         public NhanVien? NhanVien { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng chọn vai trò")]
+        [Required(ErrorMessage = "Vui lÃ²ng chá»n vai trÃ²")]
         public int MaVT { get; set; }
 
         [ForeignKey("MaVT")]

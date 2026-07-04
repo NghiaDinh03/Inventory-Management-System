@@ -1,4 +1,4 @@
-using IMS.Web.Models;
+﻿using IMS.Web.Models;
 using IMS.Web.Models.Views;
 using System.Data;
 
@@ -86,7 +86,7 @@ namespace IMS.Web.Services
         Task<List<TopSanPhamXuatNhieuView>> GetTopSanPhamXuatNhieuAsync();
         Task<List<DoanhThuTheoThangView>> GetDoanhThuTheoThangAsync();
         
-        // Cursors
+        
         Task<DataTable> ExecuteCursorCanhBaoTonAsync();
         Task<DataTable> ExecuteCursorTonCuoiKyAsync(int? maKho, DateTime tuNgay, DateTime denNgay);
     }

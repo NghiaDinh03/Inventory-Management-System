@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using IMS.Web.Models;
@@ -20,7 +20,7 @@ namespace IMS.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Tổng quan";
+            ViewData["Title"] = "Tá»•ng quan";
             
             var model = new DashboardViewModel
             {
@@ -35,7 +35,7 @@ namespace IMS.Web.Controllers
 
         public IActionResult Privacy()
         {
-            ViewData["Title"] = "Chính sách bảo mật";
+            ViewData["Title"] = "ChÃ­nh sÃ¡ch báº£o máº­t";
             return View();
         }
 

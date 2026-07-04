@@ -56,9 +56,8 @@
             <div class="demo-step">
                 <div class="demo-step-title">B2: Định nghĩa truy vấn SQL & Thực thi</div>
                 <div class="code-block">
-DECLARE @@Details ChiTietPhieuType;
-INSERT INTO @@Details (MaSP, SoLuong, DonGia) VALUES (1, 10, 180000); -- Chuột Logitech M331
-INSERT INTO @@Details (MaSP, SoLuong, DonGia) VALUES (2, 5, 850000);  -- Bàn phím cơ G213
+INSERT INTO @@Details (MaSP, SoLuong, DonGia) VALUES (1, 10, 30000); -- Táo Fuji
+INSERT INTO @@Details (MaSP, SoLuong, DonGia) VALUES (6, 5, 8000);  -- Cải xanh
 
 EXEC sp_TaoPhieuNhap 
     @@MaNCC = 1, 
@@ -123,7 +122,7 @@ EXEC sp_DuyetPhieu @@LoaiPhieu = 'PX', @@MaPhieu = @@MaPX, @@MaNV = 1;
 
             <!-- B3 -->
             <div class="demo-step">
-                <div class="demo-step-title">B3: Trạng thái tồn sản phẩm 1 tại Kho 3 (Trước khi xuất)</div>
+                <div class="demo-step-title">B3: Trạng thái tồn sản phẩm 1 tại Kho 1 (Trước khi xuất)</div>
                 <div class="table-responsive">
                     <table class="table table-custom table-hover" id="tbl-trigger-before">
                         <thead><tr><th>Đang tải dữ liệu...</th></tr></thead>
@@ -140,7 +139,7 @@ EXEC sp_DuyetPhieu @@LoaiPhieu = 'PX', @@MaPhieu = @@MaPX, @@MaNV = 1;
                         Duyệt phiếu - ĐỦ TỒN KHO (Xuất 2 cái) <i class="fa-solid fa-check-double"></i>
                     </button>
                     <button class="btn-custom btn-primary-custom py-2" style="background: var(--danger);" onclick="runDemoFail('RUN_TRIGGER_FAIL')">
-                        Duyệt phiếu - THIẾU TỒN KHO (Xuất 100 cái) <i class="fa-solid fa-triangle-exclamation"></i>
+                        Duyệt phiếu - THIẾU TỒN KHO (Xuất 500 cái) <i class="fa-solid fa-triangle-exclamation"></i>
                     </button>
                 </div>
             </div>

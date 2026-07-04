@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IMS.Web.Models
@@ -9,11 +9,11 @@ namespace IMS.Web.Models
         [Key]
         public int MaVT { get; set; }
 
-        [Required(ErrorMessage = "Tên vai trò không được để trống")]
-        [StringLength(50, ErrorMessage = "Tên vai trò không quá 50 ký tự")]
+        [Required(ErrorMessage = "TÃªn vai trÃ² khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")]
+        [StringLength(50, ErrorMessage = "TÃªn vai trÃ² khÃ´ng quÃ¡ 50 kÃ½ tá»±")]
         public string TenVaiTro { get; set; } = null!;
 
-        [StringLength(200, ErrorMessage = "Mô tả không quá 200 ký tự")]
+        [StringLength(200, ErrorMessage = "MÃ´ táº£ khÃ´ng quÃ¡ 200 kÃ½ tá»±")]
         public string? MoTa { get; set; }
 
         public bool TrangThai { get; set; } = true;

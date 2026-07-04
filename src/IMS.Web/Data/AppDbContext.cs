@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using IMS.Web.Models;
 using IMS.Web.Models.Views;
 
@@ -10,7 +10,7 @@ namespace IMS.Web.Data
         {
         }
 
-        // 12 Core Database Tables
+        
         public DbSet<DanhMuc> DanhMucs { get; set; } = null!;
         public DbSet<NhaCungCap> NhaCungCaps { get; set; } = null!;
         public DbSet<Kho> Khos { get; set; } = null!;
@@ -27,7 +27,7 @@ namespace IMS.Web.Data
         public DbSet<Gia> Gias { get; set; } = null!;
         public DbSet<NCC_SanPham> NCC_SanPhams { get; set; } = null!;
 
-        // 7 Views (No key, read-only query mapping)
+        
         public DbSet<TonKhoHienTaiView> TonKhoHienTaiViews { get; set; } = null!;
         public DbSet<SanPhamDuoiTonToiThieuView> SanPhamDuoiTonToiThieuViews { get; set; } = null!;
         public DbSet<NhapXuatTheoNgayView> NhapXuatTheoNgayViews { get; set; } = null!;
@@ -40,7 +40,7 @@ namespace IMS.Web.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configuration for core tables
+            
             modelBuilder.Entity<DanhMuc>(entity =>
             {
                 entity.HasIndex(e => e.TenDanhMuc).IsUnique();
@@ -57,7 +57,6 @@ namespace IMS.Web.Data
             {
                 entity.HasIndex(e => e.TenSP);
                 entity.HasIndex(e => e.MaVach).IsUnique().HasFilter("[MaVach] IS NOT NULL");
-                entity.Property(e => e.GiaNhap).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.GiaBan).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.TrongLuong).HasColumnType("decimal(10,3)");
 
@@ -148,7 +147,7 @@ namespace IMS.Web.Data
                 entity.HasOne(d => d.PhieuNhap)
                     .WithMany(p => p.ChiTietPhieuNhaps)
                     .HasForeignKey(d => d.MaPN)
-                    .OnDelete(DeleteBehavior.Cascade); // Cascade delete on purchase order deletion
+                    .OnDelete(DeleteBehavior.Cascade); 
 
                 entity.HasOne(d => d.SanPham)
                     .WithMany(p => p.ChiTietPhieuNhaps)
@@ -186,7 +185,7 @@ namespace IMS.Web.Data
                 entity.HasOne(d => d.PhieuXuat)
                     .WithMany(p => p.ChiTietPhieuXuats)
                     .HasForeignKey(d => d.MaPX)
-                    .OnDelete(DeleteBehavior.Cascade); // Cascade delete on goods issue deletion
+                    .OnDelete(DeleteBehavior.Cascade); 
 
                 entity.HasOne(d => d.SanPham)
                     .WithMany(p => p.ChiTietPhieuXuats)
@@ -218,7 +217,7 @@ namespace IMS.Web.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Configuration for views (Keyless entities)
+            
             modelBuilder.Entity<TonKhoHienTaiView>(entity =>
             {
                 entity.HasNoKey();

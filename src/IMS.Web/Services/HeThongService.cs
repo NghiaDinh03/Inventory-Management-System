@@ -1,4 +1,4 @@
-using IMS.Web.Data;
+﻿using IMS.Web.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +17,7 @@ namespace IMS.Web.Services
         {
             try
             {
-                // Default path is /var/opt/mssql/data/ inside Docker container
+                
                 var folderParam = new SqlParameter("@BackupFolder", path);
                 
                 await _context.Database.ExecuteSqlRawAsync(
@@ -28,7 +28,7 @@ namespace IMS.Web.Services
             }
             catch (Exception ex)
             {
-                // Log exception if needed
+                
                 Console.WriteLine("Backup Error: " + ex.Message);
                 return false;
             }
@@ -40,7 +40,7 @@ namespace IMS.Web.Services
             {
                 var pathParam = new SqlParameter("@BackupFilePath", path);
                 
-                // Call stored procedure located in master database
+                
                 await _context.Database.ExecuteSqlRawAsync(
                     "EXEC master.dbo.sp_RestoreDatabase @BackupFilePath", 
                     pathParam);

@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IMS.Web.Models
@@ -16,13 +16,13 @@ namespace IMS.Web.Models
 
         public DateTime? NgayDuyet { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng chọn kho xuất")]
+        [Required(ErrorMessage = "Vui lÃ²ng chá»n kho xuáº¥t")]
         public int MaKho { get; set; }
 
         [ForeignKey("MaKho")]
         public Kho? Kho { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng chỉ định nhân viên lập phiếu")]
+        [Required(ErrorMessage = "Vui lÃ²ng chá»‰ Ä‘á»‹nh nhÃ¢n viÃªn láº­p phiáº¿u")]
         public int MaNV { get; set; }
 
         [ForeignKey("MaNV")]
@@ -33,16 +33,16 @@ namespace IMS.Web.Models
         [ForeignKey("MaNV_Duyet")]
         public NhanVien? NhanVienDuyet { get; set; }
 
-        [StringLength(200, ErrorMessage = "Tên người nhận không quá 200 ký tự")]
+        [StringLength(200, ErrorMessage = "TÃªn ngÆ°á»i nháº­n khÃ´ng quÃ¡ 200 kÃ½ tá»±")]
         public string? NguoiNhan { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string TrangThai { get; set; } = "Nháp";
+        public string TrangThai { get; set; } = "NhÃ¡p";
 
         public decimal TongTien { get; set; } = 0;
 
-        [StringLength(500, ErrorMessage = "Ghi chú không quá 500 ký tự")]
+        [StringLength(500, ErrorMessage = "Ghi chÃº khÃ´ng quÃ¡ 500 kÃ½ tá»±")]
         public string? GhiChu { get; set; }
 
         public ICollection<ChiTietPhieuXuat>? ChiTietPhieuXuats { get; set; }

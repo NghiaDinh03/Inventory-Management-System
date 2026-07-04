@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using IMS.Web.Services;
@@ -27,7 +27,7 @@ namespace IMS.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Phiếu xuất kho";
+            ViewData["Title"] = "Phiáº¿u xuáº¥t kho";
             var list = await _phieuXuatService.GetAllAsync();
             return View(list);
         }
@@ -35,7 +35,7 @@ namespace IMS.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            ViewData["Title"] = "Chi tiết phiếu xuất";
+            ViewData["Title"] = "Chi tiáº¿t phiáº¿u xuáº¥t";
             var phieu = await _phieuXuatService.GetByIdAsync(id);
             if (phieu == null)
             {
@@ -47,7 +47,7 @@ namespace IMS.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            ViewData["Title"] = "Lập phiếu xuất kho";
+            ViewData["Title"] = "Láº­p phiáº¿u xuáº¥t kho";
             
             var khos = await _khoService.GetAllAsync();
             var products = await _sanPhamService.GetAllAsync();
@@ -64,7 +64,7 @@ namespace IMS.Web.Controllers
         {
             if (maSP == null || !maSP.Any())
             {
-                TempData["Error"] = "Vui lòng thêm ít nhất một sản phẩm vào phiếu xuất.";
+                TempData["Error"] = "Vui lÃ²ng thÃªm Ã­t nháº¥t má»™t sáº£n pháº©m vÃ o phiáº¿u xuáº¥t.";
                 return RedirectToAction(nameof(Create));
             }
 
@@ -73,7 +73,7 @@ namespace IMS.Web.Controllers
             {
                 if (soLuong[i] <= 0 || donGia[i] < 0)
                 {
-                    TempData["Error"] = "Số lượng phải lớn hơn 0 và đơn giá không được âm.";
+                    TempData["Error"] = "Sá»‘ lÆ°á»£ng pháº£i lá»›n hÆ¡n 0 vÃ  Ä‘Æ¡n giÃ¡ khÃ´ng Ä‘Æ°á»£c Ã¢m.";
                     return RedirectToAction(nameof(Create));
                 }
                 chiTiet.Add((maSP[i], soLuong[i], donGia[i]));
@@ -88,12 +88,12 @@ namespace IMS.Web.Controllers
             try
             {
                 int maPX = await _phieuXuatService.CreatePhieuXuatAsync(maKho, maNV, nguoiNhan, ghiChu, chiTiet);
-                TempData["Success"] = "Tạo phiếu xuất mới thành công!";
+                TempData["Success"] = "Táº¡o phiáº¿u xuáº¥t má»›i thÃ nh cÃ´ng!";
                 return RedirectToAction(nameof(Details), new { id = maPX });
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Đã xảy ra lỗi khi lập phiếu xuất: " + ex.Message;
+                TempData["Error"] = "ÄÃ£ xáº£y ra lá»—i khi láº­p phiáº¿u xuáº¥t: " + ex.Message;
                 return RedirectToAction(nameof(Create));
             }
         }
@@ -111,11 +111,11 @@ namespace IMS.Web.Controllers
             bool success = await _phieuXuatService.DuyetPhieuAsync(id, maNV);
             if (success)
             {
-                TempData["Success"] = "Duyệt phiếu xuất kho thành công! Số lượng tồn kho đã được trừ.";
+                TempData["Success"] = "Duyá»‡t phiáº¿u xuáº¥t kho thÃ nh cÃ´ng! Sá»‘ lÆ°á»£ng tá»“n kho Ä‘Ã£ Ä‘Æ°á»£c trá»«.";
             }
             else
             {
-                TempData["Error"] = "Duyệt phiếu thất bại. Vui lòng kiểm tra lại số lượng tồn kho có đủ không.";
+                TempData["Error"] = "Duyá»‡t phiáº¿u tháº¥t báº¡i. Vui lÃ²ng kiá»ƒm tra láº¡i sá»‘ lÆ°á»£ng tá»“n kho cÃ³ Ä‘á»§ khÃ´ng.";
             }
             return RedirectToAction(nameof(Details), new { id });
         }
@@ -126,7 +126,7 @@ namespace IMS.Web.Controllers
         {
             if (string.IsNullOrEmpty(lyDo))
             {
-                TempData["Error"] = "Vui lòng nhập lý do hủy phiếu.";
+                TempData["Error"] = "Vui lÃ²ng nháº­p lÃ½ do há»§y phiáº¿u.";
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -139,16 +139,16 @@ namespace IMS.Web.Controllers
             bool success = await _phieuXuatService.HuyPhieuAsync(id, maNV, lyDo);
             if (success)
             {
-                TempData["Success"] = "Hủy phiếu xuất thành công! Đã cộng hoàn trả lại số lượng tồn kho.";
+                TempData["Success"] = "Há»§y phiáº¿u xuáº¥t thÃ nh cÃ´ng! ÄÃ£ cá»™ng hoÃ n tráº£ láº¡i sá»‘ lÆ°á»£ng tá»“n kho.";
             }
             else
             {
-                TempData["Error"] = "Hủy phiếu thất bại. Vui lòng thử lại.";
+                TempData["Error"] = "Há»§y phiáº¿u tháº¥t báº¡i. Vui lÃ²ng thá»­ láº¡i.";
             }
             return RedirectToAction(nameof(Details), new { id });
         }
 
-        // Action API to check current stock level of a product in a specific warehouse (called via AJAX in view)
+        
         [HttpGet]
         public async Task<IActionResult> GetStockLevel(int maSP, int maKho)
         {
